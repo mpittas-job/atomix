@@ -160,7 +160,7 @@ export default function MissionVisionV3() {
     <div ref={wrapperRef}>
       <div
         ref={innerRef}
-        className="h-[calc(100vh-126px)] rounded-3xl bg-linear-to-b from-[#0B4858] via-[#2e6775] to-[#0B4858] relative overflow-hidden flex items-center justify-center"
+        className="h-[calc(100vh-126px)] rounded-3xl bg-linear-to-b from-[#004152] via-[#01485C] to-[#004152] relative overflow-hidden flex items-center justify-center"
       >
         {/* <div className="absolute top-0 left-0 w-full h-[500px] user-select-none pointer-events-none">
           <SoftAurora

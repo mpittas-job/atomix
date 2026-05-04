@@ -14,10 +14,13 @@ import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(ScrollTrigger, GSAPSplitText, useGSAP);
 
-const ACCENT_COLOR = "#00BBFF";
+const DEFAULT_ACCENT_COLOR = "#00BBFF";
 const ACCENT_TOKEN_REGEX = /\[\[accent:(.*?)\]\]/g;
 
-const renderTextWithAccent = (text: string) => {
+const renderTextWithAccent = (
+  text: string,
+  accentColor = DEFAULT_ACCENT_COLOR,
+) => {
   const nodes: React.ReactNode[] = [];
   let cursor = 0;
   let match: RegExpExecArray | null;
@@ -34,7 +37,7 @@ const renderTextWithAccent = (text: string) => {
       <span
         key={`accent-${tokenStart}`}
         style={{
-          color: ACCENT_COLOR,
+          color: accentColor,
           display: "inline",
           whiteSpace: "inherit",
         }}
@@ -55,6 +58,8 @@ const renderTextWithAccent = (text: string) => {
 
 export interface SplitTextHandle {
   play: () => void;
+  getTargets: () => Element[];
+  getFrom: () => gsap.TweenVars;
 }
 
 export interface SplitTextProps {
@@ -72,6 +77,7 @@ export interface SplitTextProps {
   textAlign?: React.CSSProperties["textAlign"];
   onLetterAnimationComplete?: () => void;
   startPaused?: boolean;
+  accentColor?: string;
 }
 
 export interface HeroSplitTextLoopProps {
@@ -97,6 +103,7 @@ const SplitText = forwardRef<SplitTextHandle, SplitTextProps>(
       tag = "p",
       onLetterAnimationComplete,
       startPaused = false,
+      accentColor,
     },
     forwardedRef,
   ) => {
@@ -104,10 +111,14 @@ const SplitText = forwardRef<SplitTextHandle, SplitTextProps>(
     const animationCompletedRef = useRef(false);
     const onCompleteRef = useRef(onLetterAnimationComplete);
     const [fontsLoaded, setFontsLoaded] = useState<boolean>(false);
-    const renderedText = useMemo(() => renderTextWithAccent(text), [text]);
+    const renderedText = useMemo(
+      () => renderTextWithAccent(text, accentColor),
+      [text, accentColor],
+    );
     const tweenRef = useRef<gsap.core.Tween | null>(null);
     const shouldPlayRef = useRef(false);
     const splitInstanceRef = useRef<GSAPSplitText | null>(null);
+    const targetsRef = useRef<Element[]>([]);
     const styleRef = useRef<HTMLStyleElement | null>(null);
 
     useImperativeHandle(forwardedRef, () => ({
@@ -118,6 +129,8 @@ const SplitText = forwardRef<SplitTextHandle, SplitTextProps>(
           shouldPlayRef.current = true;
         }
       },
+      getTargets: () => targetsRef.current,
+      getFrom: () => from,
     }));
 
     // Keep callback ref updated
@@ -207,6 +220,7 @@ const SplitText = forwardRef<SplitTextHandle, SplitTextProps>(
             splitInstanceRef.current = self;
 
             assignTargets(self);
+            targetsRef.current = targets;
 
             const tweenVars: gsap.TweenVars = {
               ...to,

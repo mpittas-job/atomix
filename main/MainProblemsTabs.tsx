@@ -321,7 +321,7 @@ export default function MainProblemsTabs() {
   }, [startTabsEntrance]);
 
   return (
-    <div className="min-h-[calc(100vh-126px)] rounded-3xl bg-linear-to-b from-[#0B4858] via-[#2e6775] to-[#0B4858] relative overflow-hidden flex flex-col justify-center items-center">
+    <div className="min-h-[calc(100vh-126px)] rounded-3xl bg-linear-to-b from-[#004152] via-[#01485C] to-[#004152] relative overflow-hidden flex flex-col justify-center items-center">
       <div className="absolute top-0 left-0 w-full h-[500px]">
         <SoftAurora
           speed={1.3}
@@ -341,7 +341,7 @@ export default function MainProblemsTabs() {
         />
       </div>
 
-      <div className="relative z-10 flex flex-col gap-y-12 w-full max-w-[1200px] px-8 py-32">
+      <div className="relative z-10 flex flex-col gap-y-12 max-w-[1200px] w-full px-8 py-32">
         <DefHeading
           theme="light"
           badgeText=""
@@ -387,7 +387,7 @@ export default function MainProblemsTabs() {
               tabsData[activeIndex].iconBoxes.length === 4
                 ? "grid-cols-4"
                 : "grid-cols-3"
-            } gap-3 w-full`}
+            } gap-5 w-full`}
           >
             {tabsData[activeIndex].iconBoxes.map((iconBox, index) => (
               <div key={`${activeIndex}-${index}`} className="relative">

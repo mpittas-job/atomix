@@ -1,4 +1,4 @@
-### MAIN BENEFITS SECTION:
+### Tasks:
 
-- [ ] Update images in Benefits with ones from new desigf?
-  - [ ] Where can I find all images and content for the section?
+- [x] Move the wave on second slide for hero to be at the bottom
+- [x] On zoom out -zoom in fix the wave being cut off and also the light background (shader)  for Main Hero

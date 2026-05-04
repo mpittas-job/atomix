@@ -28,7 +28,7 @@ function IconText({ icon, text }: { icon: string; text: string }) {
 
 function SquareBadge({ text }: { text: string }) {
   return (
-    <div className="w-full px-3 py-2 border border-[#1491B3] bg-[#003746] rounded-md text-center text-sm text-white font-bold">
+    <div className="w-full px-3 py-2 border border-white/14 bg-[#165161] rounded-md text-center text-sm text-white font-bold">
       {text}
     </div>
   );
@@ -376,7 +376,7 @@ export default function MainSolutionsAnimation() {
   }, []);
 
   return (
-    <div className="min-h-[calc(100vh-126px)] rounded-3xl bg-linear-to-b from-[#0B4858] via-[#2e6775] to-[#0B4858] relative overflow-hidden flex flex-col justify-center items-center">
+    <div className="min-h-[calc(100vh-126px)] rounded-3xl bg-linear-to-b from-[#004152] via-[#01485C] to-[#004152] relative overflow-hidden flex flex-col justify-center items-center">
       <div className="absolute top-0 left-0 w-full h-[500px]">
         <SoftAurora
           speed={1.3}

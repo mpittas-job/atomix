@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import AtomixPyramidNewDesign from "@/animations/AtomixPyramidNewDesign";
 import { FiCheck, FiX } from "react-icons/fi";
 import SoftAurora from "@/components/backgrounds/SoftAurora";
+import DefHeading from "@/components/typo/DefHeading";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,37 +22,38 @@ type IconBoxData = {
 
 type HighlightInfo = {
   title: string;
-  items: Array<{ positive: boolean; text: string }>;
+  description: string;
+  items: Array<{ positive: boolean; title: string; description: string }>;
 };
 
 const iconBoxesData: IconBoxData[] = [
   {
-    icon: "/icons/white/shield-check-white.svg",
+    icon: "/icons/gradient/shield-blue-gradient.png",
     title: "Simple SaaS",
     description: "automated and easy to change, but simple products only",
   },
   {
-    icon: "/icons/white/target-arrow.svg",
+    icon: "/icons/gradient/target-blue-gradient.png",
     title: "Bespoke builds",
     description:
       "automated and complex, but £500k+ upfront and expensive to change",
     items: [
       {
-        icon: <FiCheck className="text-white/80 w-5 h-5 shrink-0" />,
+        icon: <FiCheck className="text-white/70 w-5 h-5 shrink-0" />,
         text: "Automated",
       },
       {
-        icon: <FiCheck className="text-white/80 w-5 h-5 shrink-0" />,
+        icon: <FiCheck className="text-white/70 w-5 h-5 shrink-0" />,
         text: "Complex logic",
       },
       {
-        icon: <FiX className="text-white/80 w-5 h-5 shrink-0" />,
+        icon: <FiX className="text-white/70 w-5 h-5 shrink-0" />,
         text: "£600k, slow to change",
       },
     ],
   },
   {
-    icon: "/icons/white/module-simple.svg",
+    icon: "/icons/gradient/links-blue-gradient.png",
     title: "Disconnected stacks",
     description:
       "complex and configurable, but humans are the glue; nothing is truly automated",
@@ -61,26 +63,67 @@ const iconBoxesData: IconBoxData[] = [
 const highlightSequenceData: HighlightInfo[] = [
   {
     title: "Bespoke builds",
+    description:
+      "automated and complex, but £500k+ upfront and expensive to change",
     items: [
-      { positive: true, text: "Automated" },
-      { positive: true, text: "Complex logic" },
-      { positive: false, text: "£600k+, slow to change" },
+      {
+        positive: true,
+        title: "Automated",
+        description: "End-to-end processing without manual intervention",
+      },
+      {
+        positive: true,
+        title: "Complex logic",
+        description: "Handles sophisticated lending scenarios",
+      },
+      {
+        positive: false,
+        title: "£600k+, slow to change",
+        description: "Expensive upfront and costly to maintain",
+      },
     ],
   },
   {
     title: "Simple SaaS",
+    description: "automated and easy to change, but simple products only",
     items: [
-      { positive: true, text: "Automated" },
-      { positive: true, text: "Cheap to build" },
-      { positive: false, text: "Simple products only" },
+      {
+        positive: true,
+        title: "Automated",
+        description: "Lorem ipsum dolor sit amet lorem ipsum",
+      },
+      {
+        positive: true,
+        title: "Cheap to build",
+        description: "Lorem ipsum dolor sit amet",
+      },
+      {
+        positive: false,
+        title: "Simple products only",
+        description: "Lorem ipsum dolor sit amet lorem ipsum ",
+      },
     ],
   },
   {
     title: "Disconnected stacks",
+    description:
+      "complex and configurable, but humans are the glue; nothing is truly automated",
     items: [
-      { positive: true, text: "Complex logic" },
-      { positive: true, text: "Cheap to build" },
-      { positive: false, text: "Not automated" },
+      {
+        positive: true,
+        title: "Complex logic",
+        description: "Flexible for various product types",
+      },
+      {
+        positive: true,
+        title: "Cheap to build",
+        description: "Lower initial investment required",
+      },
+      {
+        positive: false,
+        title: "Not automated",
+        description: "Humans required to connect the gaps",
+      },
     ],
   },
 ];
@@ -91,12 +134,15 @@ const HIGHLIGHT_PHASE_2_END = 0.6;
 
 export default function MainPyramidWrapper() {
   const pyramidSectionRef = useRef<HTMLDivElement>(null);
+  const headingWrapRef = useRef<HTMLDivElement>(null);
+  const animationWrapRef = useRef<HTMLDivElement>(null);
   const pyramidColRef = useRef<HTMLDivElement>(null);
   const iconBoxRefs = useRef<Array<HTMLDivElement | null>>([]);
   const pyramidApiRef = useRef<{ setSlider: (v: number) => void } | null>(null);
   const highlightBoxRef = useRef<HTMLDivElement>(null);
   const highlightContentRef = useRef<HTMLDivElement>(null);
   const highlightTitleRef = useRef<HTMLHeadingElement>(null);
+  const highlightDescRef = useRef<HTMLParagraphElement>(null);
   const highlightItemsRef = useRef<Array<HTMLLIElement | null>>([]);
   const [highlightIndex, setHighlightIndex] = useState(0);
   const lastHighlightIndexRef = useRef(0);
@@ -104,14 +150,18 @@ export default function MainPyramidWrapper() {
 
   useGSAP(() => {
     const section = pyramidSectionRef.current;
+    const headingWrap = headingWrapRef.current;
+    const animationWrap = animationWrapRef.current;
     const pyramidCol = pyramidColRef.current;
     const boxes = iconBoxRefs.current.filter(
       (box): box is HTMLDivElement => box !== null,
     );
-    if (!section || !pyramidCol || boxes.length === 0) return;
+    if (!section || !headingWrap || !animationWrap || !pyramidCol || boxes.length === 0) return;
 
     // Initial state: pyramid on the right side of the wrapper,
     // icon boxes hidden, highlight box visible with first content.
+    gsap.set(headingWrap, { autoAlpha: 0, y: 32 });
+    gsap.set(animationWrap, { autoAlpha: 0, y: 28 });
     gsap.set(pyramidCol, { xPercent: 85 });
     gsap.set(boxes, { autoAlpha: 0, y: 32 });
     gsap.set(highlightBoxRef.current, { autoAlpha: 1 });
@@ -150,7 +200,23 @@ export default function MainPyramidWrapper() {
     });
     resizeObserver.observe(document.body);
 
-    tl.to(pyramidProgress, {
+    tl.to(headingWrap, {
+      autoAlpha: 1,
+      y: 0,
+      ease: "power2.out",
+      duration: 0.22,
+    })
+      .to(
+        animationWrap,
+        {
+          autoAlpha: 1,
+          y: 0,
+          ease: "power2.out",
+          duration: 0.18,
+        },
+        0.18,
+      )
+      .to(pyramidProgress, {
       value: 1,
       ease: "none",
       duration: 1,
@@ -176,16 +242,16 @@ export default function MainPyramidWrapper() {
           setHighlightIndex(newIndex);
         }
       },
-    })
+    }, 0.32)
       .to(
         pyramidCol,
         { xPercent: 0, ease: "none", duration: 0.22 },
-        HIGHLIGHT_SEQUENCE_END,
+        0.32 + HIGHLIGHT_SEQUENCE_END,
       )
       .to(
         highlightBoxRef.current,
         { autoAlpha: 0, ease: "power2.out", duration: 0.15 },
-        HIGHLIGHT_SEQUENCE_END,
+        0.32 + HIGHLIGHT_SEQUENCE_END,
       )
       .to(
         boxes,
@@ -196,7 +262,7 @@ export default function MainPyramidWrapper() {
           duration: 0.25,
           stagger: 0.08,
         },
-        0.8,
+        1.12,
       );
 
     return () => {
@@ -211,6 +277,7 @@ export default function MainPyramidWrapper() {
   useEffect(() => {
     const content = highlightContentRef.current;
     const title = highlightTitleRef.current;
+    const desc = highlightDescRef.current;
     const items = highlightItemsRef.current.filter(
       (item): item is HTMLLIElement => item !== null,
     );
@@ -220,6 +287,7 @@ export default function MainPyramidWrapper() {
     const ctx = gsap.context(() => {
       // Set initial state for animation
       gsap.set(title, { opacity: 0, y: 16 });
+      if (desc) gsap.set(desc, { opacity: 0, y: 12 });
       gsap.set(items, { opacity: 0, x: -12 });
 
       // Create entrance animation timeline
@@ -227,12 +295,26 @@ export default function MainPyramidWrapper() {
         defaults: { ease: "power2.out" },
       });
 
-      // Animate title first, then items staggered
+      // Animate title first, then description, then items staggered
       tl.to(title, {
         opacity: 1,
         y: 0,
         duration: isFirstRenderRef.current ? 0.8 : 0.7,
-      }).to(
+      });
+
+      if (desc) {
+        tl.to(
+          desc,
+          {
+            opacity: 1,
+            y: 0,
+            duration: isFirstRenderRef.current ? 0.6 : 0.5,
+          },
+          isFirstRenderRef.current ? "-=0.4" : "-=0.3",
+        );
+      }
+
+      tl.to(
         items,
         {
           opacity: 1,
@@ -240,7 +322,7 @@ export default function MainPyramidWrapper() {
           duration: 0.8,
           stagger: 0.15,
         },
-        isFirstRenderRef.current ? "-=0.35" : "-=0.25",
+        isFirstRenderRef.current ? "-=0.3" : "-=0.2",
       );
 
       isFirstRenderRef.current = false;
@@ -252,7 +334,7 @@ export default function MainPyramidWrapper() {
   return (
     <div
       ref={pyramidSectionRef}
-      className="min-h-[calc(100vh-126px)] rounded-3xl bg-linear-to-b from-[#0B4858] via-[#2e6775] to-[#0B4858] relative overflow-hidden flex flex-col justify-center items-center"
+      className="h-[calc(100vh-130px)] rounded-3xl bg-linear-to-b from-[#004152] via-[#01485C] to-[#004152] relative overflow-hidden flex flex-col justify-center items-center"
     >
       <div className="absolute top-0 left-0 w-full h-[500px]">
         <SoftAurora
@@ -273,11 +355,22 @@ export default function MainPyramidWrapper() {
         />
       </div>
 
-      <div className="max-w-[1200px] min-h-[200px] my-auto flex relative">
+      <div className="relative z-10 my-auto flex w-full max-w-[1200px] flex-col items-center justify-center gap-4 px-6">
+        <div ref={headingWrapRef} className="w-full mt-20">
+          <DefHeading
+            theme="light"
+            badgeText=""
+            title="The Existing Problems"
+            description="Property lending is manual, opaque and structurally exposed to fraud — not by intent, but by design. Legacy infrastructure was never built to handle the volume, complexity or transparency this market demands."
+            showBadge={false}
+          />
+        </div>
+
+        <div ref={animationWrapRef} className="w-full flex relative -mt-16">
         {/* Left highlight info box - absolutely positioned on left during pyramid highlight sequence */}
         <div
           ref={highlightBoxRef}
-          className="absolute left-34 top-1/2 -translate-y-1/2 w-[340px] opacity-0"
+          className="absolute left-34 top-1/2 -translate-y-1/2 w-[440px] opacity-0"
         >
           {(() => {
             const info =
@@ -285,29 +378,50 @@ export default function MainPyramidWrapper() {
             return (
               <div
                 ref={highlightContentRef}
-                className="highlight-content backdrop-blur-sm rounded-2xl"
+                className="highlight-content rounded-2xl"
               >
                 <h3
                   ref={highlightTitleRef}
-                  className="text-white font-semibold text-3xl mb-4"
+                  className="text-white font-semibold text-3xl mb-3"
                 >
                   {info.title}
                 </h3>
-                <ul className="space-y-2">
+                <p
+                  ref={highlightDescRef}
+                  className="text-white/70 text-md leading-relaxed mb-9"
+                >
+                  {info.description}
+                </p>
+                <ul className="space-y-6">
                   {info.items.map((item, idx) => (
                     <li
                       key={idx}
                       ref={(el) => {
                         highlightItemsRef.current[idx] = el;
                       }}
-                      className="flex items-center gap-2 text-lg text-white/80"
+                      className="flex items-start gap-4"
                     >
-                      {item.positive ? (
-                        <FiCheck className="w-4 h-4 shrink-0" />
-                      ) : (
-                        <FiX className="w-4 h-4 shrink-0" />
-                      )}
-                      {item.text}
+                      <div
+                        className={`w-13 h-13 rounded-xl flex items-center justify-center shrink-0 border-2 ${
+                          item.positive
+                            ? "border-white/0 bg-[#0C596E]"
+                            : "border-white/30 bg-transparent"
+                        }`}
+                      >
+                        {item.positive ? (
+                          <FiCheck className="w-6 h-6 text-[#39C6ED]" />
+                        ) : (
+                          <FiX className="w-6 h-6 text-white/60" />
+                        )}
+                      </div>
+                      <div className="flex flex-col pt-0.5">
+                        <span className="text-white font-semibold text-base leading-tight">
+                          {item.title}
+                        </span>
+                        <span className="text-white/70 text-md leading-relaxed mt-0.5">
+                          {item.description}
+                        </span>
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -326,26 +440,28 @@ export default function MainPyramidWrapper() {
           />
         </div>
 
-        <div className="flex-1 flex flex-col justify-center gap-12 pl-20 max-w-lg">
+        <div className="flex-1 flex flex-col justify-center gap-8 pl-20 max-w-lg">
           {iconBoxesData.map((box, index) => (
             <div
               key={index}
               ref={(el) => {
                 iconBoxRefs.current[index] = el;
               }}
-              className="flex items-start gap-4"
+              className="flex items-start gap-6"
             >
-              <img
-                src={box.icon}
-                alt={box.title}
-                className="w-10 h-10 shrink-0 mt-1"
-              />
+              <div className="w-13 h-13 shrink-0 flex justify-center items-center rounded-xl bg-[#015167]">
+                <img
+                  src={box.icon}
+                  alt={box.title}
+                  className="w-8 h-8"
+                />
+              </div>
               <div>
                 <h3 className="text-white font-semibold text-lg mb-1">
                   {box.title}
                 </h3>
                 <p
-                  className={`text-white/80 text-base leading-relaxed ${
+                  className={`text-white/70 text-base leading-relaxed ${
                     box.items ? "mb-4" : ""
                   }`}
                 >
@@ -356,7 +472,7 @@ export default function MainPyramidWrapper() {
                     {box.items.map((item, itemIndex) => (
                       <li
                         key={itemIndex}
-                        className="flex items-center gap-3 text-white/80"
+                        className="flex items-center gap-3 text-white/70"
                       >
                         {item.icon} {item.text}
                       </li>
@@ -366,6 +482,7 @@ export default function MainPyramidWrapper() {
               </div>
             </div>
           ))}
+          </div>
         </div>
       </div>
     </div>

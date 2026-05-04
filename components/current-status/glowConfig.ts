@@ -6,7 +6,7 @@ export const CURRENT_STATUS_GLOW_CONFIG = {
   fadeOutDuration: 0.9,
   repeatDelay: 1.5,
   startDelay: 0.3,
-  color: "#9df6ff",
+  color: "#6fd3ec",
   strokeWidth: 3.5,
   blurPx: 5,
   minDurationScale: 0.92,

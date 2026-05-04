@@ -15,6 +15,12 @@ import MainBenefitsTabs from "@/main/benefits-tabs/";
 import MainTheMarket from "@/main/MainTheMarket";
 import MainWhyWorkWithUs from "@/main/MainWhyWorkWithUs";
 import MainCurrentStatus from "@/components/current-status/MainCurrentStatus";
+import MainPropertyLanding from "@/main/MainPropertyLanding";
+import MainProblemsTabsLight from "@/main/MainProblemsTabsLight";
+import MainBenefitsLight from "@/main/MainBenefitsLight";
+import SliderWhyWorkWithUs from "@/components/SliderWhyWorkWithUs";
+import MainCurrentStatusLight from "@/main/MainCurrentStatusLight";
+import MainMissionVisionCards from "@/main/MainMissionVisionCards";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -169,20 +175,29 @@ export default function LandingGradientV1Page() {
         <MainHero />
       </div>
 
-      <div className="px-12 mt-2 mb-12 flex flex-col gap-6">
-        <MainProblemsTabs />
+ <MainMissionVisionCards />
+      <div className="px-6 mt-6 mb-12 flex flex-col gap-6">
+        {/* <MainPropertyLanding /> */}
+
+       
+
+        <MainProblemsTabsLight />
+
+        {/* <MainProblemsTabs /> */}
 
         <MainPyramidWrapper />
 
         <MainSolutionsAnimation />
 
-        <MainBenefitsTabs />
+        {/* <MainBenefitsTabs /> */}
+        <MainBenefitsLight />
 
         <MainTheMarket />
 
-        <MainCurrentStatus />
+        <MainCurrentStatusLight />
 
-        <MainWhyWorkWithUs />
+        {/* <MainWhyWorkWithUs /> */}
+        <SliderWhyWorkWithUs />
       </div>
 
       <DefCta title="Build the Future of Asset-Backed Lending" />

@@ -15,7 +15,7 @@ export const BadgeHeadingPill: React.FC<BadgeHeadingPillProps> = ({
 }) => {
   const colorStyles = {
     dark: {
-      background: "bg-linear-to-r from-[#3C6671] to-[#184A57]",
+      background: "bg-linear-to-r from-[#43727F] to-[#265866]",
       textGradient: "from-[#fff] to-[#fff]",
     },
   };

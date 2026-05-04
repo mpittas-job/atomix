@@ -111,13 +111,13 @@ function MainStatCard({
 
   return (
     <div
-      className={`relative h-full overflow-hidden rounded-3xl bg-[#003746] p-6 ${className || ""}`}
+      className={`relative h-full overflow-hidden rounded-3xl bg-[#145060] border border-white/8 p-6 ${className || ""}`}
     >
       {/* <div className="absolute inset-0 bg-gradient-to-br from-[#4a8a9a]/10 via-transparent to-transparent" /> */}
 
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-5 -right-5 w-[35%] h-[35%] rounded-full bg-[#58fffc]/10 blur-xl" />
-        <div className="absolute -bottom-5 -left-5 w-[35%] h-[35%] rounded-full bg-[#58fffc]/10 blur-xl" />
+        <div className="absolute -top-5 -right-5 w-[45%] h-[45%] rounded-full bg-white/10  blur-xl" />
+        <div className="absolute -bottom-5 -left-5 w-[45%] h-[45%] rounded-full bg-white/10  blur-xl" />
       </div>
 
       <div className="relative z-10">
@@ -333,7 +333,7 @@ export default function MainTheMarket() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-126px)] rounded-3xl bg-linear-to-b from-[#0B4858] via-[#2e6775] to-[#0B4858] relative overflow-hidden flex flex-col justify-center items-center">
+    <div className="min-h-[calc(100vh-126px)] rounded-3xl bg-linear-to-b from-[#004152] via-[#01485C] to-[#004152] relative overflow-hidden flex flex-col justify-center items-center">
       <div className="absolute top-0 left-0 w-full h-[500px]">
         <SoftAurora
           speed={1.3}
