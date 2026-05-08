@@ -1,7 +1,27 @@
 "use client";
 
 import { type ReactNode, useRef } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import {
+  Blocks,
+  Bot,
+  Briefcase,
+  CheckCircle2,
+  ChevronDown,
+  CircleDollarSign,
+  Compass,
+  Cpu,
+  FileCheck2,
+  Fingerprint,
+  Globe2,
+  Handshake,
+  Landmark,
+  LineChart,
+  Link2,
+  Network,
+  Scale,
+  ShieldCheck,
+  type LucideIcon,
+} from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
@@ -51,6 +71,30 @@ const missionCards: AboutCardData[] = [
     ],
   },
 ];
+
+function getItemIcon(item: string): LucideIcon {
+  const text = item.toLowerCase();
+
+  if (/ai|agent|natural language/.test(text)) return Bot;
+  if (/on-chain|token|tokeni|blockchain/.test(text)) return Blocks;
+  if (/compliance|audit|traceable|rule/.test(text)) return ShieldCheck;
+  if (/report|analytics|real-time visibility|portfolio visibility|monitoring/.test(text))
+    return LineChart;
+  if (/capital|fund|funding|investor|investors|liquidity/.test(text)) return CircleDollarSign;
+  if (/marketplace|market structure|secondary market/.test(text)) return Landmark;
+  if (/lender|lenders|borrower|borrowers|parties|stakeholder/.test(text)) return Handshake;
+  if (/integration|connect|api|third-party|ecosystem|platform/.test(text)) return Link2;
+  if (/workflow|automation|automated|process/.test(text)) return Cpu;
+  if (/decision|approval|policy|credit|enforcement/.test(text)) return FileCheck2;
+  if (/journey|origination|drawdown|progress/.test(text)) return Compass;
+  if (/mortgage|loan|lending/.test(text)) return Briefcase;
+  if (/shared data|market pricing|risk appetite/.test(text)) return Network;
+  if (/permissioned|identity|immutably/.test(text)) return Fingerprint;
+  if (/global|scale/.test(text)) return Globe2;
+  if (/fair|level playing field/.test(text)) return Scale;
+
+  return CheckCircle2;
+}
 
 const visionCards: AboutCardData[] = [
   {
@@ -134,9 +178,15 @@ function AboutCard({
       >
         {card.items.map((item) => (
           <div key={item} className="flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#E2F1F4] text-[#1eb7d8]">
-              <Check className="h-5 w-5 stroke-[3]" aria-hidden="true" />
-            </div>
+            {(() => {
+              const ItemIcon = getItemIcon(item);
+
+              return (
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#E2F1F4] text-[#1eb7d8]">
+                  <ItemIcon className="h-7 w-7 stroke-[2]" aria-hidden="true" />
+                </div>
+              );
+            })()}
             <p className="max-w-[520px] text-md leading-6 text-[#16313b]">{item}</p>
           </div>
         ))}
@@ -240,7 +290,7 @@ function AboutStackingSection({
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: "top top",
+          start: "top top+=103",
           end: () => `+=${window.innerHeight * (cardElements.length + 0.7)}`,
           pin: true,
           pinSpacing: true,
@@ -393,9 +443,9 @@ function AboutStackingSection({
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen overflow-hidden bg-[#eef3f6] px-6 py-6 text-[#222b31] sm:px-10 lg:px-16"
+      className="min-h-screen overflow-hidden bg-linear-to-b from-[#fff] via-[#eef3f6] to-[#fff] px-6 py-6 text-[#222b31] sm:px-10 lg:px-16  -mb-30"
     >
-      <div className="mx-auto flex min-h-[calc(100vh-6rem)] w-full max-w-[1280px] flex-col justify-start pt-10 lg:pt-16">
+      <div className="mx-auto flex min-h-[calc(100vh-6rem)] w-full max-w-[1280px] flex-col justify-start pt-2">
         <div className="mb-16 max-w-[980px]">
           <h1
             className="about-intro-animate mb-4 text-3xl font-semibold tracking-[-0.04em] text-[#212329] sm:text-[40px]"
