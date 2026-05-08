@@ -1,16 +1,8 @@
-Please, first make the two boxes (code here) be visible only with fade in animation from bottom.
+Create new page called "about-us".
 
-The other content below is hidden.
-Before we show it i want to first make the two boxes (code here) to collapse (we hide description and marketInfo and the whole box shrinks)
+We have the following inside -  title, description and 3 stacking cards that are pinned to the top of the screen.
 
-After that fade in up the row below (code here). Inside this row, please aniamte first the title, title below and the image container.
+1. The first section is "Mission" and it contains title, description and accordion
+2. The second section is "Vision" and it contains title, description and accordion
 
-After this on scroll reveal the SVG paths (code here)
-
-And then show the 4 boxes below with fade in up one after each other.
-
-At last, animate the two buttons with fade in up.
-
-The main sections needs to execute one after each other on scroll as user enteres the viewport.
-
-All animations should be smooth and natural.
+First, let's only show the first section and hide the second section. Fir first section we 
