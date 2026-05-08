@@ -1,14 +1,20 @@
 "use client";
 
-import { useRef } from "react";
+import { type ReactNode, useRef } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
-const cards = [
+type AboutCardData = {
+  title: string;
+  items: string[];
+};
+
+const missionCards: AboutCardData[] = [
   {
     title: "Capital providers",
     items: [
@@ -46,24 +52,80 @@ const cards = [
   },
 ];
 
-function AboutCard({ card, index }: { card: (typeof cards)[number]; index: number }) {
+const visionCards: AboutCardData[] = [
+  {
+    title: "Capital providers",
+    items: [
+      "A single integration gives access to diversified, on-chain-audited loan pools across multiple lenders",
+      "Each capital provider's interest represented as a digital token — tradeable on secondary markets, no longer locked for the full term",
+      "Flexible capital access — direct pool participation or via institutional funds, in fiat or stablecoin, within a fully permissioned and compliant ecosystem",
+      "A dedicated capital provider marketplace replaces bilateral relationships — institutional and private investors access multiple lenders in one place, collapsing due diligence costs and opening competitive capital deployment at scale",
+      "Granular, diversified portfolios become viable — automated reporting means a portfolio of smaller loans carries no greater monitoring burden than a concentrated one",
+      "Real-time compliance enforcement and portfolio visibility across every loan in the ecosystem",
+    ],
+  },
+  {
+    title: "Lenders",
+    items: [
+      "A level playing field emerges — credit rules enforced by the platform; lenders compete on product, not process",
+      "Secondary capital markets open to all — tokenised liquidity pools give lenders access to funding previously available only to large institutions",
+      "Aggregation transforms the market structure — smaller lenders collectively reach institutional securitisation scale, converting capital-constrained participants into institutional-grade originators",
+      "The same infrastructure extends beyond bridging — consumer mortgages, asset-backed lending and connected financial services, no rebuild required",
+      "Distribution partners deploy discrete, white-labelled lending environments within the same ecosystem — expanding origination reach across brokers, auction houses and beyond without additional infrastructure",
+      "A shared data advantage emerges — real market pricing, risk appetite and capital flow patterns visible across the ecosystem, giving every lender intelligence previously available only to the largest institutions",
+    ],
+  },
+  {
+    title: "Borrowers",
+    items: [
+      "A single unbroken journey — from first enquiry through to drawdown, entirely within one marketplace; the first time the complete property lending process has been available end-to-end on a single platform",
+      "AI agents available 24/7 — handling queries, tracking progress and answering loan-specific questions in natural language",
+      "A loan optimiser surfaces matched lenders, predicted rates and approval likelihood in real time",
+      "Direct access to a broader, more competitive pool of capital as the marketplace scales",
+    ],
+  },
+];
+
+function AboutCard({
+  card,
+  index,
+  onClick,
+}: {
+  card: AboutCardData;
+  index: number;
+  onClick: () => void;
+}) {
   return (
     <article
-      className="about-stack-card absolute inset-x-0 top-0 rounded-3xl bg-white/90 p-5 shadow-[0_24px_80px_rgba(18,42,53,0.10)] ring-1 ring-[#dce4e8] backdrop-blur-md sm:p-7"
+      role="button"
+      tabIndex={0}
+      onClick={onClick}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onClick();
+        }
+      }}
+      className="about-stack-card absolute inset-x-0 top-0 rounded-3xl bg-white p-5 ring-1 ring-[#fff] shadow-[inset_0_1px_20px_rgba(255,255,255,0.65)] backdrop-blur-md sm:p-7"
       style={{
         zIndex: index + 1,
         opacity: 0,
         visibility: "hidden",
-        transform: index === 0 ? "translateY(42px)" : `translateY(${520 + index * 80}px)`,
+        transform: index === 0 ? "translateY(42px)" : `translateY(${260 + index * 80}px)`,
       }}
     >
-      <div className="mb-7 flex items-center gap-2 text-2xl font-semibold text-[#242b31]">
+      <div className="pointer-events-none absolute inset-0 rounded-3xl overflow-hidden">
+        <div className="absolute -top-5 -right-5 w-[35%] h-[35%] rounded-full bg-white/60 blur-xl" />
+        <div className="absolute -bottom-5 -left-5 w-[35%] h-[35%] rounded-full bg-white/60 blur-xl" />
+      </div>
+
+      <div className="mb-7 flex items-center gap-2 text-2xl font-semibold text-[#242b31] relative z-10">
         <span>{card.title}</span>
-        <ChevronDown className="h-5 w-5 text-[#63757e]" aria-hidden="true" />
+        <ChevronDown className="about-stack-card-chevron h-5 w-5 text-[#63757e]" aria-hidden="true" />
       </div>
 
       <div
-        className="about-stack-card-content grid gap-x-14 gap-y-8 lg:grid-cols-2"
+        className="about-stack-card-content grid gap-x-14 gap-y-8 lg:grid-cols-2 relative z-10"
         style={
           index === 0
             ? { overflow: "hidden" }
@@ -83,9 +145,36 @@ function AboutCard({ card, index }: { card: (typeof cards)[number]; index: numbe
   );
 }
 
-export default function AboutUsStackingCards() {
+function AboutStackingSection({
+  title,
+  description,
+  cards,
+}: {
+  title: string;
+  description: ReactNode;
+  cards: AboutCardData[];
+}) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const cardsRef = useRef<HTMLDivElement>(null);
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+  const cardProgressRefs = useRef<number[]>([]);
+
+  const handleCardClick = (index: number) => {
+    const scrollTrigger = scrollTriggerRef.current;
+    const targetProgress = cardProgressRefs.current[index];
+
+    if (!scrollTrigger || targetProgress === undefined) return;
+
+    const targetScroll =
+      scrollTrigger.start + (scrollTrigger.end - scrollTrigger.start) * targetProgress;
+
+    gsap.to(window, {
+      scrollTo: { y: targetScroll },
+      duration: 1.1,
+      ease: "power2.inOut",
+      overwrite: "auto",
+    });
+  };
 
   useGSAP(
     () => {
@@ -96,16 +185,22 @@ export default function AboutUsStackingCards() {
         ".about-stack-card-content",
         cardsRef.current,
       );
+      const cardChevronElements = gsap.utils.toArray<HTMLElement>(
+        ".about-stack-card-chevron",
+        cardsRef.current,
+      );
 
       gsap.set(cardElements, {
         autoAlpha: (index) => (index === 0 ? 1 : 0),
-        y: (index) => (index === 0 ? 0 : 520 + index * 80),
+        y: (index) => (index === 0 ? 0 : 260 + index * 80),
+        backgroundColor: (index) => (index === 0 ? "#ffffff" : "#EDF1F3"),
         scale: 1,
         transformOrigin: "top center",
       });
       gsap.set(cardContentElements, { overflow: "hidden" });
       gsap.set(cardContentElements[0], { autoAlpha: 1, height: "auto" });
       gsap.set(cardContentElements.slice(1), { autoAlpha: 0, height: 0 });
+      gsap.set(cardChevronElements, { rotate: 0, transformOrigin: "center center" });
 
       const introElements = gsap.utils.toArray<HTMLElement>(
         ".about-intro-animate",
@@ -146,7 +241,7 @@ export default function AboutUsStackingCards() {
         scrollTrigger: {
           trigger: sectionRef.current,
           start: "top top",
-          end: () => `+=${window.innerHeight * (cardElements.length + 2)}`,
+          end: () => `+=${window.innerHeight * (cardElements.length + 0.7)}`,
           pin: true,
           pinSpacing: true,
           scrub: 1,
@@ -183,10 +278,30 @@ export default function AboutUsStackingCards() {
         });
 
         tl.to(
+          cardElements.slice(0, index),
+          {
+            backgroundColor: "#EDF1F3",
+            duration: 0.7,
+            ease: "power2.out",
+          },
+          index - 0.25,
+        );
+
+        tl.to(
           cardContentElements.slice(0, index),
           {
             autoAlpha: 0,
             height: 0,
+            duration: 0.7,
+            ease: "power2.out",
+          },
+          index - 0.25,
+        );
+
+        tl.to(
+          cardChevronElements.slice(0, index),
+          {
+            rotate: -90,
             duration: 0.7,
             ease: "power2.out",
           },
@@ -203,12 +318,71 @@ export default function AboutUsStackingCards() {
           },
           index - 0.18,
         );
+
+        tl.to(
+          cardElements[index],
+          {
+            backgroundColor: "#ffffff",
+            duration: 0.7,
+            ease: "power2.out",
+          },
+          index - 0.18,
+        );
+
+        tl.to(
+          cardChevronElements[index],
+          {
+            rotate: 0,
+            duration: 0.7,
+            ease: "power2.out",
+          },
+          index - 0.18,
+        );
       });
 
-      tl.set({}, {}, cardElements.length);
+      const finalCloseStart = cardElements.length - 0.25;
+
+      tl.to(
+        cardContentElements,
+        {
+          autoAlpha: 0,
+          height: 0,
+          duration: 0.7,
+          ease: "power2.out",
+        },
+        finalCloseStart,
+      );
+
+      tl.to(
+        cardElements,
+        {
+          backgroundColor: "#EDF1F3",
+          duration: 0.7,
+          ease: "power2.out",
+        },
+        finalCloseStart,
+      );
+
+      tl.to(
+        cardChevronElements,
+        {
+          rotate: -90,
+          duration: 0.7,
+          ease: "power2.out",
+        },
+        finalCloseStart,
+      );
+
+      tl.set({}, {}, cardElements.length + 0.5);
+      scrollTriggerRef.current = tl.scrollTrigger ?? null;
+      const timelineDuration = tl.duration();
+      cardProgressRefs.current = cards.map((_, index) =>
+        index === 0 ? 0 : gsap.utils.clamp(0, 1, (index + 0.67) / timelineDuration),
+      );
       ScrollTrigger.refresh();
 
       return () => {
+        scrollTriggerRef.current = null;
         introTl.kill();
         tl.kill();
       };
@@ -219,7 +393,7 @@ export default function AboutUsStackingCards() {
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen overflow-hidden bg-[#eef3f6] px-6 py-12 text-[#222b31] sm:px-10 lg:px-16"
+      className="min-h-screen overflow-hidden bg-[#eef3f6] px-6 py-6 text-[#222b31] sm:px-10 lg:px-16"
     >
       <div className="mx-auto flex min-h-[calc(100vh-6rem)] w-full max-w-[1280px] flex-col justify-start pt-10 lg:pt-16">
         <div className="mb-16 max-w-[980px]">
@@ -227,15 +401,13 @@ export default function AboutUsStackingCards() {
             className="about-intro-animate mb-4 text-3xl font-semibold tracking-[-0.04em] text-[#212329] sm:text-[40px]"
             style={{ opacity: 0, visibility: "hidden", transform: "translateY(42px)" }}
           >
-            Mission
+            {title}
           </h1>
           <div
             className="about-intro-animate text-xl leading-10 text-[#485E64] sm:text-2xl"
             style={{ opacity: 0, visibility: "hidden", transform: "translateY(42px)" }}
           >
-            Rebuild UK property lending. Start with bridging.
-            <br />
-            Extend into SME CRE term loans — same infrastructure, no rebuild.
+            {description}
           </div>
         </div>
 
@@ -245,10 +417,42 @@ export default function AboutUsStackingCards() {
           style={{ opacity: 0, visibility: "hidden", transform: "translateY(42px)" }}
         >
           {cards.map((card, index) => (
-            <AboutCard key={card.title} card={card} index={index} />
+            <AboutCard
+              key={card.title}
+              card={card}
+              index={index}
+              onClick={() => handleCardClick(index)}
+            />
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+export default function AboutUsStackingCards() {
+  return (
+    <>
+      <AboutStackingSection
+        title="Mission"
+        cards={missionCards}
+        description={
+          <>
+            Rebuild UK property lending. Start with bridging.
+            <br />
+            Extend into SME CRE term loans — same infrastructure, no rebuild.
+          </>
+        }
+      />
+      <AboutStackingSection
+        title="Vision"
+        cards={visionCards}
+        description={
+          <>
+            One ecosystem. Every stakeholder connected. Property lending transformed — starting in the UK, built for global scale.
+          </>
+        }
+      />
+    </>
   );
 }
