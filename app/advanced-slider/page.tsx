@@ -401,16 +401,16 @@ export default function AdvancedSliderPage() {
 
           <div
             aria-label="Slide content"
-            className="flex min-h-[600px] w-full items-end justify-center rounded-xl bg-[#499DB8] px-20"
+            className="flex min-h-[600px] w-full items-end justify-center rounded-xl bg-[#499DB8] px-20 relative"
           >
-            <div ref={slideContentRef} className="w-full bg-red-500/20r">
+            <div ref={slideContentRef} className="w-full">
               {activeSlide?.content ?? null}
             </div>
           </div>
 
           <div
             aria-label="Tab counter"
-            className="mt-2 text-[10px] opacity-50 flex justify-center mt-10"
+            className="mt-2 text-[10px] opacity-50 flex  mt-5"
           >
             {(() => {
               const totalTabs = tabs.length;
@@ -427,6 +427,8 @@ export default function AdvancedSliderPage() {
           />
         </div>
       </div>
+
+      <div className="bg-[#EBEFF2] h-[1000px] w-full"></div>
     </main>
   );
 }
