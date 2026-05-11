@@ -4,10 +4,16 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 
-type Tab = { 
+type Slide = {
+  id: string;
+  text: string;
+};
+
+type Tab = {
   id: string;
   label: string;
   color: string;
+  slides: Slide[];
 };
 
 type Section = {
@@ -23,9 +29,33 @@ const SECTIONS: Section[] = [
     navLabel: "Overview",
     title: "Overview section",
     tabs: [
-      { id: "tab-a", label: "Tab A", color: "#ef4444" },
-      { id: "tab-b", label: "Tab B", color: "#22c55e" },
-      { id: "tab-c", label: "Tab C", color: "#3b82f6" },
+      {
+        id: "tab-a",
+        label: "Tab A",
+        color: "#ef4444",
+        slides: [
+          { id: "a-1", text: "Overview / Tab A / Slide 1" },
+          { id: "a-2", text: "Overview / Tab A / Slide 2" },
+        ],
+      },
+      {
+        id: "tab-b",
+        label: "Tab B",
+        color: "#22c55e",
+        slides: [
+          { id: "b-1", text: "Overview / Tab B / Slide 1" },
+          { id: "b-2", text: "Overview / Tab B / Slide 2" },
+        ],
+      },
+      {
+        id: "tab-c",
+        label: "Tab C",
+        color: "#3b82f6",
+        slides: [
+          { id: "c-1", text: "Overview / Tab C / Slide 1" },
+          { id: "c-2", text: "Overview / Tab C / Slide 2" },
+        ],
+      },
     ],
   },
   {
@@ -33,9 +63,33 @@ const SECTIONS: Section[] = [
     navLabel: "Features",
     title: "Features section",
     tabs: [
-      { id: "tab-1", label: "Tab 1", color: "#a855f7" },
-      { id: "tab-2", label: "Tab 2", color: "#f59e0b" },
-      { id: "tab-3", label: "Tab 3", color: "#14b8a6" },
+      {
+        id: "tab-1",
+        label: "Tab 1",
+        color: "#a855f7",
+        slides: [
+          { id: "1-1", text: "Features / Tab 1 / Slide 1" },
+          { id: "1-2", text: "Features / Tab 1 / Slide 2" },
+        ],
+      },
+      {
+        id: "tab-2",
+        label: "Tab 2",
+        color: "#f59e0b",
+        slides: [
+          { id: "2-1", text: "Features / Tab 2 / Slide 1" },
+          { id: "2-2", text: "Features / Tab 2 / Slide 2" },
+        ],
+      },
+      {
+        id: "tab-3",
+        label: "Tab 3",
+        color: "#14b8a6",
+        slides: [
+          { id: "3-1", text: "Features / Tab 3 / Slide 1" },
+          { id: "3-2", text: "Features / Tab 3 / Slide 2" },
+        ],
+      },
     ],
   },
   {
@@ -43,9 +97,33 @@ const SECTIONS: Section[] = [
     navLabel: "Pricing",
     title: "Pricing section",
     tabs: [
-      { id: "basic", label: "Basic", color: "#64748b" },
-      { id: "pro", label: "Pro", color: "#111827" },
-      { id: "enterprise", label: "Enterprise", color: "#0ea5e9" },
+      {
+        id: "basic",
+        label: "Basic",
+        color: "#64748b",
+        slides: [
+          { id: "basic-1", text: "Pricing / Basic / Slide 1" },
+          { id: "basic-2", text: "Pricing / Basic / Slide 2" },
+        ],
+      },
+      {
+        id: "pro",
+        label: "Pro",
+        color: "#111827",
+        slides: [
+          { id: "pro-1", text: "Pricing / Pro / Slide 1" },
+          { id: "pro-2", text: "Pricing / Pro / Slide 2" },
+        ],
+      },
+      {
+        id: "enterprise",
+        label: "Enterprise",
+        color: "#0ea5e9",
+        slides: [
+          { id: "ent-1", text: "Pricing / Enterprise / Slide 1" },
+          { id: "ent-2", text: "Pricing / Enterprise / Slide 2" },
+        ],
+      },
     ],
   },
 ];
@@ -73,6 +151,7 @@ export default function AdvancedSliderPage() {
   const [activeTabId, setActiveTabId] = useState<string>(
     activeSection?.tabs[0]?.id ?? ""
   );
+  const [activeSlideIndex, setActiveSlideIndex] = useState(0);
 
   // When the section changes, reset the tab to that section's first tab.
   // (We do this inside render via derived state to keep it simple and predictable.)
@@ -84,6 +163,11 @@ export default function AdvancedSliderPage() {
   const activeTab = useMemo(() => {
     return activeSection?.tabs.find((t) => t.id === derivedActiveTabId);
   }, [activeSection, derivedActiveTabId]);
+
+  const slides = activeTab?.slides ?? [];
+  const derivedActiveSlideIndex =
+    activeSlideIndex >= 0 && activeSlideIndex < slides.length ? activeSlideIndex : 0;
+  const activeSlide = slides[derivedActiveSlideIndex];
 
   const placeholderRef = useRef<HTMLDivElement | null>(null);
   const [displayColor, setDisplayColor] = useState<string>(
@@ -108,7 +192,10 @@ export default function AdvancedSliderPage() {
       tl.add(() => setDisplayColor(nextColor));
       tl.to(el, { autoAlpha: 1, duration: 0.2, ease: "power1.out" });
     },
-    { dependencies: [derivedActiveTabId, activeSectionId], revertOnUpdate: true }
+    {
+      dependencies: [activeSectionId, derivedActiveTabId, derivedActiveSlideIndex],
+      revertOnUpdate: true,
+    }
   );
 
   const tabs = activeSection?.tabs ?? [];
@@ -126,14 +213,21 @@ export default function AdvancedSliderPage() {
   }, [tabs, derivedActiveTabId]);
 
   const isAtVeryStart =
-    activeSectionIndex === 0 && (tabs.length === 0 || activeTabIndex === 0);
+    activeSectionIndex === 0 && activeTabIndex === 0 && derivedActiveSlideIndex === 0;
   const isAtVeryEnd =
     activeSectionIndex === SECTIONS.length - 1 &&
-    (tabs.length === 0 || activeTabIndex === tabs.length - 1);
+    activeTabIndex === tabs.length - 1 &&
+    derivedActiveSlideIndex === Math.max(0, slides.length - 1);
 
   const goPrev = useCallback(() => {
     if (tabs.length === 0) return;
     if (isAtVeryStart) return;
+
+    if (derivedActiveSlideIndex > 0) {
+      setActiveSlideIndex((v) => Math.max(0, v - 1));
+      return;
+    }
+
     if (activeTabIndex === 0) {
       const prevSectionIndex = Math.max(0, activeSectionIndex - 1);
       const prevSection = SECTIONS[prevSectionIndex];
@@ -141,6 +235,8 @@ export default function AdvancedSliderPage() {
 
       setActiveSectionId(prevSection.id);
       setActiveTabId(prevSection.tabs[prevSection.tabs.length - 1]?.id ?? "");
+      const prevTab = prevSection.tabs[prevSection.tabs.length - 1];
+      setActiveSlideIndex(Math.max(0, (prevTab?.slides?.length ?? 1) - 1));
       if (typeof window !== "undefined") {
         window.history.replaceState(null, "", `#${prevSection.id}`);
       }
@@ -148,11 +244,24 @@ export default function AdvancedSliderPage() {
     }
 
     setActiveTabId(tabs[activeTabIndex - 1]?.id ?? "");
-  }, [activeSectionIndex, activeTabIndex, isAtVeryStart, tabs]);
+    setActiveSlideIndex(Math.max(0, (tabs[activeTabIndex - 1]?.slides?.length ?? 1) - 1));
+  }, [
+    activeSectionIndex,
+    activeTabIndex,
+    derivedActiveSlideIndex,
+    isAtVeryStart,
+    tabs,
+  ]);
 
   const goNext = useCallback(() => {
     if (tabs.length === 0) return;
     if (isAtVeryEnd) return;
+
+    if (derivedActiveSlideIndex < Math.max(0, slides.length - 1)) {
+      setActiveSlideIndex((v) => Math.min(Math.max(0, slides.length - 1), v + 1));
+      return;
+    }
+
     if (activeTabIndex === tabs.length - 1) {
       const nextSectionIndex = Math.min(SECTIONS.length - 1, activeSectionIndex + 1);
       const nextSection = SECTIONS[nextSectionIndex];
@@ -160,6 +269,7 @@ export default function AdvancedSliderPage() {
 
       setActiveSectionId(nextSection.id);
       setActiveTabId(nextSection.tabs[0]?.id ?? "");
+      setActiveSlideIndex(0);
       if (typeof window !== "undefined") {
         window.history.replaceState(null, "", `#${nextSection.id}`);
       }
@@ -167,7 +277,15 @@ export default function AdvancedSliderPage() {
     }
 
     setActiveTabId(tabs[activeTabIndex + 1]?.id ?? "");
-  }, [activeSectionIndex, activeTabIndex, isAtVeryEnd, tabs]);
+    setActiveSlideIndex(0);
+  }, [
+    activeSectionIndex,
+    activeTabIndex,
+    derivedActiveSlideIndex,
+    isAtVeryEnd,
+    slides.length,
+    tabs,
+  ]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -243,6 +361,7 @@ export default function AdvancedSliderPage() {
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setActiveTabId(tab.id)}
+              onMouseDown={() => setActiveSlideIndex(0)}
                 style={{
                   fontWeight: isActive ? 700 : 400,
                   textDecoration: isActive ? "underline" : "none",
@@ -265,7 +384,6 @@ export default function AdvancedSliderPage() {
               right: 8,
               zIndex: 1,
             }}
-            className="bg-white text-black px-4 py-2 rounded-md"
           >
             {isPlaying ? "Pause" : "Play"}
           </button>
@@ -295,11 +413,19 @@ export default function AdvancedSliderPage() {
               width: "100%",
               background: displayColor,
               opacity: 1,
+              display: "grid",
+              placeItems: "center",
             }}
-          />
+          >
+            <div>{activeSlide?.text ?? ""}</div>
+          </div>
 
-          <div aria-label="Slide counter" style={{ marginTop: 8 }}>
-            {tabs.length === 0 ? "0/0" : `${activeTabIndex + 1}/${tabs.length}`}
+          <div aria-label="Tab counter" style={{ marginTop: 8 }}>
+            {(() => {
+              const totalTabs = tabs.length;
+              const currentTab = totalTabs === 0 ? 0 : activeTabIndex + 1;
+              return `${currentTab}/${totalTabs}`;
+            })()}
           </div>
 
           <button
