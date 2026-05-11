@@ -3,7 +3,44 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { NAV_CATEGORIES, SECTIONS } from "./content/nav-categories";
+
+function CarouselNavArrow({
+  direction,
+  disabled,
+  onClick,
+  positionClassName,
+}: {
+  direction: "prev" | "next";
+  disabled: boolean;
+  onClick: () => void;
+  positionClassName: string;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={direction === "prev" ? "Previous" : "Next"}
+      onClick={onClick}
+      disabled={disabled}
+      className={[
+        "absolute top-1/2 z-10 flex size-15 -translate-y-1/2 items-center justify-center rounded-full border border-[#D3DADD] bg-transparent transition-colors duration-200 hover:bg-[#D3DADD] text-[#011F27] disabled:pointer-events-none",
+        disabled
+          ? "cursor-not-allowed opacity-40"
+          : "cursor-pointer opacity-100",
+        positionClassName,
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      {direction === "prev" ? (
+        <FiChevronLeft className="size-6 shrink-0" aria-hidden />
+      ) : (
+        <FiChevronRight className="size-6 shrink-0" aria-hidden />
+      )}
+    </button>
+  );
+}
 
 export default function AdvancedSliderPage() {
   gsap.registerPlugin(useGSAP);
@@ -296,8 +333,10 @@ export default function AdvancedSliderPage() {
         })}
       </nav>
 
-      <div className="mx-auto max-w-[1240px] p-6 flex flex-col gap-6">
-        <h1 className="text-[40px] font-semibold text-center">{activeSection?.title}</h1>
+      <div className="mx-auto max-w-[1240px] p-6 flex flex-col gap-10">
+        <h1 className="text-[40px] font-semibold text-center">
+          {activeSection?.title}
+        </h1>
 
         <div
           ref={tabListRef}
@@ -313,8 +352,7 @@ export default function AdvancedSliderPage() {
           {tabs.map((tab, tabIndex) => {
             const isActive = tab.id === derivedActiveTabId;
             const prevTab = tabIndex > 0 ? tabs[tabIndex - 1] : null;
-            const prevIsActive =
-              !!prevTab && prevTab.id === derivedActiveTabId;
+            const prevIsActive = !!prevTab && prevTab.id === derivedActiveTabId;
             const showLeftSeparator =
               tabIndex > 0 && !isActive && !prevIsActive;
             return (
@@ -344,7 +382,7 @@ export default function AdvancedSliderPage() {
           })}
         </div>
 
-        <div className="relative mt-4">
+        <div className="relative">
           <button
             type="button"
             onClick={() => setIsPlaying((v) => !v)}
@@ -354,33 +392,26 @@ export default function AdvancedSliderPage() {
             {isPlaying ? "Pause" : "Play"}
           </button>
 
-          <button
-            type="button"
-            aria-label="Previous"
+          <CarouselNavArrow
+            direction="prev"
             onClick={goPrev}
             disabled={isAtVeryStart}
-            className={`absolute top-1/2 -left-12 -translate-y-1/2 ${
-              isAtVeryStart
-                ? "cursor-not-allowed opacity-40"
-                : "cursor-pointer opacity-100"
-            }`}
-          >
-            ←
-          </button>
+            positionClassName="right-[calc(100%+22px)]"
+          />
 
           <div
             aria-label="Slide content"
-            className="flex min-h-[600px] w-full items-stretch justify-center rounded-xl bg-[#499DB8] p-7"
+            className="flex min-h-[600px] w-full items-end justify-center rounded-xl bg-[#499DB8] px-20"
           >
-            <div
-              ref={slideContentRef}
-              className="w-full bg-red-500/20 flex items-center justify-center"
-            >
+            <div ref={slideContentRef} className="w-full bg-red-500/20r">
               {activeSlide?.content ?? null}
             </div>
           </div>
 
-          <div aria-label="Tab counter" className="mt-2">
+          <div
+            aria-label="Tab counter"
+            className="mt-2 text-[10px] opacity-50 flex justify-center mt-10"
+          >
             {(() => {
               const totalTabs = tabs.length;
               const currentTab = totalTabs === 0 ? 0 : activeTabIndex + 1;
@@ -388,19 +419,12 @@ export default function AdvancedSliderPage() {
             })()}
           </div>
 
-          <button
-            type="button"
-            aria-label="Next"
+          <CarouselNavArrow
+            direction="next"
             onClick={goNext}
             disabled={isAtVeryEnd}
-            className={`absolute top-1/2 -right-12 -translate-y-1/2 ${
-              isAtVeryEnd
-                ? "cursor-not-allowed opacity-40"
-                : "cursor-pointer opacity-100"
-            }`}
-          >
-            →
-          </button>
+            positionClassName="left-[calc(100%+22px)]"
+          />
         </div>
       </div>
     </main>

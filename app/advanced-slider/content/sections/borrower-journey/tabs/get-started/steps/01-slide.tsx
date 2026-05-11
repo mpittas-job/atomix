@@ -1,10 +1,17 @@
+import Image from "next/image";
+
 export default function GetStartedSlide01() {
   return (
-    <p className="m-0">
-      Get started — Dummy welcome panel. The borrower confirms email, sets a
-      password, and accepts base terms before any product questions. Replace
-      this block with real hero copy, checklist items, and links to help centre
-      articles.
-    </p>
+    <div className="w-full min-w-0">
+      <Image
+        src="/advanced-slider/section-1/tab-1/bj-tab1-step-1.svg"
+        alt="Get started — welcome and account setup"
+        width={1984}
+        height={996}
+        className="block h-auto w-full max-w-none object-contain"
+        quality={100}
+        priority
+      />
+    </div>
   );
 }
