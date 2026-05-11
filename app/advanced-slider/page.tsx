@@ -50,6 +50,10 @@ export default function AdvancedSliderPage() {
   const activeSlide = slides[derivedActiveSlideIndex];
 
   const slideContentRef = useRef<HTMLDivElement | null>(null);
+  const tabListRef = useRef<HTMLDivElement | null>(null);
+  const tabThumbRef = useRef<HTMLDivElement | null>(null);
+  const tabButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const prevSectionIdForTabThumbRef = useRef<string | null>(null);
   const activeSlideId = activeSlide?.id ?? "";
 
   useGSAP(
@@ -82,6 +86,59 @@ export default function AdvancedSliderPage() {
       tabs.findIndex((t) => t.id === derivedActiveTabId),
     );
   }, [tabs, derivedActiveTabId]);
+
+  useGSAP(
+    () => {
+      const list = tabListRef.current;
+      const thumb = tabThumbRef.current;
+      if (!list || !thumb) return;
+
+      const measure = () => {
+        const activeBtn = tabButtonRefs.current[activeTabIndex];
+        if (!activeBtn) return null;
+        const listRect = list.getBoundingClientRect();
+        const btnRect = activeBtn.getBoundingClientRect();
+        return {
+          x: btnRect.left - listRect.left,
+          width: btnRect.width,
+        };
+      };
+
+      const applyInstant = () => {
+        const m = measure();
+        if (m) gsap.set(thumb, m);
+      };
+
+      const prev = prevSectionIdForTabThumbRef.current;
+      const sectionChanged = prev !== activeSectionId;
+      prevSectionIdForTabThumbRef.current = activeSectionId;
+
+      const m = measure();
+      if (!m) return;
+
+      if (sectionChanged || prev === null) {
+        gsap.set(thumb, m);
+      } else {
+        gsap.to(thumb, {
+          x: m.x,
+          width: m.width,
+          duration: 0.32,
+          ease: "power2.out",
+          overwrite: "auto",
+        });
+      }
+
+      const ro = new ResizeObserver(applyInstant);
+      ro.observe(list);
+      for (const el of tabButtonRefs.current) {
+        if (el) ro.observe(el);
+      }
+      return () => ro.disconnect();
+    },
+    {
+      dependencies: [activeTabIndex, activeSectionId, tabs.length],
+    },
+  );
 
   const isAtVeryStart =
     activeSectionIndex === 0 &&
@@ -183,27 +240,29 @@ export default function AdvancedSliderPage() {
   }, [isAtVeryEnd]);
 
   return (
-    <main>
+    <main className="bg-[#EBEFF2] min-h-screen">
       <nav
         aria-label="Origination and dashboards"
         className="absolute left-6 top-6 flex max-w-[220px] flex-col gap-5 font-sans text-sm leading-[1.45]"
       >
         {NAV_CATEGORIES.map((category) => {
-          const isDashboards = category.id === "dashboards";
+          const containsActiveSection = category.sections.some(
+            (s) => s.id === activeSectionId,
+          );
           return (
             <div key={category.id} className="flex flex-col gap-2.5">
               <div
-                className={`text-[11px] font-bold uppercase tracking-wide ${
-                  isDashboards ? "text-slate-500" : "text-slate-900"
+                className={`text-[11px] font-semibold uppercase tracking-wide ${
+                  containsActiveSection ? "text-[#011F27]" : "text-[#5F7378]"
                 }`}
               >
                 {category.label}
               </div>
-              <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
+              <ul className="m-0 flex list-none flex-col gap-3 p-0">
                 {category.sections.map((section) => {
                   const isActive = section.id === activeSectionId;
                   return (
-                    <li key={section.id}>
+                    <li key={section.id} className="text-sm">
                       <a
                         href={`#${section.id}`}
                         onClick={(e) => {
@@ -222,8 +281,8 @@ export default function AdvancedSliderPage() {
                         aria-current={isActive ? "page" : undefined}
                         className={`no-underline ${
                           isActive
-                            ? "font-semibold text-blue-600"
-                            : "font-normal text-slate-500"
+                            ? "font-semibold text-[#499DB8]"
+                            : "font-medium text-[#5F7378]"
                         }`}
                       >
                         {section.navLabel}
@@ -237,30 +296,44 @@ export default function AdvancedSliderPage() {
         })}
       </nav>
 
-      <div className="mx-auto max-w-[1240px] p-6">
-        <h1>{activeSection?.title}</h1>
+      <div className="mx-auto max-w-[1240px] p-6 flex flex-col gap-6">
+        <h1 className="text-[40px] font-semibold text-center">{activeSection?.title}</h1>
 
         <div
+          ref={tabListRef}
           role="tablist"
           aria-label="Tabs"
-          className="flex flex-wrap items-center gap-0 rounded-xl bg-[#eceff1] px-1 py-1.5 font-sans text-[13px]"
+          className="relative flex flex-wrap items-center rounded-full bg-[#ECF0F2] p-1 border border-white text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]"
         >
-          {(activeSection?.tabs ?? []).map((tab, tabIndex) => {
+          <div
+            ref={tabThumbRef}
+            aria-hidden
+            className="pointer-events-none absolute top-1 bottom-1 left-0 z-0 rounded-full bg-white shadow-sm shadow-slate-900/10 will-change-[transform,width]"
+          />
+          {tabs.map((tab, tabIndex) => {
             const isActive = tab.id === derivedActiveTabId;
+            const prevTab = tabIndex > 0 ? tabs[tabIndex - 1] : null;
+            const prevIsActive =
+              !!prevTab && prevTab.id === derivedActiveTabId;
+            const showLeftSeparator =
+              tabIndex > 0 && !isActive && !prevIsActive;
             return (
               <button
                 key={tab.id}
+                ref={(el) => {
+                  tabButtonRefs.current[tabIndex] = el;
+                }}
                 type="button"
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setActiveTabId(tab.id)}
                 onMouseDown={() => setActiveSlideIndex(0)}
                 className={[
-                  "cursor-pointer border-0 px-3.5 py-2 leading-tight whitespace-nowrap",
-                  tabIndex > 0 ? "border-l border-[#cfd3d8]" : "",
-                  isActive
-                    ? "rounded-full bg-white font-semibold text-slate-900 shadow-sm shadow-slate-900/10"
-                    : "rounded-none bg-transparent font-medium text-slate-500",
+                  "relative z-[1] cursor-pointer py-2 px-4 leading-tight whitespace-nowrap flex-1 font-semibold text-[14px] bg-transparent",
+                  showLeftSeparator
+                    ? "before:pointer-events-none before:absolute before:left-0 before:top-1/2 before:z-10 before:h-[15px] before:w-px before:-translate-y-1/2 before:bg-slate-300/80 before:content-['']"
+                    : "",
+                  isActive ? "text-slate-900" : "rounded-none text-[#617379]",
                 ]
                   .filter(Boolean)
                   .join(" ")}
@@ -297,11 +370,11 @@ export default function AdvancedSliderPage() {
 
           <div
             aria-label="Slide content"
-            className="flex min-h-[600px] w-full items-center justify-center rounded-xl border border-slate-900/10 bg-[#eceff1] px-7 py-6 text-[15px] leading-[1.55] text-slate-900"
+            className="flex min-h-[600px] w-full items-stretch justify-center rounded-xl bg-[#499DB8] p-7"
           >
             <div
               ref={slideContentRef}
-              className="w-full max-w-[920px] text-left"
+              className="w-full bg-red-500/20 flex items-center justify-center"
             >
               {activeSlide?.content ?? null}
             </div>
