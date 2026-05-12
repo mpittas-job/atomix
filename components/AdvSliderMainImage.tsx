@@ -15,7 +15,10 @@ export const ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION = 1;
  * Slightly before the hero finishes so the gap between hero and overlay feels tight.
  */
 export const ADV_SLIDER_DEFAULT_OVERLAY_AFTER_MAIN_AT =
-  ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION * 0.72;
+  ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION * 0.4;
+
+/** Present on the hero wrapper so `AdvSliderTooltip` can wait for the underlying `<img>` load. */
+export const ADV_SLIDER_MAIN_IMAGE_ATTR = "data-adv-slider-main-image";
 
 const DEFAULT_IMG_CLASS =
   "block h-auto w-full max-w-none object-contain rounded-t-2xl";
@@ -91,7 +94,11 @@ export default function AdvSliderMainImage({
   );
 
   return (
-    <div ref={wrapRef} className="relative w-full">
+    <div
+      ref={wrapRef}
+      className="relative w-full"
+      {...{ [ADV_SLIDER_MAIN_IMAGE_ATTR]: "" }}
+    >
       <Image
         src={src}
         alt={alt}
