@@ -1,18 +1,14 @@
 import Image from "next/image";
+import AdvSliderMainImage from "@/components/AdvSliderMainImage";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
 import { RiUserSearchFill } from "react-icons/ri";
 
 export default function SolicitorTasksSlide01() {
   return (
     <div className="w-full min-w-0 relative">
-      <Image
-        src="/advanced-slider/section-2/tab-2/sj-tab2-step1-main.svg"
-        alt="Accept invitation — solicitor email invitation"
-        width={1984}
-        height={996}
-        className="block h-auto w-full max-w-none object-contain rounded-t-2xl"
-        quality={100}
-        priority
+      <AdvSliderMainImage
+        src={"/advanced-slider/section-2/tab-2/sj-tab2-step1-main.svg"}
+        alt={"Accept invitation — solicitor email invitation"}
       />
 
       <div className="absolute bottom-[18%] -left-[5%]">

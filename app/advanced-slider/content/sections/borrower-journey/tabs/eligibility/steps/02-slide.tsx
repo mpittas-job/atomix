@@ -1,18 +1,14 @@
 import Image from "next/image";
+import AdvSliderMainImage from "@/components/AdvSliderMainImage";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
 import { PiListChecksFill } from "react-icons/pi";
 
 export default function EligibilitySlide02() {
   return (
     <div className="w-full min-w-0 relative">
-      <Image
-        src="/advanced-slider/section-1/tab-4/bj-tab4-step1-main.svg"
-        alt="Get started — welcome and account setup"
-        width={1984}
-        height={996}
-        className="block h-auto w-full max-w-none object-contain rounded-t-2xl"
-        quality={100}
-        priority
+      <AdvSliderMainImage
+        src={"/advanced-slider/section-1/tab-4/bj-tab4-step1-main.svg"}
+        alt={"Get started — welcome and account setup"}
       />
 
       <div className="absolute top-[18%] right-[2%]">

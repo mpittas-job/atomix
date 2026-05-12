@@ -1,17 +1,14 @@
 import Image from "next/image";
+import AdvSliderMainImage from "@/components/AdvSliderMainImage";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
 import { FaClock } from "react-icons/fa6";
 
 export default function GetStartedSlide04() {
   return (
     <div className="w-full min-w-0">
-      <Image
+      <AdvSliderMainImage
         src="/advanced-slider/section-1/tab-1/bj-tab1-step3-main.svg"
         alt="Get started — handoff to eligibility"
-        width={1984}
-        height={996}
-        className="block h-auto w-full max-w-none object-contain rounded-t-2xl"
-        quality={100}
       />
 
       <div className="absolute bottom-[13%] left-[5%]">
