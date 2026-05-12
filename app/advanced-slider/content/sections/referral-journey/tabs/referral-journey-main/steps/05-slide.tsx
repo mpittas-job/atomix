@@ -1,6 +1,6 @@
 import Image from "next/image";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
-import { RiMoneyPoundCircleLine } from "react-icons/ri";
+import { IoDocumentText } from "react-icons/io5";
 
 export default function ReferralJourneyMainSlide05() {
   return (
@@ -16,8 +16,8 @@ export default function ReferralJourneyMainSlide05() {
       />
 
       <AdvSliderTooltip
-        icon={RiMoneyPoundCircleLine}
-        title="Accruals and payouts tied to funded milestones reduce disputes and keep finance, legal, and partners aligned."
+        icon={IoDocumentText}
+        title="Updated documents are generated automatically, the solicitor is notified to reissue them for signing, and once executed, the process resumes."
         lineHeight={215}
         connectorLeft="50%"
       />

@@ -4,7 +4,6 @@ import ReferralJourneyMainSlide02 from "./steps/02-slide";
 import ReferralJourneyMainSlide03 from "./steps/03-slide";
 import ReferralJourneyMainSlide04 from "./steps/04-slide";
 import ReferralJourneyMainSlide05 from "./steps/05-slide";
-import ReferralJourneyMainSlide06 from "./steps/06-slide";
 
 export const referralJourneyMainTab: Tab = {
   id: "referral-journey-main",
@@ -16,6 +15,5 @@ export const referralJourneyMainTab: Tab = {
     { id: "rj-main-3", content: <ReferralJourneyMainSlide03 /> },
     { id: "rj-main-4", content: <ReferralJourneyMainSlide04 /> },
     { id: "rj-main-5", content: <ReferralJourneyMainSlide05 /> },
-    { id: "rj-main-6", content: <ReferralJourneyMainSlide06 /> },
   ],
 };

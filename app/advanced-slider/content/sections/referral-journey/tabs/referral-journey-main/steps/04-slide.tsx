@@ -1,6 +1,6 @@
 import Image from "next/image";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
-import { FaCircleCheck } from "react-icons/fa6";
+import { HiCheckBadge } from "react-icons/hi2";
 
 export default function ReferralJourneyMainSlide04() {
   return (
@@ -16,10 +16,10 @@ export default function ReferralJourneyMainSlide04() {
       />
 
       <AdvSliderTooltip
-        icon={FaCircleCheck}
-        title="Decline and withdraw reasons feed partner coaching without exposing PII, improving quality on the next introduction."
-        lineHeight={225}
-        connectorLeft="42%"
+        icon={HiCheckBadge}
+        title="The lender reviews the case and can approve, adjust, or reject the application, with any changes reflected instantly on the platform. "
+        lineHeight={110}
+        connectorLeft="48%"
       />
     </div>
   );

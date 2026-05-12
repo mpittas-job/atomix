@@ -118,8 +118,8 @@ export default function AdvancedSliderPage() {
   );
 
   const tabs = activeSection?.tabs ?? [];
-  /** Referral Journey: keep tab strip in layout but hide and block interaction (no layout shift). */
-  const referralTabStripHidden = activeSectionId === "referral-journey";
+  /** Referral Journey is a single flow without in-page tabs. */
+  const showReferralTabChrome = activeSectionId !== "referral-journey";
   const activeSectionIndex = useMemo(() => {
     return Math.max(
       0,
@@ -165,6 +165,7 @@ export default function AdvancedSliderPage() {
   }, [activeTabIndex, activeSectionId, tabs.length]);
 
   useLayoutEffect(() => {
+    if (!showReferralTabChrome) return;
     const list = tabListRef.current;
     if (!list) return;
 
@@ -184,7 +185,7 @@ export default function AdvancedSliderPage() {
     const ro = new ResizeObserver(applyInstantFromLayout);
     ro.observe(list);
     return () => ro.disconnect();
-  }, []);
+  }, [showReferralTabChrome]);
 
   const isAtVeryStart =
     activeSectionIndex === 0 &&
@@ -347,60 +348,52 @@ export default function AdvancedSliderPage() {
           {activeSection?.title}
         </h1>
 
-        <div
-          ref={tabListRef}
-          role="tablist"
-          aria-label="Tabs"
-          aria-hidden={referralTabStripHidden ? true : undefined}
-          inert={referralTabStripHidden ? true : undefined}
-          className={[
-            "relative flex flex-wrap items-center rounded-full bg-[#ECF0F2] p-1 border border-white text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]",
-            referralTabStripHidden
-              ? "invisible pointer-events-none select-none"
-              : "",
-          ]
-            .filter(Boolean)
-            .join(" ")}
-        >
+        {showReferralTabChrome ? (
           <div
-            ref={tabThumbRef}
-            aria-hidden
-            className="pointer-events-none absolute top-1 bottom-1 left-0 z-0 rounded-full bg-white shadow-sm shadow-slate-900/10 will-change-[transform,width]"
-          />
-          {tabs.map((tab, tabIndex) => {
-            const isActive = tab.id === derivedActiveTabId;
-            const prevTab = tabIndex > 0 ? tabs[tabIndex - 1] : null;
-            const prevIsActive =
-              !!prevTab && prevTab.id === derivedActiveTabId;
-            const showLeftSeparator =
-              tabIndex > 0 && !isActive && !prevIsActive;
-            return (
-              <button
-                key={tab.id}
-                ref={(el) => {
-                  tabButtonRefs.current[tabIndex] = el;
-                }}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                tabIndex={referralTabStripHidden ? -1 : undefined}
-                onClick={() => setActiveTabId(tab.id)}
-                onMouseDown={() => setActiveSlideIndex(0)}
-                className={[
-                  "relative z-[1] cursor-pointer py-2 px-4 leading-tight whitespace-nowrap flex-1 font-semibold text-[14px] bg-transparent",
-                  showLeftSeparator
-                    ? "before:pointer-events-none before:absolute before:left-0 before:top-1/2 before:z-10 before:h-[15px] before:w-px before:-translate-y-1/2 before:bg-slate-300/80 before:content-['']"
-                    : "",
-                  isActive ? "text-slate-900" : "rounded-none text-[#617379]",
-                ]
-                  .filter(Boolean)
-                  .join(" ")}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
+            ref={tabListRef}
+            role="tablist"
+            aria-label="Tabs"
+            className="relative flex flex-wrap items-center rounded-full bg-[#ECF0F2] p-1 border border-white text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]"
+          >
+            <div
+              ref={tabThumbRef}
+              aria-hidden
+              className="pointer-events-none absolute top-1 bottom-1 left-0 z-0 rounded-full bg-white shadow-sm shadow-slate-900/10 will-change-[transform,width]"
+            />
+            {tabs.map((tab, tabIndex) => {
+              const isActive = tab.id === derivedActiveTabId;
+              const prevTab = tabIndex > 0 ? tabs[tabIndex - 1] : null;
+              const prevIsActive =
+                !!prevTab && prevTab.id === derivedActiveTabId;
+              const showLeftSeparator =
+                tabIndex > 0 && !isActive && !prevIsActive;
+              return (
+                <button
+                  key={tab.id}
+                  ref={(el) => {
+                    tabButtonRefs.current[tabIndex] = el;
+                  }}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => setActiveTabId(tab.id)}
+                  onMouseDown={() => setActiveSlideIndex(0)}
+                  className={[
+                    "relative z-[1] cursor-pointer py-2 px-4 leading-tight whitespace-nowrap flex-1 font-semibold text-[14px] bg-transparent",
+                    showLeftSeparator
+                      ? "before:pointer-events-none before:absolute before:left-0 before:top-1/2 before:z-10 before:h-[15px] before:w-px before:-translate-y-1/2 before:bg-slate-300/80 before:content-['']"
+                      : "",
+                    isActive ? "text-slate-900" : "rounded-none text-[#617379]",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
 
         <div className="relative">
           <button
@@ -428,24 +421,18 @@ export default function AdvancedSliderPage() {
             </div>
           </div>
 
-          <div
-            aria-label="Tab counter"
-            aria-hidden={referralTabStripHidden ? true : undefined}
-            className={[
-              "mt-2 text-[10px] opacity-50 flex  mt-5",
-              referralTabStripHidden
-                ? "invisible pointer-events-none select-none"
-                : "",
-            ]
-              .filter(Boolean)
-              .join(" ")}
-          >
-            {(() => {
-              const totalTabs = tabs.length;
-              const currentTab = totalTabs === 0 ? 0 : activeTabIndex + 1;
-              return `${currentTab}/${totalTabs}`;
-            })()}
-          </div>
+          {showReferralTabChrome ? (
+            <div
+              aria-label="Tab counter"
+              className="mt-2 text-[10px] opacity-50 flex  mt-5"
+            >
+              {(() => {
+                const totalTabs = tabs.length;
+                const currentTab = totalTabs === 0 ? 0 : activeTabIndex + 1;
+                return `${currentTab}/${totalTabs}`;
+              })()}
+            </div>
+          ) : null}
 
           <CarouselNavArrow
             direction="next"

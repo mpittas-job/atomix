@@ -1,6 +1,4 @@
 import Image from "next/image";
-import AdvSliderTooltip from "@/components/AdvSliderTooltip";
-import { TbChartDots } from "react-icons/tb";
 
 export default function ReferralJourneyMainSlide03() {
   return (
@@ -13,13 +11,6 @@ export default function ReferralJourneyMainSlide03() {
         className="block h-auto w-full max-w-none object-contain rounded-t-2xl"
         quality={100}
         priority
-      />
-
-      <AdvSliderTooltip
-        icon={TbChartDots}
-        title="Submit leads with minimal friction and see pipeline status in real time, so partners always know what happens next."
-        lineHeight={210}
-        connectorLeft="28%"
       />
     </div>
   );

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
-import { HiOutlineUserGroup } from "react-icons/hi2";
+import { RiProgress3Line } from "react-icons/ri";
 
 export default function ReferralJourneyMainSlide01() {
   return (
@@ -16,10 +16,9 @@ export default function ReferralJourneyMainSlide01() {
       />
 
       <AdvSliderTooltip
-        icon={HiOutlineUserGroup}
-        title="Register introducers, agreements, and branding in a governed workflow so every referral starts with clear rules of engagement."
-        lineHeight={220}
-        connectorLeft="35%"
+        icon={RiProgress3Line}
+        title="When a situation arises that requires lender input, as defined by the lender’s rules, the platform automatically triggers a referral, including any supporting documentation."
+        lineHeight={320}
       />
     </div>
   );
