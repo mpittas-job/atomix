@@ -2,7 +2,7 @@ import Image from "next/image";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
 import { IoMdCheckmark } from "react-icons/io";
 
-export default function SolicitorTasksSlide02() {
+export default function SolicitorTasksSlide04() {
   return (
     <div className="w-full min-w-0 relative">
       <Image
@@ -17,9 +17,9 @@ export default function SolicitorTasksSlide02() {
 
       <AdvSliderTooltip
         icon={IoMdCheckmark}
-        title="Provide Legal opinion."
+        title="Provide any Confirmations and Undertakings"
         lineHeight={470}
-        connectorLeft="12%"
+        connectorLeft="36%"
         iconColor="#00AE3A"
       />
     </div>

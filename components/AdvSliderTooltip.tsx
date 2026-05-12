@@ -17,6 +17,8 @@ export type AdvSliderTooltipProps = {
    * Defaults to `50%` with `translateX(-50%)` so the connector stays centered.
    */
   connectorLeft?: string;
+  /** Icon fill color (any CSS color). Defaults to `#499DB8`. */
+  iconColor?: string;
 };
 
 export default function AdvSliderTooltip({
@@ -25,6 +27,7 @@ export default function AdvSliderTooltip({
   className = "",
   lineHeight = 48,
   connectorLeft,
+  iconColor = "#499DB8",
 }: AdvSliderTooltipProps) {
   return (
     <div
@@ -47,7 +50,8 @@ export default function AdvSliderTooltip({
       </div>
       <div className="flex w-full min-w-[800px] items-start gap-3 rounded-2xl px-4 py-3 text-left bg-[#EAEFF1] p-5 ring-1 ring-[#fff] shadow-[inset_0_1px_20px_rgba(255,255,255,0.65)] backdrop-blur-md relative overflow-hidden">
         <Icon
-          className="mt-0.5 size-5 shrink-0 text-[#499DB8] relative z-1"
+          className="mt-0.5 size-5 shrink-0 relative z-1"
+          style={{ color: iconColor }}
           aria-hidden
         />
         <p className="m-0 min-w-0 text-md font-medium text-[#011F27] relative z-1">
