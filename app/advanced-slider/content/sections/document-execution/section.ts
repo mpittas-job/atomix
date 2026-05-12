@@ -1,11 +1,10 @@
 import type { Section } from "@/app/advanced-slider/content/types";
-import { executionPrepareTab } from "./tabs/execution-prepare/tab";
-import { executionSignTab } from "./tabs/execution-sign/tab";
-import { executionVaultTab } from "./tabs/execution-vault/tab";
+import { borrowerExecutesLoanDocumentTab } from "./tabs/borrower-executes-loan-document/tab";
+import { signatureRequestTab } from "./tabs/signature-request/tab";
 
 export const documentExecutionSection: Section = {
   id: "document-execution",
   navLabel: "Document Execution",
   title: "Document Execution",
-  tabs: [executionPrepareTab, executionSignTab, executionVaultTab],
+  tabs: [signatureRequestTab, borrowerExecutesLoanDocumentTab],
 };
