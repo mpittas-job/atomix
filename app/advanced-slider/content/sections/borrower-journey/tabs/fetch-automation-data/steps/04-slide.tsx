@@ -1,8 +1,8 @@
 import Image from "next/image";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
-import { FaDatabase } from "react-icons/fa6";
+import { RiQuestionnaireFill } from "react-icons/ri";
 
-export default function FetchAutomationDataSlide02() {
+export default function FetchAutomationDataSlide04() {
   return (
     <div className="w-full min-w-0">
       <Image
@@ -29,10 +29,10 @@ export default function FetchAutomationDataSlide02() {
       </div>
 
       <AdvSliderTooltip
-        icon={FaDatabase}
-        title="Auto-fill application forms with verified data to accelerate the loan process."
-        lineHeight={455}
-        connectorLeft="52%"
+        icon={RiQuestionnaireFill}
+        title="Conflicting data sources are clearly displayed to support lender decision-making, with next steps such as automatic rejection, referral, or solicitor confirmation,  determined by the lender’s credit policy and rules."
+        lineHeight={220}
+        connectorLeft="21%"
       />
     </div>
   );

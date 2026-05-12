@@ -1,8 +1,8 @@
 import Image from "next/image";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
-import { FaDatabase } from "react-icons/fa6";
+import { RiUserSearchFill } from "react-icons/ri";
 
-export default function FetchAutomationDataSlide02() {
+export default function FetchAutomationDataSlide03() {
   return (
     <div className="w-full min-w-0">
       <Image
@@ -29,10 +29,10 @@ export default function FetchAutomationDataSlide02() {
       </div>
 
       <AdvSliderTooltip
-        icon={FaDatabase}
-        title="Auto-fill application forms with verified data to accelerate the loan process."
-        lineHeight={455}
-        connectorLeft="52%"
+        icon={RiUserSearchFill}
+        title="Cross-reference and verify applicant-provided information against authoritative databases to catch discrepancies and reduce fraud risk."
+        lineHeight={265}
+        connectorLeft="62%"
       />
     </div>
   );
