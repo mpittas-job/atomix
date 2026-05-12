@@ -6,7 +6,7 @@ export default function InformationVerificationSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <Image
-        src="/advanced-slider/section-2/tab-3/sj-tab3-step3-main.svg"
+        src="/advanced-slider/section-2/tab-4/sj-tab3-step3-main.svg"
         alt="Get started — welcome and account setup"
         width={1984}
         height={996}
@@ -16,7 +16,7 @@ export default function InformationVerificationSlide01() {
       />
 
       <Image
-        src="/advanced-slider/section-2/tab-3/sj-tab3-step3-main2.svg"
+        src="/advanced-slider/section-2/tab-4/sj-tab3-step3-main2.svg"
         alt="Get started — welcome and account setup"
         width={1984}
         height={996}
@@ -28,7 +28,7 @@ export default function InformationVerificationSlide01() {
       <div className="absolute bottom-[15%] -left-[4%] opacity-100">
         <div className="absolute -inset-2.5 rounded-3xl bg-white/20 backdrop-blur-md" />
         <Image
-          src="/advanced-slider/section-2/tab-3/sj-tab2-step3-overlay1.svg"
+          src="/advanced-slider/section-2/tab-4/sj-tab2-step3-overlay1.svg"
           alt="Get started — welcome and account setup"
           width={820}
           height={300}
