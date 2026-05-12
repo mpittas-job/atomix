@@ -16,7 +16,7 @@ export default function RefineOfferSlide01() {
         alt="Get started — welcome and account setup"
         width={1984}
         height={996}
-        className="block h-auto rounded-t-2xl absolute left-0 bottom-0 opacity-0"
+        className="main-img-overlay block h-auto rounded-t-2xl absolute left-0 bottom-0 opacity-0"
         quality={100}
         priority
       />

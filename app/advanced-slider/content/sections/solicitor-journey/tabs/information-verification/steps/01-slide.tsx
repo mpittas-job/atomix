@@ -16,7 +16,7 @@ export default function InformationVerificationSlide01() {
         alt="Get started — welcome and account setup"
         width={1984}
         height={996}
-        className="block h-auto rounded-t-2xl absolute left-0 bottom-0 opacity-100"
+        className="main-img-overlay block h-auto rounded-t-2xl absolute left-0 bottom-0 opacity-100"
         quality={100}
         priority
       />
