@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
@@ -106,7 +113,7 @@ export default function AdvancedSliderPage() {
     },
     {
       dependencies: [activeSlideId],
-      revertOnUpdate: true,
+      revertOnUpdate: false,
     },
   );
 
@@ -124,58 +131,58 @@ export default function AdvancedSliderPage() {
     );
   }, [tabs, derivedActiveTabId]);
 
-  useGSAP(
-    () => {
-      const list = tabListRef.current;
+  const activeTabIndexRef = useRef(activeTabIndex);
+  activeTabIndexRef.current = activeTabIndex;
+
+  useLayoutEffect(() => {
+    const list = tabListRef.current;
+    const thumb = tabThumbRef.current;
+    const activeBtn = tabButtonRefs.current[activeTabIndex];
+    if (!list || !thumb || !activeBtn) return;
+
+    const listRect = list.getBoundingClientRect();
+    const btnRect = activeBtn.getBoundingClientRect();
+    const x = btnRect.left - listRect.left;
+    const width = btnRect.width;
+
+    const prev = prevSectionIdForTabThumbRef.current;
+    const sectionChanged = prev !== activeSectionId;
+    prevSectionIdForTabThumbRef.current = activeSectionId;
+
+    if (sectionChanged || prev === null) {
+      gsap.set(thumb, { x, width });
+    } else {
+      gsap.to(thumb, {
+        x,
+        width,
+        duration: 0.22,
+        ease: "power2.out",
+        overwrite: "auto",
+      });
+    }
+  }, [activeTabIndex, activeSectionId, tabs.length]);
+
+  useLayoutEffect(() => {
+    const list = tabListRef.current;
+    if (!list) return;
+
+    const applyInstantFromLayout = () => {
       const thumb = tabThumbRef.current;
-      if (!list || !thumb) return;
+      const idx = activeTabIndexRef.current;
+      const activeBtn = tabButtonRefs.current[idx];
+      if (!thumb || !activeBtn) return;
+      const listRect = list.getBoundingClientRect();
+      const btnRect = activeBtn.getBoundingClientRect();
+      gsap.set(thumb, {
+        x: btnRect.left - listRect.left,
+        width: btnRect.width,
+      });
+    };
 
-      const measure = () => {
-        const activeBtn = tabButtonRefs.current[activeTabIndex];
-        if (!activeBtn) return null;
-        const listRect = list.getBoundingClientRect();
-        const btnRect = activeBtn.getBoundingClientRect();
-        return {
-          x: btnRect.left - listRect.left,
-          width: btnRect.width,
-        };
-      };
-
-      const applyInstant = () => {
-        const m = measure();
-        if (m) gsap.set(thumb, m);
-      };
-
-      const prev = prevSectionIdForTabThumbRef.current;
-      const sectionChanged = prev !== activeSectionId;
-      prevSectionIdForTabThumbRef.current = activeSectionId;
-
-      const m = measure();
-      if (!m) return;
-
-      if (sectionChanged || prev === null) {
-        gsap.set(thumb, m);
-      } else {
-        gsap.to(thumb, {
-          x: m.x,
-          width: m.width,
-          duration: 0.32,
-          ease: "power2.out",
-          overwrite: "auto",
-        });
-      }
-
-      const ro = new ResizeObserver(applyInstant);
-      ro.observe(list);
-      for (const el of tabButtonRefs.current) {
-        if (el) ro.observe(el);
-      }
-      return () => ro.disconnect();
-    },
-    {
-      dependencies: [activeTabIndex, activeSectionId, tabs.length],
-    },
-  );
+    const ro = new ResizeObserver(applyInstantFromLayout);
+    ro.observe(list);
+    return () => ro.disconnect();
+  }, []);
 
   const isAtVeryStart =
     activeSectionIndex === 0 &&
@@ -401,7 +408,7 @@ export default function AdvancedSliderPage() {
 
           <div
             aria-label="Slide content"
-            className="flex min-h-[600px] w-full items-end justify-center rounded-xl bg-[#499DB8] px-20 relative"
+            className="flex min-h-[600px] w-full items-end justify-center rounded-xl bg-[#499DB8] px-22 relative"
           >
             <div ref={slideContentRef} className="w-full">
               {activeSlide?.content ?? null}

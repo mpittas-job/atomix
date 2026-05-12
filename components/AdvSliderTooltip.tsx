@@ -1,4 +1,4 @@
-import type { ComponentType, SVGProps } from "react";
+import type { ComponentType, ReactNode, SVGProps } from "react";
 
 export type AdvSliderTooltipIcon = ComponentType<
   SVGProps<SVGSVGElement> & { className?: string }
@@ -8,10 +8,15 @@ export type AdvSliderTooltipProps = {
   /** Any `react-icons` icon component */
   icon: AdvSliderTooltipIcon;
   /** Main message shown next to the icon */
-  title: string;
+  title: ReactNode;
   className?: string;
   /** Dashed connector height in pixels (default `48`, ~Tailwind `h-12`) */
   lineHeight?: number;
+  /**
+   * CSS `left` for the dot + dashed line stack above the tooltip.
+   * Defaults to `50%` with `translateX(-50%)` so the connector stays centered.
+   */
+  connectorLeft?: string;
 };
 
 export default function AdvSliderTooltip({
@@ -19,17 +24,28 @@ export default function AdvSliderTooltip({
   title,
   className = "",
   lineHeight = 48,
+  connectorLeft,
 }: AdvSliderTooltipProps) {
   return (
-    <div className={`flex flex-col items-center ${className}`}>
-      <div className="flex flex-col items-center" aria-hidden>
+    <div
+      className={`flex flex-col absolute top-[calc(100%+20px)] left-[50%] translate-x-[-50%] ${className}`}
+    >
+      <div
+        className={
+          connectorLeft != null
+            ? "absolute bottom-full flex flex-col items-center translate-x-[-50%]"
+            : "absolute left-[50%] translate-x-[-50%] bottom-full flex flex-col items-center"
+        }
+        style={connectorLeft != null ? { left: connectorLeft } : undefined}
+        aria-hidden
+      >
         <span className="size-2 shrink-0 rounded-full bg-[#6CAFC5] relative -left-[1px]" />
         <div
           className="w-0 shrink-0 self-center border-l border-dashed border-[#6CAFC5]"
           style={{ height: `${lineHeight}px` }}
         />
       </div>
-      <div className="flex w-full min-w-[500px] max-w-2xl items-start gap-3 rounded-2xl px-4 py-3 text-left bg-[#EAEFF1] p-5 ring-1 ring-[#fff] shadow-[inset_0_1px_20px_rgba(255,255,255,0.65)] backdrop-blur-md relative overflow-hidden">
+      <div className="flex w-full min-w-[740px] items-start gap-3 rounded-2xl px-4 py-3 text-left bg-[#EAEFF1] p-5 ring-1 ring-[#fff] shadow-[inset_0_1px_20px_rgba(255,255,255,0.65)] backdrop-blur-md relative overflow-hidden">
         <Icon
           className="mt-0.5 size-5 shrink-0 text-[#499DB8] relative z-1"
           aria-hidden
