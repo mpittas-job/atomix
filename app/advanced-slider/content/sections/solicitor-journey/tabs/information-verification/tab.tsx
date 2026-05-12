@@ -2,6 +2,7 @@ import type { Tab } from "@/app/advanced-slider/content/types";
 import InformationVerificationSlide01 from "./steps/01-slide";
 import InformationVerificationSlide02 from "./steps/02-slide";
 import InformationVerificationSlide03 from "./steps/03-slide";
+import InformationVerificationSlide04 from "./steps/04-slide";
 
 export const informationVerificationTab: Tab = {
   id: "information-verification",
@@ -19,6 +20,10 @@ export const informationVerificationTab: Tab = {
     {
       id: "sj-information-verification-3",
       content: <InformationVerificationSlide03 />,
+    },
+    {
+      id: "sj-information-verification-4",
+      content: <InformationVerificationSlide04 />,
     },
   ],
 };

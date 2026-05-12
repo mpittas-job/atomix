@@ -1,8 +1,8 @@
 import Image from "next/image";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
-import { HiCheckBadge } from "react-icons/hi2";
+import { IoShieldCheckmarkSharp } from "react-icons/io5";
 
-export default function DocumentsSlide05() {
+export default function InformationVerificationSlide04() {
   return (
     <div className="w-full min-w-0 relative">
       <Image
@@ -29,10 +29,10 @@ export default function DocumentsSlide05() {
       </div>
 
       <AdvSliderTooltip
-        icon={HiCheckBadge}
-        title="Solicitors can verify information submitted by the borrower or provide new verified data - including details obtained from third parties."
-        lineHeight={190}
-        connectorLeft="7%"
+        icon={IoShieldCheckmarkSharp}
+        title="The information verification allows the platform to assess compliance with the lender’s eligibility criteria based on verified inputs."
+        lineHeight={140}
+        connectorLeft="4%"
       />
     </div>
   );
