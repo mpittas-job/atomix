@@ -7,6 +7,16 @@ import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(useGSAP);
 
+/** GSAP entrance `duration` (seconds) for the hero image. */
+export const ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION = 1;
+
+/**
+ * Default delay before overlay entrance when both mount together (seconds).
+ * Slightly before the hero finishes so the gap between hero and overlay feels tight.
+ */
+export const ADV_SLIDER_DEFAULT_OVERLAY_AFTER_MAIN_AT =
+  ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION * 0.72;
+
 const DEFAULT_IMG_CLASS =
   "block h-auto w-full max-w-none object-contain rounded-t-2xl";
 
@@ -62,18 +72,17 @@ export default function AdvSliderMainImage({
       gsap.killTweensOf(el);
 
       if (prefersReduced) {
-        gsap.set(el, { autoAlpha: 1, y: 0, scale: 1 });
+        gsap.set(el, { autoAlpha: 1, scale: 1 });
         return;
       }
 
       gsap.fromTo(
         el,
-        { autoAlpha: 0, y: 18, scale: 0.985 },
+        { autoAlpha: 0, scale: 0.96 },
         {
           autoAlpha: 1,
-          y: 0,
           scale: 1,
-          duration: 1,
+          duration: ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION,
           ease: "power2.out",
         },
       );

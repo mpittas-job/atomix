@@ -1,5 +1,5 @@
-import Image from "next/image";
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
+import AdvSliderOverlayImage from "@/components/AdvSliderOverlayImage";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
 import { FaMoneyBillWave } from "react-icons/fa";
 
@@ -11,31 +11,24 @@ export default function RefineOfferSlide02() {
         alt={"Get started — welcome and account setup"}
       />
 
-      <div className="absolute right-9 top-25">
-        <div className="absolute -inset-2.5 rounded-3xl bg-white/20 backdrop-blur-md" />
-        <Image
-          src="/advanced-slider/section-1/tab-3/bj-tab3-step2-overlay1.svg"
-          alt=""
-          width={700}
-          height={300}
-          className="block h-auto max-w-[290px] border-2 border-[#499DB8] shadow-xl shadow-neutral-500/20 rounded-xl relative"
-          quality={100}
-          priority
-        />
-      </div>
+      <AdvSliderOverlayImage
+        className="absolute right-9 top-25"
+        src="/advanced-slider/section-1/tab-3/bj-tab3-step2-overlay1.svg"
+        alt=""
+        width={700}
+        height={300}
+        imageClassName="block h-auto max-w-[290px] border-2 border-[#499DB8] shadow-xl shadow-neutral-500/20 rounded-xl relative"
+      />
 
-      <div className="absolute -right-10 top-55">
-        <div className="absolute -inset-2.5 rounded-3xl bg-white/20 backdrop-blur-md" />
-        <Image
-          src="/advanced-slider/section-1/tab-3/bj-tab3-step2-overlay2.svg"
-          alt=""
-          width={700}
-          height={300}
-          className="block h-auto max-w-[290px] border-2 border-[#499DB8] shadow-xl shadow-neutral-500/20 rounded-xl relative"
-          quality={100}
-          priority
-        />
-      </div>
+      <AdvSliderOverlayImage
+        className="absolute -right-10 top-55"
+        src="/advanced-slider/section-1/tab-3/bj-tab3-step2-overlay2.svg"
+        alt=""
+        width={700}
+        height={300}
+        imageClassName="block h-auto max-w-[290px] border-2 border-[#499DB8] shadow-xl shadow-neutral-500/20 rounded-xl relative"
+        enterDelay={0.08}
+      />
 
       <AdvSliderTooltip
         icon={FaMoneyBillWave}

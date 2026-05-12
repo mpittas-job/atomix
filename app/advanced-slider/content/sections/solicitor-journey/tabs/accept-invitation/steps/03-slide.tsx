@@ -1,5 +1,5 @@
-import Image from "next/image";
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
+import AdvSliderOverlayImage from "@/components/AdvSliderOverlayImage";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
 import { FaLink } from "react-icons/fa6";
 
@@ -11,18 +11,15 @@ export default function AcceptInvitationSlide03() {
         alt={"Get started — welcome and account setup"}
       />
 
-      <div className="absolute bottom-0 -right-[2%]">
-        <div className="absolute -inset-2.5 bottom-0 rounded-t-3xl bg-white/20 backdrop-blur-md" />
-        <Image
-          src="/advanced-slider/section-2/tab-1/sj-tab1-step3-overlay1.svg"
-          alt="Get started — welcome and account setup"
-          width={700}
-          height={300}
-          className="block h-auto max-w-[380px] border-2 border-[#499DB8] border-b-0 rounded-t-xl relative"
-          quality={100}
-          priority
-        />
-      </div>
+      <AdvSliderOverlayImage
+        className="absolute bottom-0 -right-[2%]"
+        blurBackdropClassName="pointer-events-none absolute -inset-2.5 bottom-0 rounded-t-3xl bg-white/20 backdrop-blur-md"
+        src="/advanced-slider/section-2/tab-1/sj-tab1-step3-overlay1.svg"
+        alt="Get started — welcome and account setup"
+        width={700}
+        height={300}
+        imageClassName="block h-auto max-w-[380px] border-2 border-[#499DB8] border-b-0 rounded-t-xl relative"
+      />
 
       <AdvSliderTooltip
         icon={FaLink}

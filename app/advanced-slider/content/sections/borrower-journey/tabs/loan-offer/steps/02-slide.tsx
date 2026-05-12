@@ -1,5 +1,5 @@
-import Image from "next/image";
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
+import AdvSliderOverlayImage from "@/components/AdvSliderOverlayImage";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
 import { FaMoneyBillWave } from "react-icons/fa";
 
@@ -12,31 +12,23 @@ export default function LoanOfferSlide02() {
       />
 
       <div className="absolute flex gap-4 bottom-[5%] left-[5%]">
-        <div className="relative">
-          <div className="absolute -inset-2.5 rounded-3xl bg-white/20 backdrop-blur-md" />
-          <Image
-            src="/advanced-slider/section-1/tab-2/bj-tab2-step2-overlay1.svg"
-            alt=""
-            width={700}
-            height={300}
-            className="block h-auto max-w-[340px]  border-2 border-[#499DB8] shadow-xl shadow-neutral-500/20 rounded-xl relative"
-            quality={100}
-            priority
-          />
-        </div>
-
-        <div className="relative">
-          <div className="absolute -inset-2.5 rounded-3xl bg-white/20 backdrop-blur-md" />
-          <Image
-            src="/advanced-slider/section-1/tab-2/bj-tab2-step2-overlay2.svg"
-            alt=""
-            width={700}
-            height={300}
-            className="block h-auto max-w-[340px]  border-2 border-[#499DB8] shadow-xl shadow-neutral-500/20 rounded-xl relative"
-            quality={100}
-            priority
-          />
-        </div>
+        <AdvSliderOverlayImage
+          className="relative"
+          src="/advanced-slider/section-1/tab-2/bj-tab2-step2-overlay1.svg"
+          alt=""
+          width={700}
+          height={300}
+          imageClassName="block h-auto max-w-[340px]  border-2 border-[#499DB8] shadow-xl shadow-neutral-500/20 rounded-xl relative"
+        />
+        <AdvSliderOverlayImage
+          className="relative"
+          src="/advanced-slider/section-1/tab-2/bj-tab2-step2-overlay2.svg"
+          alt=""
+          width={700}
+          height={300}
+          imageClassName="block h-auto max-w-[340px]  border-2 border-[#499DB8] shadow-xl shadow-neutral-500/20 rounded-xl relative"
+          enterDelay={0.1}
+        />
       </div>
 
       <AdvSliderTooltip
