@@ -118,6 +118,8 @@ export default function AdvancedSliderPage() {
   );
 
   const tabs = activeSection?.tabs ?? [];
+  /** Referral Journey: keep tab strip in layout but hide and block interaction (no layout shift). */
+  const referralTabStripHidden = activeSectionId === "referral-journey";
   const activeSectionIndex = useMemo(() => {
     return Math.max(
       0,
@@ -349,7 +351,16 @@ export default function AdvancedSliderPage() {
           ref={tabListRef}
           role="tablist"
           aria-label="Tabs"
-          className="relative flex flex-wrap items-center rounded-full bg-[#ECF0F2] p-1 border border-white text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]"
+          aria-hidden={referralTabStripHidden ? true : undefined}
+          inert={referralTabStripHidden ? true : undefined}
+          className={[
+            "relative flex flex-wrap items-center rounded-full bg-[#ECF0F2] p-1 border border-white text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]",
+            referralTabStripHidden
+              ? "invisible pointer-events-none select-none"
+              : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
         >
           <div
             ref={tabThumbRef}
@@ -359,7 +370,8 @@ export default function AdvancedSliderPage() {
           {tabs.map((tab, tabIndex) => {
             const isActive = tab.id === derivedActiveTabId;
             const prevTab = tabIndex > 0 ? tabs[tabIndex - 1] : null;
-            const prevIsActive = !!prevTab && prevTab.id === derivedActiveTabId;
+            const prevIsActive =
+              !!prevTab && prevTab.id === derivedActiveTabId;
             const showLeftSeparator =
               tabIndex > 0 && !isActive && !prevIsActive;
             return (
@@ -371,6 +383,7 @@ export default function AdvancedSliderPage() {
                 type="button"
                 role="tab"
                 aria-selected={isActive}
+                tabIndex={referralTabStripHidden ? -1 : undefined}
                 onClick={() => setActiveTabId(tab.id)}
                 onMouseDown={() => setActiveSlideIndex(0)}
                 className={[
@@ -417,7 +430,15 @@ export default function AdvancedSliderPage() {
 
           <div
             aria-label="Tab counter"
-            className="mt-2 text-[10px] opacity-50 flex  mt-5"
+            aria-hidden={referralTabStripHidden ? true : undefined}
+            className={[
+              "mt-2 text-[10px] opacity-50 flex  mt-5",
+              referralTabStripHidden
+                ? "invisible pointer-events-none select-none"
+                : "",
+            ]
+              .filter(Boolean)
+              .join(" ")}
           >
             {(() => {
               const totalTabs = tabs.length;
