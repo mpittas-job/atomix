@@ -1,13 +1,13 @@
 import Image from "next/image";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
-import { FaCircleCheck } from "react-icons/fa6";
+import { FaUsers } from "react-icons/fa";
 
 export default function BorrowerExecutesLoanDocumentSlide03() {
   return (
     <div className="w-full min-w-0 relative">
       <Image
-        src="/advanced-slider/section-1/tab-6/bj-tab6-step1-main.svg"
-        alt="Borrower executes loan document — completion and filing"
+        src="/advanced-slider/section-4/tab-2/de-tab2-step1-main.svg"
+        alt="Signature request — issue signing pack"
         width={1984}
         height={996}
         className="block h-auto w-full max-w-none object-contain rounded-t-2xl"
@@ -15,11 +15,24 @@ export default function BorrowerExecutesLoanDocumentSlide03() {
         priority
       />
 
+      <div className="absolute bottom-0 -right-[4%]">
+        <div className="absolute -inset-2.5 bottom-0 rounded-t-3xl bg-white/20 backdrop-blur-md" />
+        <Image
+          src="/advanced-slider/section-4/tab-2/de-tab2-step2-overlay.svg"
+          alt="Get started — welcome and account setup"
+          width={700}
+          height={300}
+          className="block h-auto max-w-[560px] border-2 border-[#499DB8] border-b-0 rounded-t-xl relative"
+          quality={100}
+          priority
+        />
+      </div>
+
       <AdvSliderTooltip
-        icon={FaCircleCheck}
-        title="On completion, executed artefacts are sealed, indexed, and made available to the next milestones without manual re-upload."
-        lineHeight={220}
-        connectorLeft="38%"
+        icon={FaUsers}
+        title="All signatures are time-stamped and recorded for audit and compliance. "
+        lineHeight={120}
+        connectorLeft="83%"
       />
     </div>
   );
