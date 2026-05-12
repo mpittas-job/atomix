@@ -6,7 +6,7 @@ export default function GetStartedSlide02() {
   return (
     <div className="w-full min-w-0">
       <Image
-        src="/advanced-slider/section-1/tab-1/bj-tab1-step2-main.svg"
+        src="/advanced-slider/section-1/tab-1/bj-tab1-step1-main.svg"
         alt="Get started — welcome and account setup"
         width={1984}
         height={996}

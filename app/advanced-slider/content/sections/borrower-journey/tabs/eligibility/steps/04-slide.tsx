@@ -1,8 +1,8 @@
 import Image from "next/image";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
-import { RiLoopLeftLine } from "react-icons/ri";
+import { IoIosCheckmarkCircle } from "react-icons/io";
 
-export default function EligibilitySlide01() {
+export default function EligibilitySlide04() {
   return (
     <div className="w-full min-w-0 relative">
       <Image
@@ -16,18 +16,16 @@ export default function EligibilitySlide01() {
       />
 
       <AdvSliderTooltip
-        icon={RiLoopLeftLine}
+        icon={IoIosCheckmarkCircle}
         title={
           <>
-            <strong className="font-bold">
-              All rule configuration is no-code and requires no technical
-              resources.
-            </strong>{" "}
-            Changes made by the lender instantly update the application journey
-            and decision logic.
+            <strong className="font-bold">Input compliance rules:</strong>{" "}
+            Atomix will ensure all rules (e.g. title insurance, regulatory) are
+            accurately adhered to and automatically configure the underwriting
+            process.
           </>
         }
-        lineHeight={330}
+        lineHeight={265}
       />
     </div>
   );

@@ -24,7 +24,7 @@ export default function GetStartedSlide03() {
             experience.
           </>
         }
-        lineHeight={510}
+        lineHeight={525}
         connectorLeft="20%"
       />
     </div>

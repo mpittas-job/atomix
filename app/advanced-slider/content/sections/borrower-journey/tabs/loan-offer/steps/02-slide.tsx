@@ -23,7 +23,7 @@ export default function LoanOfferSlide02() {
             alt=""
             width={700}
             height={300}
-            className="block h-auto max-w-[340px]  border-2 border-[#499DB8] shadow-xl shadow-neutral-500/20 rounded-2xl relative"
+            className="block h-auto max-w-[340px]  border-2 border-[#499DB8] shadow-xl shadow-neutral-500/20 rounded-xl relative"
             quality={100}
             priority
           />
@@ -36,7 +36,7 @@ export default function LoanOfferSlide02() {
             alt=""
             width={700}
             height={300}
-            className="block h-auto max-w-[340px]  border-2 border-[#499DB8] shadow-xl shadow-neutral-500/20 rounded-2xl relative"
+            className="block h-auto max-w-[340px]  border-2 border-[#499DB8] shadow-xl shadow-neutral-500/20 rounded-xl relative"
             quality={100}
             priority
           />

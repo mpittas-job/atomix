@@ -1,10 +1,36 @@
+import Image from "next/image";
+import AdvSliderTooltip from "@/components/AdvSliderTooltip";
+import { FaMoneyBillWave } from "react-icons/fa";
+
 export default function RefineOfferSlide01() {
   return (
-    <p className="m-0">
-      Refine offer — Dummy adjustment step. Borrower tweaks term length or fixed
-      vs variable (placeholder toggles) and sees how monthly payment labels
-      update. Connect to your pricing engine and persist the chosen variant id
-      here.
-    </p>
+    <div className="w-full min-w-0 relative">
+      <Image
+        src="/advanced-slider/section-1/tab-3/bj-tab3-step1-main.svg"
+        alt="Get started — welcome and account setup"
+        width={1984}
+        height={996}
+        className="block h-auto w-full max-w-none object-contain rounded-t-2xl"
+        quality={100}
+        priority
+      />
+
+      <Image
+        src="/advanced-slider/section-1/tab-3/bj-tab3-step1-main-2.svg"
+        alt="Get started — welcome and account setup"
+        width={1984}
+        height={996}
+        className="block h-auto rounded-t-2xl absolute left-0 bottom-0 opacity-0"
+        quality={100}
+        priority
+      />
+
+      <AdvSliderTooltip
+        icon={FaMoneyBillWave}
+        title="The platform dynamically determines which questions, such as property condition, influence the loan amount based on the lenders’ eligibility criteria and responses to earlier questions."
+        lineHeight={300}
+        connectorLeft="18%"
+      />
+    </div>
   );
 }

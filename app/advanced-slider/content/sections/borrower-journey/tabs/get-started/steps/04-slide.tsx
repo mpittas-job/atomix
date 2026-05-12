@@ -21,7 +21,7 @@ export default function GetStartedSlide04() {
           alt="Get started — welcome and account setup"
           width={700}
           height={300}
-          className="block h-auto max-w-[660px]  border-2 border-[#499DB8] shadow-xl shadow-neutral-500/20 rounded-2xl relative"
+          className="block h-auto max-w-[660px]  border-2 border-[#499DB8] shadow-xl shadow-neutral-500/20 rounded-xl relative"
           quality={100}
           priority
         />
