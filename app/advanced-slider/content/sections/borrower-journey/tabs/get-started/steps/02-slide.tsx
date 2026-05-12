@@ -18,7 +18,7 @@ export default function GetStartedSlide02() {
       <AdvSliderTooltip
         icon={HiMiniQuestionMarkCircle}
         title="Borrowers begin their application with a short set of questions to receive an initial indicative offer."
-        lineHeight={420}
+        lineHeight={440}
       />
     </div>
   );

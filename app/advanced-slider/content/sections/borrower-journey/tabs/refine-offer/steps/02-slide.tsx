@@ -44,8 +44,8 @@ export default function RefineOfferSlide02() {
       <AdvSliderTooltip
         icon={FaMoneyBillWave}
         title="The offer remains visible throughout the application journey and updates dynamically as additional information is provided."
-        lineHeight={300}
-        connectorLeft="18%"
+        lineHeight={215}
+        connectorLeft="78%"
       />
     </div>
   );

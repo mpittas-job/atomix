@@ -45,7 +45,7 @@ export default function AdvSliderTooltip({
           style={{ height: `${lineHeight}px` }}
         />
       </div>
-      <div className="flex w-full min-w-[780px] items-start gap-3 rounded-2xl px-4 py-3 text-left bg-[#EAEFF1] p-5 ring-1 ring-[#fff] shadow-[inset_0_1px_20px_rgba(255,255,255,0.65)] backdrop-blur-md relative overflow-hidden">
+      <div className="flex w-full min-w-[800px] items-start gap-3 rounded-2xl px-4 py-3 text-left bg-[#EAEFF1] p-5 ring-1 ring-[#fff] shadow-[inset_0_1px_20px_rgba(255,255,255,0.65)] backdrop-blur-md relative overflow-hidden">
         <Icon
           className="mt-0.5 size-5 shrink-0 text-[#499DB8] relative z-1"
           aria-hidden

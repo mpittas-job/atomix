@@ -1,8 +1,8 @@
 import Image from "next/image";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
-import { RiProgress2Fill } from "react-icons/ri";
+import { IoMdCloudUpload } from "react-icons/io";
 
-export default function OnboardingSlide02() {
+export default function OnboardingSlide03() {
   return (
     <div className="w-full min-w-0 relative">
       <Image
@@ -16,10 +16,10 @@ export default function OnboardingSlide02() {
       />
 
       <AdvSliderTooltip
-        icon={RiProgress2Fill}
-        title="Onboarding can be customised depending on whether the user is a capital provider, borrower, or solicitor, etc."
-        lineHeight={375}
-        connectorLeft="10%"
+        icon={IoMdCloudUpload}
+        title="Lenders can decide when KYC, KYB, AML, and additional APIs including credit, fraud, income, affordability, and criminal background checks, etc."
+        lineHeight={265}
+        connectorLeft="2%"
       />
     </div>
   );
