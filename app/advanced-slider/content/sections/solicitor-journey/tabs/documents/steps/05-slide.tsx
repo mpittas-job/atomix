@@ -1,26 +1,16 @@
 import Image from "next/image";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
-import { FaListCheck } from "react-icons/fa6";
+import { HiCheckBadge } from "react-icons/hi2";
 
-export default function DocumentsSlide03() {
+export default function DocumentsSlide05() {
   return (
     <div className="w-full min-w-0 relative">
-      <Image
-        src="/advanced-slider/section-2/tab-3/sj-tab3-step3-main.svg"
-        alt="Get started — welcome and account setup"
-        width={1984}
-        height={996}
-        className="block h-auto w-full max-w-none object-contain rounded-t-2xl"
-        quality={100}
-        priority
-      />
-
       <Image
         src="/advanced-slider/section-2/tab-3/sj-tab3-step3-main2.svg"
         alt="Get started — welcome and account setup"
         width={1984}
         height={996}
-        className="block h-auto rounded-t-2xl absolute left-0 bottom-0 opacity-100"
+        className="block h-auto w-full max-w-none object-contain rounded-t-2xl"
         quality={100}
         priority
       />
@@ -39,10 +29,10 @@ export default function DocumentsSlide03() {
       </div>
 
       <AdvSliderTooltip
-        icon={FaListCheck}
-        title="The lender determines which verification methods are acceptable and who is authorised to validate specific information. "
-        lineHeight={355}
-        connectorLeft="34%"
+        icon={HiCheckBadge}
+        title="Solicitors can verify information submitted by the borrower or provide new verified data - including details obtained from third parties."
+        lineHeight={190}
+        connectorLeft="7%"
       />
     </div>
   );
