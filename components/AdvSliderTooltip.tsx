@@ -9,6 +9,10 @@ import {
   ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION,
 } from "@/components/AdvSliderMainImage";
 import { ADV_SLIDER_OVERLAY_IMAGE_ATTR } from "@/components/AdvSliderOverlayImage";
+import {
+  ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT,
+  ADV_SLIDER_STEP_ANIMATION_START_EVENT,
+} from "@/components/advSliderStepAnimationEvents";
 
 gsap.registerPlugin(useGSAP);
 
@@ -25,11 +29,10 @@ const TOOLTIP_DOT_DURATION = 0.45;
 const TOOLTIP_LINE_DURATION = 0.6;
 const TOOLTIP_PANEL_DURATION = 0.6;
 
-export const ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT =
-  "adv-slider-step-animation-complete";
-
-export const ADV_SLIDER_STEP_ANIMATION_START_EVENT =
-  "adv-slider-step-animation-start";
+export {
+  ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT,
+  ADV_SLIDER_STEP_ANIMATION_START_EVENT,
+} from "@/components/advSliderStepAnimationEvents";
 
 export const ADV_SLIDER_TOOLTIP_ATTR = "data-adv-slider-tooltip";
 

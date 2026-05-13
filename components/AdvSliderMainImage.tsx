@@ -4,6 +4,10 @@ import { useRef } from "react";
 import Image, { type ImageProps } from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import {
+  ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT,
+  ADV_SLIDER_STEP_ANIMATION_START_EVENT,
+} from "@/components/advSliderStepAnimationEvents";
 
 gsap.registerPlugin(useGSAP);
 
@@ -22,6 +26,38 @@ export const ADV_SLIDER_DEFAULT_OVERLAY_AFTER_MAIN_AT =
 
 /** Present on the hero wrapper so `AdvSliderTooltip` can wait for the underlying `<img>` load. */
 export const ADV_SLIDER_MAIN_IMAGE_ATTR = "data-adv-slider-main-image";
+
+/** Keep in sync with `ADV_SLIDER_TOOLTIP_ATTR` in `AdvSliderTooltip.tsx`. */
+const ADV_SLIDER_TOOLTIP_SELECTOR = "[data-adv-slider-tooltip]";
+
+function findActiveSlideIdFromEl(el: HTMLElement): string | null {
+  const host = el.closest<HTMLElement>("[data-adv-slide-id]");
+  return host?.getAttribute("data-adv-slide-id") ?? null;
+}
+
+function slideStepHasTooltip(el: HTMLElement): boolean {
+  const host = el.closest<HTMLElement>("[data-adv-slide-id]");
+  if (!host) return false;
+  return host.querySelector(ADV_SLIDER_TOOLTIP_SELECTOR) != null;
+}
+
+function dispatchStepStart(slideId: string, durationMs: number) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent(ADV_SLIDER_STEP_ANIMATION_START_EVENT, {
+      detail: { slideId, durationMs },
+    }),
+  );
+}
+
+function dispatchStepComplete(slideId: string) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent(ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT, {
+      detail: { slideId },
+    }),
+  );
+}
 
 const DEFAULT_IMG_CLASS =
   "block h-auto w-full max-w-none object-contain rounded-t-2xl";
@@ -75,11 +111,26 @@ export default function AdvSliderMainImage({
         typeof window !== "undefined" &&
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+      const tooltipOwnsStepEvents = slideStepHasTooltip(el);
+      const slideId = findActiveSlideIdFromEl(el);
+      const mainDurationMs = Math.round(
+        (ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION + ADV_SLIDER_STEP_ENTER_DELAY) *
+          1000,
+      );
+
       gsap.killTweensOf(el);
 
       if (prefersReduced) {
         gsap.set(el, { autoAlpha: 1, scale: 1 });
+        if (!tooltipOwnsStepEvents && slideId) {
+          dispatchStepStart(slideId, 0);
+          dispatchStepComplete(slideId);
+        }
         return;
+      }
+
+      if (!tooltipOwnsStepEvents && slideId) {
+        dispatchStepStart(slideId, mainDurationMs);
       }
 
       gsap.fromTo(
@@ -91,6 +142,10 @@ export default function AdvSliderMainImage({
           duration: ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION,
           ease: "power3.out",
           delay: ADV_SLIDER_STEP_ENTER_DELAY,
+          onComplete: () => {
+            if (tooltipOwnsStepEvents || !slideId) return;
+            dispatchStepComplete(slideId);
+          },
         },
       );
     },
