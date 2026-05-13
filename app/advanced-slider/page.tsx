@@ -424,10 +424,10 @@ export default function AdvancedSliderPage() {
                           }
                         }}
                         aria-current={isActive ? "page" : undefined}
-                        className={`no-underline ${
+                        className={`no-underline transition-colors duration-150 ${
                           isActive
                             ? "font-semibold text-[#499DB8]"
-                            : "font-medium text-[#5F7378]"
+                            : "font-medium text-[#5F7378] hover:text-[#011F27]"
                         }`}
                       >
                         {section.navLabel}
