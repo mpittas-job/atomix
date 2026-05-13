@@ -12,9 +12,11 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { IoIosPause, IoIosPlay } from "react-icons/io";
+import Image from "next/image";
 import SoftAurora from "@/components/backgrounds/SoftAurora";
 import Header from "@/components/header";
 import { Button } from "@/components/ui";
+import DefHeading from "@/components/typo/DefHeading";
 
 import { NAV_CATEGORIES, SECTIONS } from "./content/nav-categories";
 import {
@@ -477,6 +479,38 @@ export default function AdvancedSliderPage() {
           </div>
         </div>
       </div>
+
+      <section aria-label="The Atomix Journey" className="px-6 py-16 md:py-24">
+        <div className="mx-auto max-w-[1240px]">
+          <DefHeading
+            showBadge={false}
+            badgeText=""
+            title="The Atomix Journey"
+            description={
+              <>
+                Real-time data captured at every stage — powering faster
+                decisions, structured collaboration, and continuous loan
+                management beyond completion.
+              </>
+            }
+            theme="dark"
+            className="max-w-5xl"
+          />
+          <div className="mt-12 flex justify-center md:mt-16">
+            <Image
+              src="/advanced-slider/flow-chart.png"
+              alt="The Atomix Journey"
+              width={1200}
+              height={527}
+              sizes="(max-width: 1280px) min(100vw - 48px, 1152px), 1152px"
+              className="h-auto w-full max-w-6xl rounded-2xl object-contain"
+              quality={100}
+              priority
+              unoptimized
+            />
+          </div>
+        </div>
+      </section>
 
       <div className="relative min-h-screen">
         <nav
