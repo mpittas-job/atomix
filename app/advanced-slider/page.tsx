@@ -13,6 +13,8 @@ import { useGSAP } from "@gsap/react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { IoIosPause, IoIosPlay } from "react-icons/io";
 import SoftAurora from "@/components/backgrounds/SoftAurora";
+import Header from "@/components/header";
+import { Button } from "@/components/ui";
 
 import { NAV_CATEGORIES, SECTIONS } from "./content/nav-categories";
 import {
@@ -386,62 +388,111 @@ export default function AdvancedSliderPage() {
 
   return (
     <main className="bg-[#EBEFF2] min-h-screen">
-      <nav
-        aria-label="Origination and dashboards"
-        className="z-1 absolute left-6 top-6 flex max-w-[220px] flex-col gap-5 font-sans text-sm leading-[1.45]"
-      >
-        {NAV_CATEGORIES.map((category) => {
-          const containsActiveSection = category.sections.some(
-            (s) => s.id === activeSectionId,
-          );
-          return (
-            <div key={category.id} className="flex flex-col gap-2.5">
-              <div
-                className={`text-[11px] font-semibold uppercase tracking-wide ${
-                  containsActiveSection ? "text-[#011F27]" : "text-[#5F7378]"
-                }`}
+      <Header />
+
+      {/* Fixed header does not consume layout height — reserve its space so hero sits below it */}
+      <div className="pt-26.5">
+        <div className="p-6">
+          <div
+            aria-labelledby="advanced-slider-hero-title"
+            className="bg-[#004152] py-24 text-white rounded-4xl relative"
+          >
+            <div className="mx-auto flex w-full max-w-[1240px] flex-col items-center gap-6 text-center relative z-1">
+              <h1
+                id="advanced-slider-hero-title"
+                className="m-0 w-full max-w-[500px] text-balance text-[52px] font-semibold leading-16"
               >
-                {category.label}
+                Atomix Loan Operating System
+              </h1>
+              <p className="m-0 w-full max-w-[36rem] text-[24px] text-white/70 font-normal">
+                Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem
+                ipsum dolor sit amet lorem ipsum.
+              </p>
+              <div>
+                <Button variant="primary" type="button">
+                  Contact us
+                </Button>
               </div>
-              <ul className="m-0 flex list-none flex-col gap-3 p-0">
-                {category.sections.map((section) => {
-                  const isActive = section.id === activeSectionId;
-                  return (
-                    <li key={section.id} className="text-sm">
-                      <a
-                        href={`#${section.id}`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setActiveSectionId(section.id);
-                          setActiveTabId(section.tabs[0]?.id ?? "");
-                          setActiveSlideIndex(0);
-                          if (typeof window !== "undefined") {
-                            window.history.replaceState(
-                              null,
-                              "",
-                              `#${section.id}`,
-                            );
-                          }
-                        }}
-                        aria-current={isActive ? "page" : undefined}
-                        className={`no-underline transition-colors duration-150 ${
-                          isActive
-                            ? "font-semibold text-[#499DB8]"
-                            : "font-medium text-[#5F7378] hover:text-[#011F27]"
-                        }`}
-                      >
-                        {section.navLabel}
-                      </a>
-                    </li>
-                  );
-                })}
-              </ul>
             </div>
-          );
-        })}
-      </nav>
+
+            <div className="absolute left-0 h-full w-full bottom-0 pointer-events-none">
+              <SoftAurora
+                speed={1.3}
+                scale={1.2}
+                brightness={0.55}
+                color1="#78cfe3"
+                color2="#87b9d4"
+                noiseFrequency={1}
+                noiseAmplitude={3.5}
+                bandHeight={0.2}
+                bandSpread={1.1}
+                octaveDecay={0.12}
+                layerOffset={0.5}
+                colorSpeed={1}
+                enableMouseInteraction={false}
+                mouseInfluence={0.2}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div className="relative min-h-screen">
+        <nav
+          aria-label="Origination and dashboards"
+          className="z-1 absolute left-6 top-6 flex max-w-[220px] flex-col gap-5 font-sans text-sm leading-[1.45]"
+        >
+          {NAV_CATEGORIES.map((category) => {
+            const containsActiveSection = category.sections.some(
+              (s) => s.id === activeSectionId,
+            );
+            return (
+              <div key={category.id} className="flex flex-col gap-2.5">
+                <div
+                  className={`text-[11px] font-semibold uppercase tracking-wide ${
+                    containsActiveSection ? "text-[#011F27]" : "text-[#5F7378]"
+                  }`}
+                >
+                  {category.label}
+                </div>
+                <ul className="m-0 flex list-none flex-col gap-3 p-0">
+                  {category.sections.map((section) => {
+                    const isActive = section.id === activeSectionId;
+                    return (
+                      <li key={section.id} className="text-sm">
+                        <a
+                          href={`#${section.id}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setActiveSectionId(section.id);
+                            setActiveTabId(section.tabs[0]?.id ?? "");
+                            setActiveSlideIndex(0);
+                            if (typeof window !== "undefined") {
+                              window.history.replaceState(
+                                null,
+                                "",
+                                `#${section.id}`,
+                              );
+                            }
+                          }}
+                          aria-current={isActive ? "page" : undefined}
+                          className={`no-underline transition-colors duration-150 ${
+                            isActive
+                              ? "font-semibold text-[#499DB8]"
+                              : "font-medium text-[#5F7378] hover:text-[#011F27]"
+                          }`}
+                        >
+                          {section.navLabel}
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            );
+          })}
+        </nav>
+
         <div className="mx-auto max-w-[1240px] p-6 flex flex-col gap-10 relative z-1">
           <h1 className="text-[40px] font-semibold text-center">
             {activeSection?.title}

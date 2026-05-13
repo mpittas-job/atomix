@@ -321,7 +321,7 @@ export default function AdvSliderTooltip({
       </div>
       <div
         ref={panelRef}
-        className="flex w-full min-w-[800px] items-start gap-3 rounded-2xl px-4 py-3 text-left bg-[#EAEFF1]/30 p-5 ring-1 ring-[#fff] shadow-[inset_0_1px_20px_rgba(255,255,255,0.65)] backdrop-blur-md relative overflow-hidden opacity-0"
+        className="flex w-full min-w-[800px] items-start gap-3 rounded-2xl px-4 py-3 text-left bg-[#EAEFF1]/20 p-5 ring-1 ring-[#fff] shadow-[inset_0_1px_20px_rgba(255,255,255,0.65)] backdrop-blur-md relative overflow-hidden opacity-0"
       >
         <Icon
           className="mt-0.5 size-5 shrink-0 relative z-1"
