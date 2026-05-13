@@ -114,6 +114,11 @@ export default function AdvancedSliderPage() {
   const playProgressTweenRef = useRef<gsap.core.Tween | null>(null);
   const playProgressTotalMsRef = useRef<number | null>(null);
 
+  const heroAnimScopeRef = useRef<HTMLDivElement | null>(null);
+  const heroTitleRef = useRef<HTMLHeadingElement | null>(null);
+  const heroDescRef = useRef<HTMLParagraphElement | null>(null);
+  const heroCtaRef = useRef<HTMLDivElement | null>(null);
+
   const PLAY_PROGRESS_AUTOPLAY_WAIT_MS = 3000;
   const PLAY_PROGRESS_RADIUS = 18;
   const PLAY_PROGRESS_CIRC = 2 * Math.PI * PLAY_PROGRESS_RADIUS;
@@ -386,6 +391,35 @@ export default function AdvancedSliderPage() {
     if (isAtVeryEnd) setIsPlaying(false);
   }, [isAtVeryEnd]);
 
+  useGSAP(
+    () => {
+      const title = heroTitleRef.current;
+      const desc = heroDescRef.current;
+      const cta = heroCtaRef.current;
+      if (!title || !desc || !cta) return;
+
+      const prefersReduced =
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      gsap.killTweensOf([title, desc, cta]);
+
+      if (prefersReduced) {
+        gsap.set([title, desc, cta], { autoAlpha: 1, y: 0 });
+        return;
+      }
+
+      gsap.set([title, desc, cta], { autoAlpha: 0, y: -28 });
+
+      gsap
+        .timeline({ defaults: { ease: "power2.out" } })
+        .to(title, { autoAlpha: 1, y: 0, duration: 0.88 })
+        .to(desc, { autoAlpha: 1, y: 0, duration: 0.75 }, ">+=0.22")
+        .to(cta, { autoAlpha: 1, y: 0, duration: 0.68 }, ">+=0.22");
+    },
+    { scope: heroAnimScopeRef, revertOnUpdate: true },
+  );
+
   return (
     <main className="bg-[#EBEFF2] min-h-screen">
       <Header />
@@ -397,18 +431,25 @@ export default function AdvancedSliderPage() {
             aria-labelledby="advanced-slider-hero-title"
             className="bg-[#004152] py-24 text-white rounded-4xl relative"
           >
-            <div className="mx-auto flex w-full max-w-[1240px] flex-col items-center gap-6 text-center relative z-1">
+            <div
+              ref={heroAnimScopeRef}
+              className="mx-auto flex w-full max-w-[1240px] flex-col items-center gap-6 text-center relative z-1"
+            >
               <h1
+                ref={heroTitleRef}
                 id="advanced-slider-hero-title"
                 className="m-0 w-full max-w-[500px] text-balance text-[52px] font-semibold leading-16"
               >
                 Atomix Loan Operating System
               </h1>
-              <p className="m-0 w-full max-w-[36rem] text-[24px] text-white/70 font-normal">
+              <p
+                ref={heroDescRef}
+                className="m-0 w-full max-w-[36rem] text-[24px] text-white/70 font-normal"
+              >
                 Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem
                 ipsum dolor sit amet lorem ipsum.
               </p>
-              <div>
+              <div ref={heroCtaRef}>
                 <Button variant="primary" type="button">
                   Contact us
                 </Button>
