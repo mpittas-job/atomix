@@ -11,8 +11,13 @@ import {
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { IoIosPause, IoIosPlay } from "react-icons/io";
+
 import { NAV_CATEGORIES, SECTIONS } from "./content/nav-categories";
-import { ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT } from "@/components/AdvSliderTooltip";
+import {
+  ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT,
+  ADV_SLIDER_STEP_ANIMATION_START_EVENT,
+} from "@/components/AdvSliderTooltip";
 
 function CarouselNavArrow({
   direction,
@@ -101,6 +106,15 @@ export default function AdvancedSliderPage() {
   const prevSectionIdForTabThumbRef = useRef<string | null>(null);
   const activeSlideId = activeSlide?.id ?? "";
   const [isAnimationComplete, setIsAnimationComplete] = useState(false);
+
+  const playProgressCircleRef = useRef<SVGCircleElement | null>(null);
+  const playProgressTweenRef = useRef<gsap.core.Tween | null>(null);
+  const playProgressTotalMsRef = useRef<number | null>(null);
+
+  const PLAY_PROGRESS_AUTOPLAY_WAIT_MS = 3000;
+  const PLAY_PROGRESS_RADIUS = 18;
+  const PLAY_PROGRESS_CIRC = 2 * Math.PI * PLAY_PROGRESS_RADIUS;
+  const PLAY_PROGRESS_STROKE_WIDTH = 2;
 
   useGSAP(
     () => {
@@ -278,6 +292,19 @@ export default function AdvancedSliderPage() {
   }, [activeSlideId]);
 
   useEffect(() => {
+    const circle = playProgressCircleRef.current;
+    if (!circle) return;
+    playProgressTweenRef.current?.kill();
+    playProgressTweenRef.current = null;
+    playProgressTotalMsRef.current = null;
+    // Use direct SVG presentation attributes for widest compatibility.
+    gsap.set(circle, {
+      strokeDasharray: PLAY_PROGRESS_CIRC,
+      strokeDashoffset: PLAY_PROGRESS_CIRC,
+    });
+  }, [activeSlideId, PLAY_PROGRESS_CIRC]);
+
+  useEffect(() => {
     const onDone = (e: Event) => {
       const ev = e as CustomEvent<{ slideId?: string }>;
       const slideIdFromEvent = ev?.detail?.slideId;
@@ -288,8 +315,54 @@ export default function AdvancedSliderPage() {
 
     window.addEventListener(ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT, onDone);
     return () =>
-      window.removeEventListener(ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT, onDone);
+      window.removeEventListener(
+        ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT,
+        onDone,
+      );
   }, [activeSlideId]);
+
+  useEffect(() => {
+    const onStart = (e: Event) => {
+      const ev = e as CustomEvent<{ slideId?: string; durationMs?: number }>;
+      const slideIdFromEvent = ev?.detail?.slideId;
+      const durationMs = ev?.detail?.durationMs;
+      if (!slideIdFromEvent || durationMs == null) return;
+      if (slideIdFromEvent !== activeSlideId) return;
+
+      const circle = playProgressCircleRef.current;
+      if (!circle) return;
+
+      const totalMs = Math.max(0, durationMs + PLAY_PROGRESS_AUTOPLAY_WAIT_MS);
+      playProgressTotalMsRef.current = totalMs;
+
+      playProgressTweenRef.current?.kill();
+      gsap.set(circle, {
+        strokeDasharray: PLAY_PROGRESS_CIRC,
+        strokeDashoffset: PLAY_PROGRESS_CIRC,
+      });
+
+      const tween = gsap.to(circle, {
+        strokeDashoffset: 0,
+        duration: totalMs / 1000,
+        ease: "none",
+        overwrite: "auto",
+      });
+
+      if (!isPlaying) tween.pause();
+      playProgressTweenRef.current = tween;
+    };
+
+    window.addEventListener(ADV_SLIDER_STEP_ANIMATION_START_EVENT, onStart);
+    return () =>
+      window.removeEventListener(ADV_SLIDER_STEP_ANIMATION_START_EVENT, onStart);
+  }, [activeSlideId, isPlaying, PLAY_PROGRESS_CIRC]);
+
+  useEffect(() => {
+    const tween = playProgressTweenRef.current;
+    if (!tween) return;
+    if (isPlaying) tween.resume();
+    else tween.pause();
+  }, [isPlaying]);
 
   useEffect(() => {
     if (!isPlaying) return;
@@ -421,9 +494,40 @@ export default function AdvancedSliderPage() {
             type="button"
             onClick={() => setIsPlaying((v) => !v)}
             aria-pressed={!isPlaying ? "true" : "false"}
-            className="absolute right-2 top-2 z-10"
+            aria-label={isPlaying ? "Pause" : "Play"}
+            className="absolute right-2 top-2 z-10 grid size-11 place-items-center rounded-full bg-white text-[#011F27] shadow-sm shadow-slate-900/15 ring-1 ring-black/5 transition-transform active:scale-[0.98]"
           >
-            {isPlaying ? "Pause" : "Play"}
+            <svg
+              className="pointer-events-none absolute inset-0"
+              viewBox="0 0 44 44"
+              aria-hidden
+            >
+              <circle
+                cx="22"
+                cy="22"
+                r={PLAY_PROGRESS_RADIUS}
+                fill="none"
+                stroke="rgba(1,31,39,0.12)"
+                strokeWidth={PLAY_PROGRESS_STROKE_WIDTH}
+              />
+              <circle
+                ref={playProgressCircleRef}
+                cx="22"
+                cy="22"
+                r={PLAY_PROGRESS_RADIUS}
+                fill="none"
+                stroke="#499DB8"
+                strokeWidth={PLAY_PROGRESS_STROKE_WIDTH}
+                strokeLinecap="round"
+                transform="rotate(-90 22 22)"
+                style={{ willChange: "stroke-dashoffset" }}
+              />
+            </svg>
+            {isPlaying ? (
+              <IoIosPause className="size-6" aria-hidden />
+            ) : (
+              <IoIosPlay className="size-6 translate-x-[1px]" aria-hidden />
+            )}
           </button>
 
           <CarouselNavArrow

@@ -28,6 +28,9 @@ const TOOLTIP_PANEL_DURATION = 0.6;
 export const ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT =
   "adv-slider-step-animation-complete";
 
+export const ADV_SLIDER_STEP_ANIMATION_START_EVENT =
+  "adv-slider-step-animation-start";
+
 export const ADV_SLIDER_TOOLTIP_ATTR = "data-adv-slider-tooltip";
 
 export type AdvSliderTooltipIcon = ComponentType<
@@ -225,6 +228,20 @@ export default function AdvSliderTooltip({
             },
             ">",
           );
+
+        // Let the parent slider know how long this step’s animation takes
+        // (so it can sync UI like the play/pause progress ring).
+        const slideIdForStart = findActiveSlideId(root);
+        if (slideIdForStart && typeof window !== "undefined") {
+          window.dispatchEvent(
+            new CustomEvent(ADV_SLIDER_STEP_ANIMATION_START_EVENT, {
+              detail: {
+                slideId: slideIdForStart,
+                durationMs: Math.round(tl.duration() * 1000),
+              },
+            }),
+          );
+        }
 
         tl.eventCallback("onComplete", () => {
           const slideId = findActiveSlideId(root);
