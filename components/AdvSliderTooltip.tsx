@@ -99,7 +99,9 @@ export default function AdvSliderTooltip({
 
       const slideRoot = findSlideRoot(root);
       const heroOverlays = slideRoot
-        ? Array.from(slideRoot.querySelectorAll<HTMLElement>(".main-img-overlay"))
+        ? Array.from(
+            slideRoot.querySelectorAll<HTMLElement>(".main-img-overlay"),
+          )
         : [];
       const overlayImages = slideRoot
         ? Array.from(
@@ -150,7 +152,8 @@ export default function AdvSliderTooltip({
           for (const [idx, el] of heroOverlays.entries()) {
             const position =
               idx === 0
-                ? ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION + HERO_OVERLAY_EXTRA_DELAY
+                ? ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION +
+                  HERO_OVERLAY_EXTRA_DELAY
                 : `>+${HERO_OVERLAY_GAP}`;
             tl.to(
               el,
@@ -170,7 +173,8 @@ export default function AdvSliderTooltip({
             if (idx === 0) {
               position = heroOverlays.length
                 ? `>+${OVERLAY_IMAGE_GAP}`
-                : ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION + HERO_OVERLAY_EXTRA_DELAY;
+                : ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION +
+                  HERO_OVERLAY_EXTRA_DELAY;
             } else {
               position = `>+${OVERLAY_IMAGE_GAP}`;
             }
@@ -317,7 +321,7 @@ export default function AdvSliderTooltip({
       </div>
       <div
         ref={panelRef}
-        className="flex w-full min-w-[800px] items-start gap-3 rounded-2xl px-4 py-3 text-left bg-[#EAEFF1] p-5 ring-1 ring-[#fff] shadow-[inset_0_1px_20px_rgba(255,255,255,0.65)] backdrop-blur-md relative overflow-hidden opacity-0"
+        className="flex w-full min-w-[800px] items-start gap-3 rounded-2xl px-4 py-3 text-left bg-[#EAEFF1]/30 p-5 ring-1 ring-[#fff] shadow-[inset_0_1px_20px_rgba(255,255,255,0.65)] backdrop-blur-md relative overflow-hidden opacity-0"
       >
         <Icon
           className="mt-0.5 size-5 shrink-0 relative z-1"
