@@ -114,6 +114,10 @@ export default function AdvSliderTooltip({
         if (heroOverlays.length) gsap.set(heroOverlays, { autoAlpha: 1 });
         if (overlayImages.length) {
           gsap.set(overlayImages, { autoAlpha: 1 });
+          for (const el of overlayImages) {
+            const img = el.querySelector("img");
+            if (img) gsap.set(img, { scale: 1 });
+          }
         }
         gsap.set(dot, { autoAlpha: 1, scale: 1 });
         gsap.set(line, { scaleY: 1, transformOrigin: "top center" });
@@ -128,12 +132,16 @@ export default function AdvSliderTooltip({
         if (heroOverlays.length) gsap.set(heroOverlays, { autoAlpha: 0 });
         if (overlayImages.length) {
           gsap.set(overlayImages, { autoAlpha: 0 });
+          for (const el of overlayImages) {
+            const img = el.querySelector("img");
+            if (img) gsap.set(img, { scale: 0.92, transformOrigin: "50% 50%" });
+          }
         }
         gsap.set(dot, { autoAlpha: 0, scale: 0 });
         gsap.set(line, { scaleY: 0, transformOrigin: "top center" });
         gsap.set(panel, { autoAlpha: 0, y: 10 });
 
-        const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
         if (heroOverlays.length) {
           for (const [idx, el] of heroOverlays.entries()) {
@@ -146,7 +154,7 @@ export default function AdvSliderTooltip({
               {
                 autoAlpha: 1,
                 duration: HERO_OVERLAY_FADE_DURATION,
-                ease: "power2.out",
+                ease: "power3.out",
               },
               position,
             );
@@ -168,10 +176,23 @@ export default function AdvSliderTooltip({
               {
                 autoAlpha: 1,
                 duration: OVERLAY_IMAGE_DURATION,
-                ease: "power2.out",
+                ease: "power3.out",
               },
               position,
             );
+
+            const img = el.querySelector("img");
+            if (img) {
+              tl.to(
+                img,
+                {
+                  scale: 1,
+                  duration: OVERLAY_IMAGE_DURATION,
+                  ease: "back.out(1.6)",
+                },
+                "<",
+              );
+            }
           }
         }
 
@@ -190,7 +211,7 @@ export default function AdvSliderTooltip({
             {
               scaleY: 1,
               duration: TOOLTIP_LINE_DURATION,
-              ease: "power2.inOut",
+              ease: "power3.inOut",
             },
             ">",
           )
@@ -200,7 +221,7 @@ export default function AdvSliderTooltip({
               autoAlpha: 1,
               y: 0,
               duration: TOOLTIP_PANEL_DURATION,
-              ease: "power2.out",
+              ease: "power3.out",
             },
             ">",
           );

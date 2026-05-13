@@ -80,15 +80,17 @@ export default function AdvSliderOverlayImage({
     () => {
       const el = wrapRef.current;
       if (!el) return;
+      const img = el.querySelector<HTMLImageElement>("img");
 
       const prefersReduced =
         typeof window !== "undefined" &&
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      gsap.killTweensOf(el);
+      gsap.killTweensOf([el, img].filter(Boolean));
 
       if (prefersReduced) {
         gsap.set(el, { autoAlpha: 1 });
+        if (img) gsap.set(img, { scale: 1 });
         return;
       }
 
@@ -99,10 +101,15 @@ export default function AdvSliderOverlayImage({
       const hasTooltip = !!parent?.querySelector(`[${ADV_SLIDER_TOOLTIP_ATTR}]`);
       if (hasTooltip) {
         gsap.set(el, { autoAlpha: 0 });
+        if (img) gsap.set(img, { scale: 1 });
         return;
       }
 
       const delay = afterMainDuration + enterDelay;
+
+      if (img) {
+        gsap.set(img, { transformOrigin: "50% 50%", willChange: "transform" });
+      }
 
       gsap.fromTo(
         el,
@@ -110,10 +117,23 @@ export default function AdvSliderOverlayImage({
         {
           autoAlpha: 1,
           duration: 1.35,
-          ease: "power2.out",
+          ease: "power3.out",
           delay,
         },
       );
+
+      if (img) {
+        gsap.fromTo(
+          img,
+          { scale: 0.92 },
+          {
+            scale: 1,
+            duration: 1.35,
+            ease: "back.out(1.6)",
+            delay,
+          },
+        );
+      }
     },
     {
       dependencies: [srcKey, enterDelay, afterMainDuration],

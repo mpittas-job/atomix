@@ -89,7 +89,7 @@ export default function AdvSliderMainImage({
           autoAlpha: 1,
           scale: 1,
           duration: ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION,
-          ease: "power2.out",
+          ease: "power3.out",
           delay: ADV_SLIDER_STEP_ENTER_DELAY,
         },
       );
