@@ -14,6 +14,8 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { IoIosPause, IoIosPlay } from "react-icons/io";
 import Image from "next/image";
 import SoftAurora from "@/components/backgrounds/SoftAurora";
+import DefCta from "@/components/DefCta";
+import Footer from "@/components/Footer";
 import Header from "@/components/header";
 import { Button } from "@/components/ui";
 import DefHeading from "@/components/typo/DefHeading";
@@ -480,253 +482,295 @@ export default function AdvancedSliderPage() {
         </div>
       </div>
 
-      <section aria-label="The Atomix Journey" className="px-6 py-16 md:py-24">
-        <div className="mx-auto max-w-[1240px]">
-          <DefHeading
-            showBadge={false}
-            badgeText=""
-            title="The Atomix Journey"
-            description={
-              <>
-                Real-time data captured at every stage — powering faster
-                decisions, structured collaboration, and continuous loan
-                management beyond completion.
-              </>
-            }
-            theme="dark"
-            className="max-w-5xl"
-          />
-          <div className="mt-12 flex justify-center md:mt-16">
-            <Image
-              src="/advanced-slider/flow-chart.png"
-              alt="The Atomix Journey"
-              width={1200}
-              height={527}
-              sizes="(max-width: 1280px) min(100vw - 48px, 1152px), 1152px"
-              className="h-auto w-full max-w-6xl rounded-2xl object-contain"
-              quality={100}
-              priority
-              unoptimized
-            />
-          </div>
-        </div>
-      </section>
-
-      <div className="relative min-h-screen">
-        <nav
-          aria-label="Origination and dashboards"
-          className="z-1 absolute left-6 top-6 flex max-w-[220px] flex-col gap-5 font-sans text-sm leading-[1.45]"
-        >
-          {NAV_CATEGORIES.map((category) => {
-            const containsActiveSection = category.sections.some(
-              (s) => s.id === activeSectionId,
-            );
-            return (
-              <div key={category.id} className="flex flex-col gap-2.5">
-                <div
-                  className={`text-[11px] font-semibold uppercase tracking-wide ${
-                    containsActiveSection ? "text-[#011F27]" : "text-[#5F7378]"
-                  }`}
-                >
-                  {category.label}
-                </div>
-                <ul className="m-0 flex list-none flex-col gap-3 p-0">
-                  {category.sections.map((section) => {
-                    const isActive = section.id === activeSectionId;
-                    return (
-                      <li key={section.id} className="text-sm">
-                        <a
-                          href={`#${section.id}`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setActiveSectionId(section.id);
-                            setActiveTabId(section.tabs[0]?.id ?? "");
-                            setActiveSlideIndex(0);
-                            if (typeof window !== "undefined") {
-                              window.history.replaceState(
-                                null,
-                                "",
-                                `#${section.id}`,
-                              );
-                            }
-                          }}
-                          aria-current={isActive ? "page" : undefined}
-                          className={`no-underline transition-colors duration-150 ${
-                            isActive
-                              ? "font-semibold text-[#499DB8]"
-                              : "font-medium text-[#5F7378] hover:text-[#011F27]"
-                          }`}
-                        >
-                          {section.navLabel}
-                        </a>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            );
-          })}
-        </nav>
-
-        <div className="mx-auto max-w-[1240px] p-6 flex flex-col gap-10 relative z-1">
-          <h1 className="text-[40px] font-semibold text-center">
-            {activeSection?.title}
-          </h1>
-
-          {showReferralTabChrome ? (
-            <div
-              ref={tabListRef}
-              role="tablist"
-              aria-label="Tabs"
-              className="relative flex flex-wrap items-center rounded-full bg-[#ECF0F2] p-1 border border-white text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]"
+      <div className="relative w-full">
+        <div className="pointer-events-none absolute inset-y-0 top-10 bottom-15 left-10 z-30 w-[220px] max-w-[min(220px,calc(100vw-3rem))]">
+          <div className="pointer-events-auto sticky top-28 lg:top-32">
+            <nav
+              aria-label="Origination and dashboards"
+              className="flex w-full flex-col gap-5 font-sans text-sm leading-[1.45]"
             >
-              <div
-                ref={tabThumbRef}
-                aria-hidden
-                className="pointer-events-none absolute top-1 bottom-1 left-0 z-0 rounded-full bg-white shadow-sm shadow-slate-900/10 will-change-[transform,width]"
-              />
-              {tabs.map((tab, tabIndex) => {
-                const isActive = tab.id === derivedActiveTabId;
-                const prevTab = tabIndex > 0 ? tabs[tabIndex - 1] : null;
-                const prevIsActive =
-                  !!prevTab && prevTab.id === derivedActiveTabId;
-                const showLeftSeparator =
-                  tabIndex > 0 && !isActive && !prevIsActive;
+              <a
+                href="#atomix-journey-flow"
+                className="no-underline text-sm font-medium text-[#5F7378] transition-colors duration-150 hover:text-[#011F27]"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .getElementById("atomix-journey-flow")
+                    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+                  if (typeof window !== "undefined") {
+                    window.history.replaceState(
+                      null,
+                      "",
+                      "#atomix-journey-flow",
+                    );
+                  }
+                }}
+              >
+                The Atomix Journey
+              </a>
+              {NAV_CATEGORIES.map((category) => {
+                const containsActiveSection = category.sections.some(
+                  (s) => s.id === activeSectionId,
+                );
                 return (
-                  <button
-                    key={tab.id}
-                    ref={(el) => {
-                      tabButtonRefs.current[tabIndex] = el;
-                    }}
-                    type="button"
-                    role="tab"
-                    aria-selected={isActive}
-                    onClick={() => setActiveTabId(tab.id)}
-                    onMouseDown={() => setActiveSlideIndex(0)}
-                    className={[
-                      "relative z-[1] cursor-pointer py-2 px-4 leading-tight whitespace-nowrap flex-1 font-semibold text-[14px] bg-transparent",
-                      showLeftSeparator
-                        ? "before:pointer-events-none before:absolute before:left-0 before:top-1/2 before:z-10 before:h-[15px] before:w-px before:-translate-y-1/2 before:bg-slate-300/80 before:content-['']"
-                        : "",
-                      isActive
-                        ? "text-slate-900"
-                        : "rounded-none text-[#617379]",
-                    ]
-                      .filter(Boolean)
-                      .join(" ")}
-                  >
-                    {tab.label}
-                  </button>
+                  <div key={category.id} className="flex flex-col gap-2.5">
+                    <div
+                      className={`text-[11px] font-semibold uppercase tracking-wide ${
+                        containsActiveSection
+                          ? "text-[#011F27]"
+                          : "text-[#5F7378]"
+                      }`}
+                    >
+                      {category.label}
+                    </div>
+                    <ul className="m-0 flex list-none flex-col gap-3 p-0">
+                      {category.sections.map((section) => {
+                        const isActive = section.id === activeSectionId;
+                        return (
+                          <li key={section.id} className="text-sm">
+                            <a
+                              href={`#${section.id}`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setActiveSectionId(section.id);
+                                setActiveTabId(section.tabs[0]?.id ?? "");
+                                setActiveSlideIndex(0);
+                                document
+                                  .getElementById("advanced-slider")
+                                  ?.scrollIntoView({
+                                    behavior: "smooth",
+                                    block: "start",
+                                  });
+                                if (typeof window !== "undefined") {
+                                  window.history.replaceState(
+                                    null,
+                                    "",
+                                    `#${section.id}`,
+                                  );
+                                }
+                              }}
+                              aria-current={isActive ? "page" : undefined}
+                              className={`no-underline transition-colors duration-150 ${
+                                isActive
+                                  ? "font-semibold text-[#499DB8]"
+                                  : "font-medium text-[#5F7378] hover:text-[#011F27]"
+                              }`}
+                            >
+                              {section.navLabel}
+                            </a>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
                 );
               })}
-            </div>
-          ) : null}
+            </nav>
+          </div>
+        </div>
 
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setIsPlaying((v) => !v)}
-              aria-pressed={!isPlaying ? "true" : "false"}
-              aria-label={isPlaying ? "Pause" : "Play"}
-              className="absolute right-2 top-2 z-10 grid size-11 place-items-center rounded-full bg-white text-[#011F27] shadow-sm shadow-slate-900/15 ring-1 ring-black/5 transition-transform active:scale-[0.98]"
-            >
-              <svg
-                className="pointer-events-none absolute inset-0 transition-opacity duration-200"
-                style={{ opacity: isPlaying ? 1 : 0 }}
-                viewBox="0 0 44 44"
-                aria-hidden
-              >
-                <circle
-                  cx="22"
-                  cy="22"
-                  r={PLAY_PROGRESS_RADIUS}
-                  fill="none"
-                  stroke="rgba(1,31,39,0.12)"
-                  strokeWidth={PLAY_PROGRESS_STROKE_WIDTH}
-                />
-                <circle
-                  ref={playProgressCircleRef}
-                  cx="22"
-                  cy="22"
-                  r={PLAY_PROGRESS_RADIUS}
-                  fill="none"
-                  stroke="#499DB8"
-                  strokeWidth={PLAY_PROGRESS_STROKE_WIDTH}
-                  strokeLinecap="round"
-                  transform="rotate(-90 22 22)"
-                  style={{ willChange: "stroke-dashoffset" }}
-                />
-              </svg>
-              {isPlaying ? (
-                <IoIosPause className="size-6" aria-hidden />
-              ) : (
-                <IoIosPlay className="size-6 translate-x-[1px]" aria-hidden />
-              )}
-            </button>
-
-            <CarouselNavArrow
-              direction="prev"
-              onClick={goPrev}
-              disabled={isAtVeryStart}
-              positionClassName="right-[calc(100%+22px)]"
+        <section
+          id="atomix-journey-flow"
+          aria-label="The Atomix Journey"
+          className="w-full scroll-mt-28 py-16 md:scroll-mt-32 md:py-24"
+        >
+          <div className="mx-auto w-full max-w-[1240px] px-6">
+            <DefHeading
+              showBadge={false}
+              badgeText=""
+              title="The Atomix Journey"
+              description={
+                <>
+                  Real-time data captured at every stage — powering faster
+                  decisions, structured collaboration, and continuous loan
+                  management beyond completion.
+                </>
+              }
+              theme="dark"
+              className="max-w-5xl"
             />
-
-            <div
-              aria-label="Slide content"
-              className="flex min-h-[600px] w-full items-end justify-center rounded-xl bg-[#499DB8] px-22 relative"
-            >
-              <div
-                ref={slideContentRef}
-                className="w-full"
-                data-adv-slide-id={activeSlideId}
-              >
-                {activeSlide?.content ?? null}
-              </div>
+            <div className="mt-12 flex justify-center md:mt-16">
+              <Image
+                src="/advanced-slider/flow-chart.png"
+                alt="The Atomix Journey"
+                width={1200}
+                height={527}
+                sizes="(max-width: 1280px) min(100vw - 48px, 1152px), 1152px"
+                className="h-auto w-full max-w-6xl rounded-2xl object-contain"
+                quality={100}
+                priority
+                unoptimized
+              />
             </div>
+          </div>
+        </section>
+
+        <section
+          id="advanced-slider"
+          aria-label="Loan journey slider"
+          className="relative min-h-screen w-full scroll-mt-28 overflow-x-clip md:scroll-mt-32"
+        >
+          <div className="pointer-events-none absolute top-0 bottom-0 left-1/2 z-0 w-screen -translate-x-1/2">
+            <SoftAurora
+              speed={1.3}
+              scale={1.2}
+              brightness={0.55}
+              color1="#2d7a94ff"
+              color2="#499db8ff"
+              noiseFrequency={1}
+              noiseAmplitude={3.5}
+              bandHeight={0.2}
+              bandSpread={1}
+              octaveDecay={0.12}
+              layerOffset={0.5}
+              colorSpeed={1}
+              enableMouseInteraction={false}
+              mouseInfluence={0.2}
+            />
+          </div>
+          <div className="relative z-10 mx-auto flex w-full max-w-[1240px] flex-col gap-4 px-6 pb-24 pt-2">
+            <h1 className="text-[40px] font-semibold text-center">
+              {activeSection?.title}
+            </h1>
 
             {showReferralTabChrome ? (
               <div
-                aria-label="Tab counter"
-                className="mt-2 text-[10px] opacity-50 flex  mt-5"
+                ref={tabListRef}
+                role="tablist"
+                aria-label="Tabs"
+                className="relative flex flex-wrap items-center rounded-full bg-[#ECF0F2] p-1 mb-5 border border-white text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]"
               >
-                {(() => {
-                  const totalTabs = tabs.length;
-                  const currentTab = totalTabs === 0 ? 0 : activeTabIndex + 1;
-                  return `${currentTab}/${totalTabs}`;
-                })()}
+                <div
+                  ref={tabThumbRef}
+                  aria-hidden
+                  className="pointer-events-none absolute top-1 bottom-1 left-0 z-0 rounded-full bg-white shadow-sm shadow-slate-900/10 will-change-[transform,width]"
+                />
+                {tabs.map((tab, tabIndex) => {
+                  const isActive = tab.id === derivedActiveTabId;
+                  const prevTab = tabIndex > 0 ? tabs[tabIndex - 1] : null;
+                  const prevIsActive =
+                    !!prevTab && prevTab.id === derivedActiveTabId;
+                  const showLeftSeparator =
+                    tabIndex > 0 && !isActive && !prevIsActive;
+                  return (
+                    <button
+                      key={tab.id}
+                      ref={(el) => {
+                        tabButtonRefs.current[tabIndex] = el;
+                      }}
+                      type="button"
+                      role="tab"
+                      aria-selected={isActive}
+                      onClick={() => setActiveTabId(tab.id)}
+                      onMouseDown={() => setActiveSlideIndex(0)}
+                      className={[
+                        "relative z-[1] cursor-pointer py-2 px-4 leading-tight whitespace-nowrap flex-1 font-semibold text-[14px] bg-transparent",
+                        showLeftSeparator
+                          ? "before:pointer-events-none before:absolute before:left-0 before:top-1/2 before:z-10 before:h-[15px] before:w-px before:-translate-y-1/2 before:bg-slate-300/80 before:content-['']"
+                          : "",
+                        isActive
+                          ? "text-slate-900"
+                          : "rounded-none text-[#617379]",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                    >
+                      {tab.label}
+                    </button>
+                  );
+                })}
               </div>
             ) : null}
 
-            <CarouselNavArrow
-              direction="next"
-              onClick={goNext}
-              disabled={isAtVeryEnd}
-              positionClassName="left-[calc(100%+22px)]"
-            />
-          </div>
-        </div>
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsPlaying((v) => !v)}
+                aria-pressed={!isPlaying ? "true" : "false"}
+                aria-label={isPlaying ? "Pause" : "Play"}
+                className="absolute right-2 top-2 z-10 grid size-11 place-items-center rounded-full bg-white text-[#011F27] shadow-sm shadow-slate-900/15 ring-1 ring-black/5 transition-transform active:scale-[0.98]"
+              >
+                <svg
+                  className="pointer-events-none absolute inset-0 transition-opacity duration-200"
+                  style={{ opacity: isPlaying ? 1 : 0 }}
+                  viewBox="0 0 44 44"
+                  aria-hidden
+                >
+                  <circle
+                    cx="22"
+                    cy="22"
+                    r={PLAY_PROGRESS_RADIUS}
+                    fill="none"
+                    stroke="rgba(1,31,39,0.12)"
+                    strokeWidth={PLAY_PROGRESS_STROKE_WIDTH}
+                  />
+                  <circle
+                    ref={playProgressCircleRef}
+                    cx="22"
+                    cy="22"
+                    r={PLAY_PROGRESS_RADIUS}
+                    fill="none"
+                    stroke="#499DB8"
+                    strokeWidth={PLAY_PROGRESS_STROKE_WIDTH}
+                    strokeLinecap="round"
+                    transform="rotate(-90 22 22)"
+                    style={{ willChange: "stroke-dashoffset" }}
+                  />
+                </svg>
+                {isPlaying ? (
+                  <IoIosPause className="size-6" aria-hidden />
+                ) : (
+                  <IoIosPlay className="size-6 translate-x-[1px]" aria-hidden />
+                )}
+              </button>
 
-        <div className="absolute left-0 h-full w-full -bottom-20 pointer-events-none">
-          <SoftAurora
-            speed={1.3}
-            scale={1.2}
-            brightness={0.55}
-            color1="#2d7a94ff"
-            color2="#499db8ff"
-            noiseFrequency={1}
-            noiseAmplitude={3.5}
-            bandHeight={0.2}
-            bandSpread={1}
-            octaveDecay={0.12}
-            layerOffset={0.5}
-            colorSpeed={1}
-            enableMouseInteraction={false}
-            mouseInfluence={0.2}
-          />
-        </div>
+              <CarouselNavArrow
+                direction="prev"
+                onClick={goPrev}
+                disabled={isAtVeryStart}
+                positionClassName="right-[calc(100%+22px)]"
+              />
+
+              <div
+                aria-label="Slide content"
+                className="flex min-h-[600px] w-full items-end justify-center rounded-xl bg-[#499DB8] px-22 relative"
+              >
+                <div
+                  ref={slideContentRef}
+                  className="w-full"
+                  data-adv-slide-id={activeSlideId}
+                >
+                  {activeSlide?.content ?? null}
+                </div>
+              </div>
+
+              {showReferralTabChrome ? (
+                <div
+                  aria-label="Tab counter"
+                  className="mt-2 text-[10px] opacity-50 flex  mt-5"
+                >
+                  {(() => {
+                    const totalTabs = tabs.length;
+                    const currentTab = totalTabs === 0 ? 0 : activeTabIndex + 1;
+                    return `${currentTab}/${totalTabs}`;
+                  })()}
+                </div>
+              ) : null}
+
+              <CarouselNavArrow
+                direction="next"
+                onClick={goNext}
+                disabled={isAtVeryEnd}
+                positionClassName="left-[calc(100%+22px)]"
+              />
+            </div>
+          </div>
+        </section>
       </div>
 
-      <div className="bg-[#EBEFF2] h-[1000px] w-full"></div>
+      <DefCta title="Build the Future of Asset-Backed Lending" />
+
+      <Footer />
     </main>
   );
 }

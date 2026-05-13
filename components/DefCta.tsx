@@ -39,48 +39,50 @@ const DefCta: React.FC<DefCtaProps> = ({ title }) => {
   }, []);
 
   return (
-    <div
-      ref={sectionRef}
-      className="flex items-center gap-2 bg-gradient-to-r from-[#004151] to-[#06677E] py-30 relative overflow-hidden"
-    >
-      <div className="max-w-[1260px] w-full mx-auto px-4">
-        <div className="max-w-xl flex flex-col items-start gap-y-10">
-          <SplitText
-            text={title}
-            tag="h2"
-            className="text-5xl font-semibold text-white leading-tight"
-            splitType="words"
-            delay={30}
-            duration={0.6}
-            textAlign="left"
-          />
+    <div className="p-6">
+      <div
+        ref={sectionRef}
+        className="flex items-center gap-2 bg-gradient-to-r from-[#004151] to-[#06677E] py-30 relative overflow-hidden rounded-4xl"
+      >
+        <div className="max-w-[1260px] w-full mx-auto px-4">
+          <div className="max-w-xl flex flex-col items-start gap-y-10">
+            <SplitText
+              text={title}
+              tag="h2"
+              className="text-5xl font-semibold text-white leading-tight"
+              splitType="words"
+              delay={30}
+              duration={0.6}
+              textAlign="left"
+            />
 
-          <DefButton>Book a Demo</DefButton>
-        </div>
-      </div>
-
-      <div ref={imagesRef} className="absolute top-[10%] right-0 w-[40%]">
-        <div className="relative w-full">
-          <img
-            src="/dashboard/hero-desktop-img.svg"
-            alt="Atomix desktop dashboard preview"
-            className="w-full select-none"
-            style={{
-              objectFit: "contain",
-              paddingLeft: "12%",
-            }}
-          />
+            <DefButton>Book a Demo</DefButton>
+          </div>
         </div>
 
-        <div>
-          <img
-            src="/dashboard/hero-mobile-img.svg"
-            alt="Atomix mobile form preview"
-            className="absolute left-0 bottom-0 w-[22%] select-none"
-            style={{
-              objectFit: "contain",
-            }}
-          />
+        <div ref={imagesRef} className="absolute top-[10%] right-10 w-[40%]">
+          <div className="relative w-full">
+            <img
+              src="/dashboard/hero-desktop-img.svg"
+              alt="Atomix desktop dashboard preview"
+              className="w-full select-none"
+              style={{
+                objectFit: "contain",
+                paddingLeft: "12%",
+              }}
+            />
+          </div>
+
+          <div>
+            <img
+              src="/dashboard/hero-mobile-img.svg"
+              alt="Atomix mobile form preview"
+              className="absolute left-0 bottom-0 w-[22%] select-none"
+              style={{
+                objectFit: "contain",
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>
