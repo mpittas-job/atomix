@@ -354,7 +354,10 @@ export default function AdvancedSliderPage() {
 
     window.addEventListener(ADV_SLIDER_STEP_ANIMATION_START_EVENT, onStart);
     return () =>
-      window.removeEventListener(ADV_SLIDER_STEP_ANIMATION_START_EVENT, onStart);
+      window.removeEventListener(
+        ADV_SLIDER_STEP_ANIMATION_START_EVENT,
+        onStart,
+      );
   }, [activeSlideId, isPlaying, PLAY_PROGRESS_CIRC]);
 
   useEffect(() => {
@@ -498,7 +501,8 @@ export default function AdvancedSliderPage() {
             className="absolute right-2 top-2 z-10 grid size-11 place-items-center rounded-full bg-white text-[#011F27] shadow-sm shadow-slate-900/15 ring-1 ring-black/5 transition-transform active:scale-[0.98]"
           >
             <svg
-              className="pointer-events-none absolute inset-0"
+              className="pointer-events-none absolute inset-0 transition-opacity duration-200"
+              style={{ opacity: isPlaying ? 1 : 0 }}
               viewBox="0 0 44 44"
               aria-hidden
             >
