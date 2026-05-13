@@ -12,6 +12,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { NAV_CATEGORIES, SECTIONS } from "./content/nav-categories";
+import { ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT } from "@/components/AdvSliderTooltip";
 
 function CarouselNavArrow({
   direction,
@@ -99,6 +100,7 @@ export default function AdvancedSliderPage() {
   const tabButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const prevSectionIdForTabThumbRef = useRef<string | null>(null);
   const activeSlideId = activeSlide?.id ?? "";
+  const [isAnimationComplete, setIsAnimationComplete] = useState(false);
 
   useGSAP(
     () => {
@@ -272,15 +274,34 @@ export default function AdvancedSliderPage() {
   ]);
 
   useEffect(() => {
+    setIsAnimationComplete(false);
+  }, [activeSlideId]);
+
+  useEffect(() => {
+    const onDone = (e: Event) => {
+      const ev = e as CustomEvent<{ slideId?: string }>;
+      const slideIdFromEvent = ev?.detail?.slideId;
+      if (!slideIdFromEvent) return;
+      if (slideIdFromEvent !== activeSlideId) return;
+      setIsAnimationComplete(true);
+    };
+
+    window.addEventListener(ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT, onDone);
+    return () =>
+      window.removeEventListener(ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT, onDone);
+  }, [activeSlideId]);
+
+  useEffect(() => {
     if (!isPlaying) return;
     if (isAtVeryEnd) return;
+    if (!isAnimationComplete) return;
 
-    const id = window.setInterval(() => {
+    const id = window.setTimeout(() => {
       goNext();
     }, 3000);
 
-    return () => window.clearInterval(id);
-  }, [goNext, isAtVeryEnd, isPlaying]);
+    return () => window.clearTimeout(id);
+  }, [goNext, isAtVeryEnd, isPlaying, activeSlideId, isAnimationComplete]);
 
   useEffect(() => {
     if (isAtVeryEnd) setIsPlaying(false);
@@ -416,7 +437,11 @@ export default function AdvancedSliderPage() {
             aria-label="Slide content"
             className="flex min-h-[600px] w-full items-end justify-center rounded-xl bg-[#499DB8] px-22 relative"
           >
-            <div ref={slideContentRef} className="w-full">
+            <div
+              ref={slideContentRef}
+              className="w-full"
+              data-adv-slide-id={activeSlideId}
+            >
               {activeSlide?.content ?? null}
             </div>
           </div>

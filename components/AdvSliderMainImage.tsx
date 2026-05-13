@@ -8,14 +8,17 @@ import { useGSAP } from "@gsap/react";
 gsap.registerPlugin(useGSAP);
 
 /** GSAP entrance `duration` (seconds) for the hero image. */
-export const ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION = 1;
+export const ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION = 1.2;
+
+/** Global delay before a step’s entrance animation starts (seconds). */
+export const ADV_SLIDER_STEP_ENTER_DELAY = 0;
 
 /**
  * Default delay before overlay entrance when both mount together (seconds).
  * Slightly before the hero finishes so the gap between hero and overlay feels tight.
  */
 export const ADV_SLIDER_DEFAULT_OVERLAY_AFTER_MAIN_AT =
-  ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION * 0.4;
+  ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION * 0.55;
 
 /** Present on the hero wrapper so `AdvSliderTooltip` can wait for the underlying `<img>` load. */
 export const ADV_SLIDER_MAIN_IMAGE_ATTR = "data-adv-slider-main-image";
@@ -87,6 +90,7 @@ export default function AdvSliderMainImage({
           scale: 1,
           duration: ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION,
           ease: "power2.out",
+          delay: ADV_SLIDER_STEP_ENTER_DELAY,
         },
       );
     },

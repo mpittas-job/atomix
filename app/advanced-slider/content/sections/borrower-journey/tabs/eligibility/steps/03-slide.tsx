@@ -1,7 +1,7 @@
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
 import AdvSliderOverlayImage from "@/components/AdvSliderOverlayImage";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
-import { PiListChecksFill } from "react-icons/pi";
+import { FaEye } from "react-icons/fa";
 
 export default function EligibilitySlide03() {
   return (
@@ -31,7 +31,7 @@ export default function EligibilitySlide03() {
       />
 
       <AdvSliderTooltip
-        icon={PiListChecksFill}
+        icon={FaEye}
         title={
           <>
             <strong className="font-bold">Transparency:</strong> The platform

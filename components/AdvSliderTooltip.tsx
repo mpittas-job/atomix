@@ -4,9 +4,31 @@ import { useRef } from "react";
 import type { ComponentType, ReactNode, SVGProps } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { ADV_SLIDER_MAIN_IMAGE_ATTR } from "@/components/AdvSliderMainImage";
+import {
+  ADV_SLIDER_MAIN_IMAGE_ATTR,
+  ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION,
+} from "@/components/AdvSliderMainImage";
+import { ADV_SLIDER_OVERLAY_IMAGE_ATTR } from "@/components/AdvSliderOverlayImage";
 
 gsap.registerPlugin(useGSAP);
+
+const HERO_OVERLAY_EXTRA_DELAY = 0.6;
+const HERO_OVERLAY_FADE_DURATION = 0.8;
+const HERO_OVERLAY_GAP = 0.55;
+
+const OVERLAY_IMAGE_DURATION = 1.35;
+const OVERLAY_IMAGE_GAP = 0.65;
+
+const BEFORE_TOOLTIP_GAP = 0.75;
+
+const TOOLTIP_DOT_DURATION = 0.45;
+const TOOLTIP_LINE_DURATION = 0.6;
+const TOOLTIP_PANEL_DURATION = 0.6;
+
+export const ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT =
+  "adv-slider-step-animation-complete";
+
+export const ADV_SLIDER_TOOLTIP_ATTR = "data-adv-slider-tooltip";
 
 export type AdvSliderTooltipIcon = ComponentType<
   SVGProps<SVGSVGElement> & { className?: string }
@@ -38,6 +60,15 @@ function findHeroImg(tooltipRoot: HTMLElement): HTMLImageElement | null {
   return host?.querySelector("img") ?? null;
 }
 
+function findSlideRoot(tooltipRoot: HTMLElement): HTMLElement | null {
+  return tooltipRoot.parentElement ?? null;
+}
+
+function findActiveSlideId(tooltipRoot: HTMLElement): string | null {
+  const host = tooltipRoot.closest<HTMLElement>("[data-adv-slide-id]");
+  return host?.getAttribute("data-adv-slide-id") ?? null;
+}
+
 export default function AdvSliderTooltip({
   icon: Icon,
   title,
@@ -63,9 +94,27 @@ export default function AdvSliderTooltip({
         typeof window !== "undefined" &&
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      gsap.killTweensOf([dot, line, panel]);
+      const slideRoot = findSlideRoot(root);
+      const heroOverlays = slideRoot
+        ? Array.from(slideRoot.querySelectorAll<HTMLElement>(".main-img-overlay"))
+        : [];
+      const overlayImages = slideRoot
+        ? Array.from(
+            slideRoot.querySelectorAll<HTMLElement>(
+              `[${ADV_SLIDER_OVERLAY_IMAGE_ATTR}]`,
+            ),
+          )
+        : [];
+
+      gsap.killTweensOf(
+        [dot, line, panel, ...heroOverlays, ...overlayImages].filter(Boolean),
+      );
 
       if (prefersReduced) {
+        if (heroOverlays.length) gsap.set(heroOverlays, { autoAlpha: 1 });
+        if (overlayImages.length) {
+          gsap.set(overlayImages, { autoAlpha: 1 });
+        }
         gsap.set(dot, { autoAlpha: 1, scale: 1 });
         gsap.set(line, { scaleY: 1, transformOrigin: "top center" });
         gsap.set(panel, { autoAlpha: 1, y: 0 });
@@ -73,24 +122,74 @@ export default function AdvSliderTooltip({
       }
 
       const runIntro = () => {
-        gsap.killTweensOf([dot, line, panel]);
+        gsap.killTweensOf(
+          [dot, line, panel, ...heroOverlays, ...overlayImages].filter(Boolean),
+        );
+        if (heroOverlays.length) gsap.set(heroOverlays, { autoAlpha: 0 });
+        if (overlayImages.length) {
+          gsap.set(overlayImages, { autoAlpha: 0 });
+        }
         gsap.set(dot, { autoAlpha: 0, scale: 0 });
         gsap.set(line, { scaleY: 0, transformOrigin: "top center" });
         gsap.set(panel, { autoAlpha: 0, y: 10 });
 
         const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
 
-        tl.to(dot, {
-          autoAlpha: 1,
-          scale: 1,
-          duration: 0.32,
-          ease: "back.out(1.7)",
-        })
+        if (heroOverlays.length) {
+          for (const [idx, el] of heroOverlays.entries()) {
+            const position =
+              idx === 0
+                ? ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION + HERO_OVERLAY_EXTRA_DELAY
+                : `>+${HERO_OVERLAY_GAP}`;
+            tl.to(
+              el,
+              {
+                autoAlpha: 1,
+                duration: HERO_OVERLAY_FADE_DURATION,
+                ease: "power2.out",
+              },
+              position,
+            );
+          }
+        }
+
+        if (overlayImages.length) {
+          for (const [idx, el] of overlayImages.entries()) {
+            let position: string | number;
+            if (idx === 0) {
+              position = heroOverlays.length
+                ? `>+${OVERLAY_IMAGE_GAP}`
+                : ADV_SLIDER_MAIN_IMAGE_ENTER_DURATION + HERO_OVERLAY_EXTRA_DELAY;
+            } else {
+              position = `>+${OVERLAY_IMAGE_GAP}`;
+            }
+            tl.to(
+              el,
+              {
+                autoAlpha: 1,
+                duration: OVERLAY_IMAGE_DURATION,
+                ease: "power2.out",
+              },
+              position,
+            );
+          }
+        }
+
+        tl.to(
+          dot,
+          {
+            autoAlpha: 1,
+            scale: 1,
+            duration: TOOLTIP_DOT_DURATION,
+            ease: "back.out(1.7)",
+          },
+          `>+${BEFORE_TOOLTIP_GAP}`,
+        )
           .to(
             line,
             {
               scaleY: 1,
-              duration: 0.42,
+              duration: TOOLTIP_LINE_DURATION,
               ease: "power2.inOut",
             },
             ">",
@@ -100,11 +199,21 @@ export default function AdvSliderTooltip({
             {
               autoAlpha: 1,
               y: 0,
-              duration: 0.45,
+              duration: TOOLTIP_PANEL_DURATION,
               ease: "power2.out",
             },
             ">",
           );
+
+        tl.eventCallback("onComplete", () => {
+          const slideId = findActiveSlideId(root);
+          if (!slideId || typeof window === "undefined") return;
+          window.dispatchEvent(
+            new CustomEvent(ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT, {
+              detail: { slideId },
+            }),
+          );
+        });
       };
 
       const img = findHeroImg(root);
@@ -142,6 +251,7 @@ export default function AdvSliderTooltip({
     <div
       ref={rootRef}
       className={`flex flex-col absolute top-[calc(100%+20px)] left-[50%] translate-x-[-50%] ${className}`}
+      {...{ [ADV_SLIDER_TOOLTIP_ATTR]: "" }}
     >
       <div
         className={

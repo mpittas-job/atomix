@@ -5,8 +5,11 @@ import Image, { type ImageProps } from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ADV_SLIDER_DEFAULT_OVERLAY_AFTER_MAIN_AT } from "@/components/AdvSliderMainImage";
+import { ADV_SLIDER_TOOLTIP_ATTR } from "@/components/AdvSliderTooltip";
 
 gsap.registerPlugin(useGSAP);
+
+export const ADV_SLIDER_OVERLAY_IMAGE_ATTR = "data-adv-slider-overlay-image";
 
 const DEFAULT_BLUR_BACKDROP =
   "pointer-events-none absolute -inset-2.5 rounded-3xl bg-white/20 backdrop-blur-md";
@@ -85,7 +88,17 @@ export default function AdvSliderOverlayImage({
       gsap.killTweensOf(el);
 
       if (prefersReduced) {
-        gsap.set(el, { autoAlpha: 1, y: 0, scale: 1 });
+        gsap.set(el, { autoAlpha: 1 });
+        return;
+      }
+
+      // If the slide has an `AdvSliderTooltip`, it orchestrates the full
+      // entrance sequence (main image -> main-img-overlay layers -> overlay
+      // images -> tooltip). Stay hidden here so the tooltip timeline drives us.
+      const parent = el.parentElement;
+      const hasTooltip = !!parent?.querySelector(`[${ADV_SLIDER_TOOLTIP_ATTR}]`);
+      if (hasTooltip) {
+        gsap.set(el, { autoAlpha: 0 });
         return;
       }
 
@@ -93,12 +106,10 @@ export default function AdvSliderOverlayImage({
 
       gsap.fromTo(
         el,
-        { autoAlpha: 0, y: 14, scale: 0.99 },
+        { autoAlpha: 0 },
         {
           autoAlpha: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.7,
+          duration: 1.35,
           ease: "power2.out",
           delay,
         },
@@ -112,7 +123,12 @@ export default function AdvSliderOverlayImage({
   );
 
   return (
-    <div ref={wrapRef} className={className}>
+    <div
+      ref={wrapRef}
+      className={className}
+      style={{ willChange: "opacity", transform: "translateZ(0)" }}
+      {...{ [ADV_SLIDER_OVERLAY_IMAGE_ATTR]: "" }}
+    >
       <div className={blurBackdropClassName} aria-hidden />
       <Image
         src={src}

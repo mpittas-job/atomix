@@ -22,7 +22,7 @@ export default function SolicitorTasksSlide01() {
 
       <AdvSliderTooltip
         icon={RiUserSearchFill}
-        title="The selected solicitor receives an email invitation to join the loan process."
+        title="All solicitor interactions are tracked and managed on the platform."
         lineHeight={490}
         connectorLeft="77%"
       />

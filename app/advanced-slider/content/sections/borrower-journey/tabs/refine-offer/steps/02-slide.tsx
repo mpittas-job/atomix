@@ -7,7 +7,7 @@ export default function RefineOfferSlide02() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src={"/advanced-slider/section-1/tab-3/bj-tab3-step1-main.svg"}
+        src={"/advanced-slider/section-1/tab-3/bj-tab3-step1-main-2.svg"}
         alt={"Get started — welcome and account setup"}
       />
 
