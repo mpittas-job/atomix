@@ -14,10 +14,10 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { IoIosPause, IoIosPlay } from "react-icons/io";
 import Image from "next/image";
 import SoftAurora from "@/components/backgrounds/SoftAurora";
+import HeroAnimatedBg from "@/components/HeroAnimatedBg";
 import DefCta from "@/components/DefCta";
 import Footer from "@/components/Footer";
 import Header from "@/components/header";
-import { Button } from "@/components/ui";
 import DefHeading from "@/components/typo/DefHeading";
 
 import { NAV_CATEGORIES, SECTIONS } from "./content/nav-categories";
@@ -117,11 +117,6 @@ export default function AdvancedSliderPage() {
   const playProgressCircleRef = useRef<SVGCircleElement | null>(null);
   const playProgressTweenRef = useRef<gsap.core.Tween | null>(null);
   const playProgressTotalMsRef = useRef<number | null>(null);
-
-  const heroAnimScopeRef = useRef<HTMLDivElement | null>(null);
-  const heroTitleRef = useRef<HTMLHeadingElement | null>(null);
-  const heroDescRef = useRef<HTMLParagraphElement | null>(null);
-  const heroCtaRef = useRef<HTMLDivElement | null>(null);
 
   const PLAY_PROGRESS_AUTOPLAY_WAIT_MS = 3000;
   const PLAY_PROGRESS_RADIUS = 18;
@@ -395,91 +390,13 @@ export default function AdvancedSliderPage() {
     if (isAtVeryEnd) setIsPlaying(false);
   }, [isAtVeryEnd]);
 
-  useGSAP(
-    () => {
-      const title = heroTitleRef.current;
-      const desc = heroDescRef.current;
-      const cta = heroCtaRef.current;
-      if (!title || !desc || !cta) return;
-
-      const prefersReduced =
-        typeof window !== "undefined" &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-      gsap.killTweensOf([title, desc, cta]);
-
-      if (prefersReduced) {
-        gsap.set([title, desc, cta], { autoAlpha: 1, y: 0 });
-        return;
-      }
-
-      gsap.set([title, desc, cta], { autoAlpha: 0, y: -28 });
-
-      gsap
-        .timeline({ defaults: { ease: "power2.out" } })
-        .to(title, { autoAlpha: 1, y: 0, duration: 0.88 })
-        .to(desc, { autoAlpha: 1, y: 0, duration: 0.75 }, ">+=0.22")
-        .to(cta, { autoAlpha: 1, y: 0, duration: 0.68 }, ">+=0.22");
-    },
-    { scope: heroAnimScopeRef, revertOnUpdate: true },
-  );
-
   return (
     <main className="bg-[#EBEFF2] min-h-screen">
       <Header />
 
       {/* Fixed header does not consume layout height — reserve its space so hero sits below it */}
       <div className="pt-26.5">
-        <div className="p-6">
-          <div
-            aria-labelledby="advanced-slider-hero-title"
-            className="bg-[#004152] py-24 text-white rounded-4xl relative"
-          >
-            <div
-              ref={heroAnimScopeRef}
-              className="mx-auto flex w-full max-w-[1240px] flex-col items-center gap-6 text-center relative z-1"
-            >
-              <h1
-                ref={heroTitleRef}
-                id="advanced-slider-hero-title"
-                className="m-0 w-full max-w-[500px] text-balance text-[52px] font-semibold leading-16"
-              >
-                Atomix Loan Operating System
-              </h1>
-              <p
-                ref={heroDescRef}
-                className="m-0 w-full max-w-[36rem] text-[24px] text-white/70 font-normal"
-              >
-                Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem
-                ipsum dolor sit amet lorem ipsum.
-              </p>
-              <div ref={heroCtaRef}>
-                <Button variant="primary" type="button">
-                  Contact us
-                </Button>
-              </div>
-            </div>
-
-            <div className="absolute left-0 h-full w-full bottom-0 pointer-events-none">
-              <SoftAurora
-                speed={1.3}
-                scale={1.2}
-                brightness={0.55}
-                color1="#78cfe3"
-                color2="#87b9d4"
-                noiseFrequency={1}
-                noiseAmplitude={3.5}
-                bandHeight={0.2}
-                bandSpread={1.1}
-                octaveDecay={0.12}
-                layerOffset={0.5}
-                colorSpeed={1}
-                enableMouseInteraction={false}
-                mouseInfluence={0.2}
-              />
-            </div>
-          </div>
-        </div>
+        <HeroAnimatedBg />
       </div>
 
       <div className="relative w-full">
