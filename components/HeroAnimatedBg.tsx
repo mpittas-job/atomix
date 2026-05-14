@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Button } from "@/components/ui";
+import GridDistortion from "@/react-bits/GridDistortion";
 
 gsap.registerPlugin(useGSAP);
 
@@ -40,8 +41,7 @@ const tileRows = HERO_TILE_OPTIONS.rows;
 const TILE_COUNT = tileCols * tileRows;
 const TILE_COLOR_A = HERO_TILE_OPTIONS.gradient.from;
 const TILE_COLOR_B = HERO_TILE_OPTIONS.gradient.to;
-const GRADIENT_MOTION_SPEED =
-  HERO_TILE_OPTIONS.gradientMotion.speedMultiplier;
+const GRADIENT_MOTION_SPEED = HERO_TILE_OPTIONS.gradientMotion.speedMultiplier;
 
 function tileGradientCss(deg: number) {
   return `linear-gradient(${deg}deg, ${TILE_COLOR_A}, ${TILE_COLOR_B})`;
@@ -169,7 +169,7 @@ function TilePanel({
   );
 }
 
-export type HeroAnimatedBgTileDisplayMode = "drift" | "gradient";
+export type HeroAnimatedBgTileDisplayMode = "drift" | "gradient" | "static";
 
 export type HeroAnimatedBgProps = {
   /**
@@ -181,8 +181,20 @@ export type HeroAnimatedBgProps = {
    * `drift` — infinite mosaic scroll sideways (or per `HERO_TILE_OPTIONS.drift.direction`);
    * tile gradients stay fixed per cell.
    * `gradient` — rotating linear-gradient per tile; no mosaic drift.
+   * `static` — solid card background only; no tile layer or background motion.
    */
   tileDisplayMode?: HeroAnimatedBgTileDisplayMode;
+  /**
+   * Optional URL for the rounded hero card only (not the outer `p-6` wrapper).
+   * Renders as `background-size: cover` over the fallback `bg-[#004152]`, unless
+   * `heroCardGridDistortion` is true (then this URL is passed to `GridDistortion`).
+   */
+  heroCardBackgroundImage?: string;
+  /**
+   * When true with `tileDisplayMode="static"` and `heroCardBackgroundImage`, the
+   * card uses `GridDistortion` as a full-bleed background instead of a CSS image.
+   */
+  heroCardGridDistortion?: boolean;
 };
 
 const DEFAULT_HERO_TITLE_ID = "advanced-slider-hero-title";
@@ -190,7 +202,15 @@ const DEFAULT_HERO_TITLE_ID = "advanced-slider-hero-title";
 export default function HeroAnimatedBg({
   heroTitleId = DEFAULT_HERO_TITLE_ID,
   tileDisplayMode = "gradient",
+  heroCardBackgroundImage,
+  heroCardGridDistortion = false,
 }: HeroAnimatedBgProps = {}) {
+  const staticBg = tileDisplayMode === "static";
+  const gridDistortionBg =
+    staticBg &&
+    heroCardGridDistortion &&
+    heroCardBackgroundImage != null &&
+    heroCardBackgroundImage !== "";
   const driftActive = tileDisplayMode === "drift";
   const driftIsVertical =
     driftActive &&
@@ -207,6 +227,8 @@ export default function HeroAnimatedBg({
   // Tile gradients are driven only from this effect (not React `style`), so parent
   // re-renders cannot reset `--tile-angle` / background each frame.
   useLayoutEffect(() => {
+    if (staticBg) return;
+
     const root = tilesLayerRef.current;
     const track = tilesTrackRef.current;
     if (!root || !track) return;
@@ -268,7 +290,7 @@ export default function HeroAnimatedBg({
       gsap.ticker.remove(tick);
       driftTween?.kill();
     };
-  }, [driftActive]);
+  }, [driftActive, staticBg]);
 
   useGSAP(
     () => {
@@ -299,46 +321,86 @@ export default function HeroAnimatedBg({
     { scope: heroAnimScopeRef, revertOnUpdate: true },
   );
 
+  const hasHeroCardImage =
+    heroCardBackgroundImage != null && heroCardBackgroundImage !== "";
+
+  const heroCardStyle =
+    hasHeroCardImage && !gridDistortionBg
+      ? {
+          backgroundColor: "#004152",
+          backgroundImage: `url("${heroCardBackgroundImage}")`,
+          backgroundSize: "cover" as const,
+          backgroundPosition: "center" as const,
+          backgroundRepeat: "no-repeat" as const,
+        }
+      : gridDistortionBg
+        ? { backgroundColor: "#004152" }
+        : undefined;
+
+  const heroCardHasCustomBg = hasHeroCardImage || gridDistortionBg;
+
   return (
     <div className="p-6">
       <div
         ref={heroCardRef}
         aria-labelledby={heroTitleId}
-        className="relative overflow-hidden rounded-4xl bg-[#004152] py-24 text-white"
+        className={
+          heroCardHasCustomBg
+            ? "relative overflow-hidden rounded-4xl py-24 text-white"
+            : "relative overflow-hidden rounded-4xl bg-[#004152] py-24 text-white"
+        }
+        style={heroCardStyle}
       >
-        <div
-          ref={tilesLayerRef}
-          className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
-          aria-hidden
-        >
-          <div
-            ref={tilesTrackRef}
-            className={
-              driftActive
-                ? driftIsVertical
-                  ? "flex h-[200%] w-full min-w-0 flex-col will-change-transform"
-                  : "flex h-full w-[200%] min-w-0 flex-row will-change-transform"
-                : "flex h-full w-full min-w-0 flex-row"
-            }
-          >
-            <TilePanel
-              panelKey="a"
-              driftActive={driftActive}
-              driftIsVertical={driftIsVertical}
+        {gridDistortionBg ? (
+          <div className="absolute inset-0 z-0 min-h-0 min-w-0" aria-hidden>
+            <GridDistortion
+              imageSrc={heroCardBackgroundImage}
+              className="min-h-0 min-w-0"
+              strength={0.3}
+              grid={30}
             />
-            {driftActive ? (
+          </div>
+        ) : null}
+
+        {!staticBg ? (
+          <div
+            ref={tilesLayerRef}
+            className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+            aria-hidden
+          >
+            <div
+              ref={tilesTrackRef}
+              className={
+                driftActive
+                  ? driftIsVertical
+                    ? "flex h-[200%] w-full min-w-0 flex-col will-change-transform"
+                    : "flex h-full w-[200%] min-w-0 flex-row will-change-transform"
+                  : "flex h-full w-full min-w-0 flex-row"
+              }
+            >
               <TilePanel
-                panelKey="b"
+                panelKey="a"
                 driftActive={driftActive}
                 driftIsVertical={driftIsVertical}
               />
-            ) : null}
+              {driftActive ? (
+                <TilePanel
+                  panelKey="b"
+                  driftActive={driftActive}
+                  driftIsVertical={driftIsVertical}
+                />
+              ) : null}
+            </div>
           </div>
-        </div>
+        ) : null}
 
         <div
           ref={heroAnimScopeRef}
-          className="relative z-[1] mx-auto flex w-full max-w-[1240px] flex-col items-center gap-6 text-center"
+          className={
+            gridDistortionBg
+              ? "pointer-events-none relative z-[1] mx-auto flex w-full max-w-[1240px] flex-col items-center gap-6 text-center"
+              : "relative z-[1] mx-auto flex w-full max-w-[1240px] flex-col items-center gap-6 text-center"
+          }
         >
           <h1
             ref={heroTitleRef}
@@ -354,7 +416,10 @@ export default function HeroAnimatedBg({
             Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum
             dolor sit amet lorem ipsum.
           </p>
-          <div ref={heroCtaRef}>
+          <div
+            ref={heroCtaRef}
+            className={gridDistortionBg ? "pointer-events-auto" : undefined}
+          >
             <Button variant="primary" type="button">
               Contact us
             </Button>
