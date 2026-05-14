@@ -9,14 +9,13 @@ import type { SplitTextHandle } from "@/components/typo/SplitText";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import SoftAurora from "@/components/backgrounds/SoftAurora";
 import InkSpill from "@/components/backgrounds/InkSpill";
 import type { InkSpillHandle } from "@/components/backgrounds/InkSpill";
 import { FaArrowRight } from "react-icons/fa";
-import { memo, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 
-gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+gsap.registerPlugin(ScrollTrigger);
 
 const aboutAtomixSections = [
   {
@@ -180,19 +179,22 @@ export default function MainHero() {
       force3D: true,
     });
     
-    // Hide all about cards except first
-    aboutCardRefs.current.forEach((card, i) => {
-      if (card) gsap.set(card, { opacity: i === 0 ? 1 : 0, scale: i === 0 ? 1 : 1.05 });
-    });
+    // About cards use React isActive + CSS only (no scroll-driven GSAP opacity on cards).
 
     // --- SCROLL TIMELINE (scrub, no snap) ---
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: "#def-hero-main",
         start: "top top",
-        end: "+=6500",
+        end: "+=4200",
         scrub: 2.5,
         pin: true,
+        onLeave: () => {
+          clickTargetSectionRef.current = null;
+        },
+        onLeaveBack: () => {
+          clickTargetSectionRef.current = null;
+        },
       },
     });
     tlRef.current = tl;
@@ -250,86 +252,13 @@ export default function MainHero() {
       .call(() => {
         if (clickTargetSectionRef.current == null) setActiveSection(0);
       }, undefined, "section1")
-      // Section 2 transition
-      .addLabel("section2", "section1+=1.2")
-      .call(() => {
-        if (clickTargetSectionRef.current == null) setActiveSection(1);
-      }, undefined, "section2")
-      .to(
-        aboutCardRefs.current[1],
-        { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" },
-        "section2",
-      )
-      .to(
-        aboutCardRefs.current[0],
-        { opacity: 0, scale: 0.98, duration: 0.4, ease: "power2.in" },
-        "section2",
-      )
-      // Section 3 transition
-      .addLabel("section3", "section2+=1.2")
-      .call(() => {
-        if (clickTargetSectionRef.current == null) setActiveSection(2);
-      }, undefined, "section3")
-      .to(
-        aboutCardRefs.current[2],
-        { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" },
-        "section3",
-      )
-      .to(
-        aboutCardRefs.current[1],
-        { opacity: 0, scale: 0.98, duration: 0.4, ease: "power2.in" },
-        "section3",
-      )
-      // Section 4 transition
-      .addLabel("section4", "section3+=1.2")
-      .call(() => {
-        if (clickTargetSectionRef.current == null) setActiveSection(3);
-      }, undefined, "section4")
-      .to(
-        aboutCardRefs.current[3],
-        { opacity: 1, scale: 1, duration: 0.5, ease: "power2.out" },
-        "section4",
-      )
-      .to(
-        aboutCardRefs.current[2],
-        { opacity: 0, scale: 0.98, duration: 0.4, ease: "power2.in" },
-        "section4",
-      )
-      .addLabel("aboutComplete")
-      // Stay on last section for a bit before unpinning
+      .addLabel("aboutComplete", "section1+=0.15")
       .to({}, { duration: 1.2 }, "aboutComplete");
   }, []);
 
   const handleAboutSectionClick = useCallback((index: number) => {
     clickTargetSectionRef.current = index;
     setActiveSection(index);
-
-    const tl = tlRef.current;
-    const st = tl?.scrollTrigger;
-    if (!tl || !st) return;
-
-    const sectionLabel = `section${index + 1}`;
-    const labelTime = tl.labels[sectionLabel];
-    if (labelTime == null) return;
-
-    const fullyRenderedTime = Math.min(labelTime + 0.55, tl.duration());
-    const progress = fullyRenderedTime / tl.duration();
-    const scrollTo = st.start + progress * (st.end - st.start);
-
-    gsap.killTweensOf(window);
-    gsap.to(window, {
-      scrollTo: { y: scrollTo, autoKill: false },
-      duration: 0.8,
-      ease: "power2.inOut",
-      overwrite: true,
-      onComplete: () => {
-        clickTargetSectionRef.current = null;
-        setActiveSection(index);
-      },
-      onInterrupt: () => {
-        clickTargetSectionRef.current = null;
-      },
-    });
   }, []);
 
   return (
