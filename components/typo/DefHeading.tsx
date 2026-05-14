@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useRef } from "react";
 import { BadgeHeadingPill } from "../ui/BadgeHeadingPill";
 import { gsap } from "gsap";
