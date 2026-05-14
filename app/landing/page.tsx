@@ -175,11 +175,9 @@ export default function LandingGradientV1Page() {
         <MainHero />
       </div>
 
- <MainMissionVisionCards />
+      <MainMissionVisionCards />
       <div className="px-6 mt-6 mb-12 flex flex-col gap-6">
         {/* <MainPropertyLanding /> */}
-
-       
 
         <MainProblemsTabsLight />
 
