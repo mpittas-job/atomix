@@ -13,8 +13,8 @@ gsap.registerPlugin(useGSAP);
  * - **columns / rows** — grid size; tiles stay square. Rotation uses one GSAP ticker.
  * - **gradient** — `linear-gradient` endpoints; each tile’s angle spins continuously.
  * - **gradientMotion** — global multiplier for rotation speed.
- * - **drift** — optional seamless infinite scroll of the whole mosaic (two panels + one
- *   GSAP tween). Off by default; set `HERO_TILE_OPTIONS.drift.enabled` to `true` to restore moving tiles.
+ * - **drift** — duration/direction for the infinite mosaic tween when a hero uses
+ *   `tileDisplayMode="drift"` (see component props).
  */
 export const HERO_TILE_OPTIONS = {
   columns: 24,
@@ -28,8 +28,6 @@ export const HERO_TILE_OPTIONS = {
     speedMultiplier: 1,
   },
   drift: {
-    /** `true` = infinite mosaic scroll; `false` = gradient-only tiles (single panel). */
-    enabled: false,
     /** Seconds for one full loop (one panel width / height). */
     durationSec: 52,
     /** Seamless infinite direction for the tile field. */
@@ -49,20 +47,11 @@ function tileGradientCss(deg: number) {
   return `linear-gradient(${deg}deg, ${TILE_COLOR_A}, ${TILE_COLOR_B})`;
 }
 
-const TILE_MOSAIC_DRIFT_ENABLED = HERO_TILE_OPTIONS.drift.enabled;
-
-const driftIsVertical =
-  TILE_MOSAIC_DRIFT_ENABLED &&
-  (HERO_TILE_OPTIONS.drift.direction === "up" ||
-    HERO_TILE_OPTIONS.drift.direction === "down");
-
 /**
  * Infinite seamless scroll of the mosaic track (two `TilePanel`s required in JSX).
- * Re-enable by setting `HERO_TILE_OPTIONS.drift.enabled` to `true`.
  */
 function startHeroTileDriftTween(track: HTMLElement): gsap.core.Tween | null {
-  const { enabled, durationSec, direction } = HERO_TILE_OPTIONS.drift;
-  if (!enabled) return null;
+  const { durationSec, direction } = HERO_TILE_OPTIONS.drift;
 
   gsap.killTweensOf(track);
   const dur = durationSec;
@@ -151,8 +140,16 @@ function TileCell({ index }: { index: number }) {
   );
 }
 
-function TilePanel({ panelKey }: { panelKey: string }) {
-  const panelLayoutClass = TILE_MOSAIC_DRIFT_ENABLED
+function TilePanel({
+  panelKey,
+  driftActive,
+  driftIsVertical,
+}: {
+  panelKey: string;
+  driftActive: boolean;
+  driftIsVertical: boolean;
+}) {
+  const panelLayoutClass = driftActive
     ? driftIsVertical
       ? "grid h-1/2 min-h-0 w-full shrink-0 auto-rows-auto content-start"
       : "grid h-full min-w-0 w-1/2 shrink-0 auto-rows-auto content-start"
@@ -172,7 +169,33 @@ function TilePanel({ panelKey }: { panelKey: string }) {
   );
 }
 
-export default function HeroAnimatedBg() {
+export type HeroAnimatedBgTileDisplayMode = "drift" | "gradient";
+
+export type HeroAnimatedBgProps = {
+  /**
+   * Id for the hero `<h1>`; the card uses `aria-labelledby` pointing at this id.
+   * Use a unique value when multiple heroes appear on one page.
+   */
+  heroTitleId?: string;
+  /**
+   * `drift` — infinite mosaic scroll sideways (or per `HERO_TILE_OPTIONS.drift.direction`);
+   * tile gradients stay fixed per cell.
+   * `gradient` — rotating linear-gradient per tile; no mosaic drift.
+   */
+  tileDisplayMode?: HeroAnimatedBgTileDisplayMode;
+};
+
+const DEFAULT_HERO_TITLE_ID = "advanced-slider-hero-title";
+
+export default function HeroAnimatedBg({
+  heroTitleId = DEFAULT_HERO_TITLE_ID,
+  tileDisplayMode = "gradient",
+}: HeroAnimatedBgProps = {}) {
+  const driftActive = tileDisplayMode === "drift";
+  const driftIsVertical =
+    driftActive &&
+    (HERO_TILE_OPTIONS.drift.direction === "up" ||
+      HERO_TILE_OPTIONS.drift.direction === "down");
   const heroCardRef = useRef<HTMLDivElement | null>(null);
   const tilesLayerRef = useRef<HTMLDivElement | null>(null);
   const tilesTrackRef = useRef<HTMLDivElement | null>(null);
@@ -206,11 +229,17 @@ export default function HeroAnimatedBg() {
     });
 
     let driftTween: gsap.core.Tween | null = null;
-    if (!prefersReduced) {
+    if (!prefersReduced && driftActive) {
       driftTween = startHeroTileDriftTween(track);
     }
 
     if (prefersReduced) {
+      return () => {
+        driftTween?.kill();
+      };
+    }
+
+    if (driftActive) {
       return () => {
         driftTween?.kill();
       };
@@ -239,7 +268,7 @@ export default function HeroAnimatedBg() {
       gsap.ticker.remove(tick);
       driftTween?.kill();
     };
-  }, []);
+  }, [driftActive]);
 
   useGSAP(
     () => {
@@ -274,7 +303,7 @@ export default function HeroAnimatedBg() {
     <div className="p-6">
       <div
         ref={heroCardRef}
-        aria-labelledby="advanced-slider-hero-title"
+        aria-labelledby={heroTitleId}
         className="relative overflow-hidden rounded-4xl bg-[#004152] py-24 text-white"
       >
         <div
@@ -285,15 +314,25 @@ export default function HeroAnimatedBg() {
           <div
             ref={tilesTrackRef}
             className={
-              TILE_MOSAIC_DRIFT_ENABLED
+              driftActive
                 ? driftIsVertical
                   ? "flex h-[200%] w-full min-w-0 flex-col will-change-transform"
                   : "flex h-full w-[200%] min-w-0 flex-row will-change-transform"
                 : "flex h-full w-full min-w-0 flex-row"
             }
           >
-            <TilePanel panelKey="a" />
-            {TILE_MOSAIC_DRIFT_ENABLED ? <TilePanel panelKey="b" /> : null}
+            <TilePanel
+              panelKey="a"
+              driftActive={driftActive}
+              driftIsVertical={driftIsVertical}
+            />
+            {driftActive ? (
+              <TilePanel
+                panelKey="b"
+                driftActive={driftActive}
+                driftIsVertical={driftIsVertical}
+              />
+            ) : null}
           </div>
         </div>
 
@@ -303,7 +342,7 @@ export default function HeroAnimatedBg() {
         >
           <h1
             ref={heroTitleRef}
-            id="advanced-slider-hero-title"
+            id={heroTitleId}
             className="m-0 w-full max-w-[500px] text-balance text-[52px] leading-16 font-semibold"
           >
             Atomix Loan Operating System
