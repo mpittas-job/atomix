@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Button } from "@/components/ui";
 import GridDistortion from "@/react-bits/GridDistortion";
+import DotGrid, { type DotGridProps } from "@/react-bits/DotGrid";
 
 gsap.registerPlugin(useGSAP);
 
@@ -193,8 +194,17 @@ export type HeroAnimatedBgProps = {
   /**
    * When true with `tileDisplayMode="static"` and `heroCardBackgroundImage`, the
    * card uses `GridDistortion` as a full-bleed background instead of a CSS image.
+   * Ignored if `heroCardDotGrid` is true.
    */
   heroCardGridDistortion?: boolean;
+  /**
+   * When true with `tileDisplayMode="static"`, the card uses the canvas `DotGrid`
+   * as a full-bleed background (no mosaic tiles). Takes precedence over
+   * `heroCardGridDistortion` / CSS `heroCardBackgroundImage`.
+   */
+  heroCardDotGrid?: boolean;
+  /** Optional props forwarded to `DotGrid` when `heroCardDotGrid` is true. */
+  heroCardDotGridProps?: Partial<DotGridProps>;
 };
 
 const DEFAULT_HERO_TITLE_ID = "advanced-slider-hero-title";
@@ -204,13 +214,18 @@ export default function HeroAnimatedBg({
   tileDisplayMode = "gradient",
   heroCardBackgroundImage,
   heroCardGridDistortion = false,
+  heroCardDotGrid = false,
+  heroCardDotGridProps,
 }: HeroAnimatedBgProps = {}) {
   const staticBg = tileDisplayMode === "static";
+  const dotGridBg = staticBg && heroCardDotGrid;
+  const hasHeroCardImage =
+    heroCardBackgroundImage != null && heroCardBackgroundImage !== "";
   const gridDistortionBg =
     staticBg &&
+    !dotGridBg &&
     heroCardGridDistortion &&
-    heroCardBackgroundImage != null &&
-    heroCardBackgroundImage !== "";
+    hasHeroCardImage;
   const driftActive = tileDisplayMode === "drift";
   const driftIsVertical =
     driftActive &&
@@ -321,11 +336,8 @@ export default function HeroAnimatedBg({
     { scope: heroAnimScopeRef, revertOnUpdate: true },
   );
 
-  const hasHeroCardImage =
-    heroCardBackgroundImage != null && heroCardBackgroundImage !== "";
-
   const heroCardStyle =
-    hasHeroCardImage && !gridDistortionBg
+    hasHeroCardImage && !gridDistortionBg && !dotGridBg
       ? {
           backgroundColor: "#004152",
           backgroundImage: `url("${heroCardBackgroundImage}")`,
@@ -333,11 +345,12 @@ export default function HeroAnimatedBg({
           backgroundPosition: "center" as const,
           backgroundRepeat: "no-repeat" as const,
         }
-      : gridDistortionBg
+      : gridDistortionBg || dotGridBg
         ? { backgroundColor: "#004152" }
         : undefined;
 
-  const heroCardHasCustomBg = hasHeroCardImage || gridDistortionBg;
+  const heroCardHasCustomBg =
+    hasHeroCardImage || gridDistortionBg || dotGridBg;
 
   return (
     <div className="p-6">
@@ -351,6 +364,15 @@ export default function HeroAnimatedBg({
         }
         style={heroCardStyle}
       >
+        {dotGridBg ? (
+          <div className="absolute inset-0 z-0 min-h-0 min-w-0" aria-hidden>
+            <DotGrid
+              {...(heroCardDotGridProps ?? {})}
+              className={`!p-0 min-h-0 min-w-0 ${heroCardDotGridProps?.className ?? ""}`}
+            />
+          </div>
+        ) : null}
+
         {gridDistortionBg ? (
           <div className="absolute inset-0 z-0 min-h-0 min-w-0" aria-hidden>
             <GridDistortion

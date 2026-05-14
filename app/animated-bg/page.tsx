@@ -34,7 +34,7 @@ export default function AnimatedBgPage() {
           Rotating tile gradients
         </h2>
         <p className="m-0 max-w-2xl text-sm text-neutral-600 dark:text-neutral-400">
-          The grid stays still; each tile&apos;s linear-gradient rotates
+          The grid stays still and each tile&apos;s linear-gradient rotates
           continuously.
         </p>
         <HeroAnimatedBg
@@ -54,15 +54,41 @@ export default function AnimatedBgPage() {
           WebGL grid distortion
         </h2>
         <p className="m-0 max-w-2xl text-sm text-neutral-600 dark:text-neutral-400">
-          Same hero layout and GSAP intro as above. The card background is a
-          Three.js shader: a grid samples and warps the image as you move the
-          pointer—no mosaic tile layer.
+          The card background is a Three.js shader. a grid samples and warps the
+          image as you move the pointer.
         </p>
         <HeroAnimatedBg
-          heroTitleId="animated-bg-hero-static"
+          heroTitleId="animated-bg-hero-grid-distortion"
           tileDisplayMode="static"
           heroCardBackgroundImage="/global/akif-waseem-sTF5sS0YvgA-unsplash-2.jpg"
           heroCardGridDistortion
+        />
+      </section>
+
+      <section
+        className="flex flex-col gap-3"
+        aria-labelledby="animated-bg-dot-grid-heading"
+      >
+        <h2
+          id="animated-bg-dot-grid-heading"
+          className="m-0 text-lg font-semibold text-neutral-900 dark:text-neutral-100"
+        >
+          Interactive dot grid
+        </h2>
+        <p className="m-0 max-w-2xl text-sm text-neutral-600 dark:text-neutral-400">
+          The card background is a canvas dot field with GSAP Inertia on pointer
+          motion and click shocks.
+        </p>
+        <HeroAnimatedBg
+          heroTitleId="animated-bg-hero-dot-grid"
+          tileDisplayMode="static"
+          heroCardDotGrid
+          heroCardDotGridProps={{
+            baseColor: "#0a5568",
+            activeColor: "#7dd3fc",
+            dotSize: 20,
+            gap: 20,
+          }}
         />
       </section>
     </main>
