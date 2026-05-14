@@ -222,10 +222,7 @@ export default function HeroAnimatedBg({
   const hasHeroCardImage =
     heroCardBackgroundImage != null && heroCardBackgroundImage !== "";
   const gridDistortionBg =
-    staticBg &&
-    !dotGridBg &&
-    heroCardGridDistortion &&
-    hasHeroCardImage;
+    staticBg && !dotGridBg && heroCardGridDistortion && hasHeroCardImage;
   const driftActive = tileDisplayMode === "drift";
   const driftIsVertical =
     driftActive &&
@@ -349,11 +346,10 @@ export default function HeroAnimatedBg({
         ? { backgroundColor: "#004152" }
         : undefined;
 
-  const heroCardHasCustomBg =
-    hasHeroCardImage || gridDistortionBg || dotGridBg;
+  const heroCardHasCustomBg = hasHeroCardImage || gridDistortionBg || dotGridBg;
 
   return (
-    <div className="p-6">
+    <div>
       <div
         ref={heroCardRef}
         aria-labelledby={heroTitleId}

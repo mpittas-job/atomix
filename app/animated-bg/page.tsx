@@ -2,18 +2,18 @@ import HeroAnimatedBg from "@/components/HeroAnimatedBg";
 
 export default function AnimatedBgPage() {
   return (
-    <main className="mx-auto flex w-full max-w-[1400px] flex-col gap-16 px-4 py-10">
+    <main className="mx-auto flex w-full flex-col gap-16 px-10 py-10">
       <section
-        className="flex flex-col gap-3"
+        className="flex flex-col gap-6"
         aria-labelledby="animated-bg-drift-heading"
       >
         <h2
           id="animated-bg-drift-heading"
-          className="m-0 text-lg font-semibold text-neutral-900 dark:text-neutral-100"
+          className="m-0 text-2xl font-semibold text-neutral-900 dark:text-neutral-100"
         >
           Infinite tile drift
         </h2>
-        <p className="m-0 max-w-2xl text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="mb-3 max-w-4xl text-sm text-neutral-600 dark:text-neutral-400">
           The mosaic scrolls horizontally on a loop (two panels). Each tile
           keeps a fixed gradient angle.
         </p>
@@ -29,11 +29,11 @@ export default function AnimatedBgPage() {
       >
         <h2
           id="animated-bg-gradient-heading"
-          className="m-0 text-lg font-semibold text-neutral-900 dark:text-neutral-100"
+          className="m-0 text-2xl font-semibold text-neutral-900 dark:text-neutral-100"
         >
           Rotating tile gradients
         </h2>
-        <p className="m-0 max-w-2xl text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="mb-3 max-w-4xl text-sm text-neutral-600 dark:text-neutral-400">
           The grid stays still and each tile&apos;s linear-gradient rotates
           continuously.
         </p>
@@ -49,11 +49,11 @@ export default function AnimatedBgPage() {
       >
         <h2
           id="animated-bg-grid-distortion-heading"
-          className="m-0 text-lg font-semibold text-neutral-900 dark:text-neutral-100"
+          className="m-0 text-2xl font-semibold text-neutral-900 dark:text-neutral-100"
         >
           WebGL grid distortion
         </h2>
-        <p className="m-0 max-w-2xl text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="mb-3 max-w-4xl text-sm text-neutral-600 dark:text-neutral-400">
           The card background is a Three.js shader. a grid samples and warps the
           image as you move the pointer.
         </p>
@@ -71,11 +71,11 @@ export default function AnimatedBgPage() {
       >
         <h2
           id="animated-bg-dot-grid-heading"
-          className="m-0 text-lg font-semibold text-neutral-900 dark:text-neutral-100"
+          className="m-0 text-2xl font-semibold text-neutral-900 dark:text-neutral-100"
         >
           Interactive dot grid
         </h2>
-        <p className="m-0 max-w-2xl text-sm text-neutral-600 dark:text-neutral-400">
+        <p className="mb-3 max-w-4xl text-sm text-neutral-600 dark:text-neutral-400">
           The card background is a canvas dot field with GSAP Inertia on pointer
           motion and click shocks.
         </p>
