@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
@@ -132,21 +132,56 @@ const HIGHLIGHT_SEQUENCE_END = 0.78;
 const HIGHLIGHT_PHASE_1_END = 0.3;
 const HIGHLIGHT_PHASE_2_END = 0.6;
 
+const PYRAMID_TABS = [
+  {
+    id: "simple-saas",
+    label: "Simple SaaS",
+    highlightIndex: 1,
+    sectionIndex: 0,
+  },
+  {
+    id: "bespoke-builds",
+    label: "Bespoke builds",
+    highlightIndex: 0,
+    sectionIndex: 1,
+  },
+  {
+    id: "disconnected-stacks",
+    label: "Disconnected stacks",
+    highlightIndex: 2,
+    sectionIndex: 2,
+  },
+] as const;
+
+type PyramidApi = {
+  setSlider: (v: number) => void;
+  setFinalHighlightOnly: (locked: boolean) => void;
+};
+
 export default function TestPyramidWrapper() {
   const pyramidSectionRef = useRef<HTMLDivElement>(null);
   const headingWrapRef = useRef<HTMLDivElement>(null);
   const animationWrapRef = useRef<HTMLDivElement>(null);
   const pyramidColRef = useRef<HTMLDivElement>(null);
   const iconBoxRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const pyramidApiRef = useRef<{ setSlider: (v: number) => void } | null>(null);
+  const pyramidApiRef = useRef<PyramidApi | null>(null);
   const highlightBoxRef = useRef<HTMLDivElement>(null);
   const highlightContentRef = useRef<HTMLDivElement>(null);
   const highlightTitleRef = useRef<HTMLHeadingElement>(null);
   const highlightDescRef = useRef<HTMLParagraphElement>(null);
   const highlightItemsRef = useRef<Array<HTMLLIElement | null>>([]);
   const [highlightIndex, setHighlightIndex] = useState(0);
+  const [activeTabIndex, setActiveTabIndex] = useState(1);
   const lastHighlightIndexRef = useRef(0);
   const isFirstRenderRef = useRef(true);
+  const tabListRef = useRef<HTMLDivElement | null>(null);
+  const tabThumbRef = useRef<HTMLDivElement | null>(null);
+  const tabButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const isFirstTabThumbRef = useRef(true);
+  const hasScrolledPastPyramidRef = useRef(false);
+  const isFinalHighlightLockedRef = useRef(false);
+  const activeTabIndexRef = useRef(activeTabIndex);
+  activeTabIndexRef.current = activeTabIndex;
 
   useGSAP(() => {
     const section = pyramidSectionRef.current;
@@ -164,6 +199,17 @@ export default function TestPyramidWrapper() {
       boxes.length === 0
     )
       return;
+
+    const setFinalHighlightLock = (locked: boolean) => {
+      if (isFinalHighlightLockedRef.current === locked) return;
+      isFinalHighlightLockedRef.current = locked;
+      pyramidApiRef.current?.setFinalHighlightOnly(locked);
+
+      if (locked) {
+        lastHighlightIndexRef.current = 2;
+        setHighlightIndex(2);
+      }
+    };
 
     // Initial state: pyramid on the right side of the wrapper,
     // icon boxes hidden, highlight box visible with first content.
@@ -183,6 +229,27 @@ export default function TestPyramidWrapper() {
         pinSpacing: true,
         scrub: true,
         invalidateOnRefresh: true,
+        onEnter: () => {
+          setFinalHighlightLock(false);
+        },
+        onLeave: () => {
+          hasScrolledPastPyramidRef.current = true;
+          setFinalHighlightLock(false);
+        },
+        onEnterBack: () => {
+          if (hasScrolledPastPyramidRef.current) {
+            setFinalHighlightLock(true);
+          }
+        },
+        onUpdate: (self) => {
+          if (self.direction > 0) {
+            setFinalHighlightLock(false);
+          }
+        },
+        onLeaveBack: () => {
+          setFinalHighlightLock(false);
+          hasScrolledPastPyramidRef.current = false;
+        },
       },
     });
     const pyramidProgress = { value: 0 };
@@ -232,6 +299,8 @@ export default function TestPyramidWrapper() {
           onUpdate: () => {
             const progress = pyramidProgress.value;
             pyramidApiRef.current?.setSlider(progress);
+
+            if (isFinalHighlightLockedRef.current) return;
 
             // Update highlight box content based on pyramid highlight phase
             let newIndex = lastHighlightIndexRef.current;
@@ -283,6 +352,72 @@ export default function TestPyramidWrapper() {
       tl.kill();
     };
   }, []);
+
+  useEffect(() => {
+    const tabIndex = PYRAMID_TABS.findIndex(
+      (tab) => tab.highlightIndex === highlightIndex,
+    );
+    if (tabIndex >= 0) setActiveTabIndex(tabIndex);
+  }, [highlightIndex]);
+
+  useLayoutEffect(() => {
+    const list = tabListRef.current;
+    const thumb = tabThumbRef.current;
+    const activeBtn = tabButtonRefs.current[activeTabIndex];
+    if (!list || !thumb || !activeBtn) return;
+
+    const listRect = list.getBoundingClientRect();
+    const btnRect = activeBtn.getBoundingClientRect();
+    const x = btnRect.left - listRect.left;
+    const width = btnRect.width;
+
+    if (isFirstTabThumbRef.current) {
+      gsap.set(thumb, { x, width });
+      isFirstTabThumbRef.current = false;
+    } else {
+      gsap.to(thumb, {
+        x,
+        width,
+        duration: 0.22,
+        ease: "power2.out",
+        overwrite: "auto",
+      });
+    }
+  }, [activeTabIndex]);
+
+  useLayoutEffect(() => {
+    const list = tabListRef.current;
+    if (!list) return;
+
+    const applyInstantFromLayout = () => {
+      const thumb = tabThumbRef.current;
+      const idx = activeTabIndexRef.current;
+      const activeBtn = tabButtonRefs.current[idx];
+      if (!thumb || !activeBtn) return;
+      const listRect = list.getBoundingClientRect();
+      const btnRect = activeBtn.getBoundingClientRect();
+      gsap.set(thumb, {
+        x: btnRect.left - listRect.left,
+        width: btnRect.width,
+      });
+    };
+
+    const ro = new ResizeObserver(applyInstantFromLayout);
+    ro.observe(list);
+    return () => ro.disconnect();
+  }, []);
+
+  const handleTabClick = (tabIndex: number) => {
+    const tab = PYRAMID_TABS[tabIndex];
+    if (!tab) return;
+
+    setActiveTabIndex(tabIndex);
+    setHighlightIndex(tab.highlightIndex);
+    iconBoxRefs.current[tab.sectionIndex]?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  };
 
   // Animate highlight content when highlightIndex changes
   useEffect(() => {
@@ -342,6 +477,9 @@ export default function TestPyramidWrapper() {
     return () => ctx.revert();
   }, [highlightIndex]);
 
+  const highlightInfo =
+    highlightSequenceData[highlightIndex] ?? highlightSequenceData[0];
+
   return (
     <div
       ref={pyramidSectionRef}
@@ -383,29 +521,71 @@ export default function TestPyramidWrapper() {
             ref={highlightBoxRef}
             className="absolute left-34 top-1/2 -translate-y-1/2 w-[440px] opacity-0"
           >
-            {(() => {
-              const info =
-                highlightSequenceData[highlightIndex] ||
-                highlightSequenceData[0];
-              return (
-                <div
-                  ref={highlightContentRef}
-                  className="highlight-content rounded-2xl"
-                >
+            <div
+              ref={tabListRef}
+              role="tablist"
+              aria-label="Pyramid categories"
+              className="relative mb-5 flex flex-wrap items-center rounded-full border border-white bg-[#ECF0F2] p-1 text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]"
+            >
+              <div
+                ref={tabThumbRef}
+                aria-hidden
+                className="pointer-events-none absolute top-1 bottom-1 left-0 z-0 rounded-full bg-white shadow-sm shadow-slate-900/10 will-change-[transform,width]"
+              />
+              {PYRAMID_TABS.map((tab, tabIndex) => {
+                const isActive = tabIndex === activeTabIndex;
+                const prevTab =
+                  tabIndex > 0 ? PYRAMID_TABS[tabIndex - 1] : null;
+                const prevIsActive =
+                  !!prevTab && tabIndex - 1 === activeTabIndex;
+                const showLeftSeparator =
+                  tabIndex > 0 && !isActive && !prevIsActive;
+                return (
+                  <button
+                    key={tab.id}
+                    ref={(el) => {
+                      tabButtonRefs.current[tabIndex] = el;
+                    }}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    onClick={() => handleTabClick(tabIndex)}
+                    className={[
+                      "relative z-[1] flex-1 cursor-pointer whitespace-nowrap bg-transparent px-4 py-2 text-[14px] leading-tight font-semibold",
+                      showLeftSeparator
+                        ? "before:pointer-events-none before:absolute before:left-0 before:top-1/2 before:z-10 before:h-[15px] before:w-px before:-translate-y-1/2 before:bg-slate-300/80 before:content-['']"
+                        : "",
+                      isActive
+                        ? "text-slate-900"
+                        : "rounded-none text-[#617379]",
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div
+              ref={highlightContentRef}
+              className="highlight-content rounded-2xl"
+            >
                   <h3
                     ref={highlightTitleRef}
                     className="text-white font-semibold text-3xl mb-3"
                   >
-                    {info.title}
+                    {highlightInfo.title}
                   </h3>
                   <p
                     ref={highlightDescRef}
                     className="text-white/70 text-md leading-relaxed mb-9"
                   >
-                    {info.description}
+                    {highlightInfo.description}
                   </p>
                   <ul className="space-y-6">
-                    {info.items.map((item, idx) => (
+                    {highlightInfo.items.map((item, idx) => (
                       <li
                         key={idx}
                         ref={(el) => {
@@ -437,9 +617,7 @@ export default function TestPyramidWrapper() {
                       </li>
                     ))}
                   </ul>
-                </div>
-              );
-            })()}
+            </div>
           </div>
 
           <div ref={pyramidColRef} className="flex-1">
@@ -453,13 +631,18 @@ export default function TestPyramidWrapper() {
           </div>
 
           <div className="flex-1 flex flex-col justify-center gap-8 pl-20 max-w-lg">
-            {iconBoxesData.map((box, index) => (
+            {iconBoxesData.map((box, index) => {
+              const sectionId =
+                PYRAMID_TABS.find((tab) => tab.sectionIndex === index)?.id ??
+                `pyramid-section-${index}`;
+              return (
               <div
                 key={index}
+                id={sectionId}
                 ref={(el) => {
                   iconBoxRefs.current[index] = el;
                 }}
-                className="flex items-start gap-6"
+                className="flex scroll-mt-28 items-start gap-6 md:scroll-mt-32"
               >
                 <div className="w-13 h-13 shrink-0 flex justify-center items-center rounded-xl bg-[#2b7187]">
                   <img src={box.icon} alt={box.title} className="w-8 h-8" />
@@ -489,7 +672,8 @@ export default function TestPyramidWrapper() {
                   )}
                 </div>
               </div>
-            ))}
+            );
+            })}
           </div>
         </div>
       </div>

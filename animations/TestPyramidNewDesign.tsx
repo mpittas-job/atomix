@@ -186,7 +186,10 @@ export interface TestPyramidNewDesignProps {
   className?: string;
   style?: CSSProperties;
   initialSliderValue?: number;
-  onReady?: (api: { setSlider: (v: number) => void }) => void;
+  onReady?: (api: {
+    setSlider: (v: number) => void;
+    setFinalHighlightOnly: (locked: boolean) => void;
+  }) => void;
   onInfiniteSpinStart?: () => void;
   disableScrollTrigger?: boolean;
 }
@@ -234,6 +237,7 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
   const scrollProgressRef = useRef(clamp01(initialSliderValue));
   const initialDisableScrollTriggerRef = useRef(disableScrollTrigger);
   const initialSliderValueRef = useRef(clamp01(initialSliderValue));
+  const finalHighlightOnlyRef = useRef(false);
   const curTRef = useRef(0);
   const spinRef = useRef(0);
   const hasTriggeredInfiniteSpinRef = useRef(false);
@@ -617,6 +621,12 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
       rightWeight *= highlightFade;
       bottomWeight *= highlightFade;
 
+      if (finalHighlightOnlyRef.current) {
+        leftWeight = 0;
+        rightWeight = 0;
+        bottomWeight = 1;
+      }
+
       applyFaceHighlight(leftFaceMat, leftWeight);
       applyFaceHighlight(rightFaceMat, rightWeight);
       applyFaceHighlight(bottomFaceMat, bottomWeight);
@@ -625,7 +635,8 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
       applyEdgeHighlight(bottomEdgeMat, bottomWeight);
 
       const edgeLabelWeights = [bottomWeight, rightWeight, leftWeight];
-      const shouldForceAllEdgeLabelsVisible = rawT >= HIGHLIGHT_SEQUENCE_END;
+      const shouldForceAllEdgeLabelsVisible =
+        !finalHighlightOnlyRef.current && rawT >= HIGHLIGHT_SEQUENCE_END;
       eMeshes.forEach((mesh, index) => {
         const material = mesh.material;
         const opacity = shouldForceAllEdgeLabelsVisible
@@ -716,6 +727,9 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
     onReady?.({
       setSlider: (v: number) => {
         scrollProgressRef.current = clamp01(v);
+      },
+      setFinalHighlightOnly: (locked: boolean) => {
+        finalHighlightOnlyRef.current = locked;
       },
     });
 
