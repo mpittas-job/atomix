@@ -139,6 +139,7 @@ function WaveBackdrop() {
 }
 
 export default function HeroCareers() {
+  const copyScopeRef = useRef<HTMLDivElement>(null);
   const facesScopeRef = useRef<HTMLDivElement>(null);
   const faceMotionRefs = useRef<(HTMLDivElement | null)[]>([]);
   const slotSwapTimersRef = useRef<(gsap.core.Tween | null)[]>(
@@ -151,6 +152,36 @@ export default function HeroCareers() {
 
   const [slotFaces, setSlotFaces] = useState<number[]>(() =>
     Array.from({ length: FACE_COUNT }, (_, i) => i),
+  );
+
+  useGSAP(
+    () => {
+      const copyItems = copyScopeRef.current?.querySelectorAll<HTMLElement>(
+        "[data-hero-careers-copy-item]",
+      );
+      if (!copyItems?.length) return;
+
+      const mm = gsap.matchMedia();
+
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set(copyItems, { autoAlpha: 1, y: 0 });
+      });
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.set(copyItems, { autoAlpha: 0, y: 32 });
+        gsap.to(copyItems, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 1.15,
+          ease: "power3.out",
+          stagger: 0.28,
+          delay: 0.35,
+        });
+      });
+
+      return () => mm.revert();
+    },
+    { scope: copyScopeRef },
   );
 
   useGSAP(
@@ -376,14 +407,23 @@ export default function HeroCareers() {
       </div>
 
       <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-6">
-        <div className="pointer-events-auto max-w-[1240px] text-center">
-          <p className="mb-4 text-md font-semibold uppercase text-[#19A1C6]">
+        <div
+          ref={copyScopeRef}
+          className="pointer-events-auto max-w-[1240px] text-center"
+        >
+          <p
+            data-hero-careers-copy-item
+            className="mb-4 text-md font-semibold uppercase text-[#19A1C6]"
+          >
             Careers at Atomix
           </p>
-          <h1 className="max-w-[500px] text-balance font-semibold text-[#212329] text-[52px] leading-[1.25]">
+          <h1
+            data-hero-careers-copy-item
+            className="mx-auto max-w-[500px] text-balance font-semibold text-[#212329] text-[52px] leading-[1.25]"
+          >
             Be a part of something great
           </h1>
-          <div className="mt-9">
+          <div data-hero-careers-copy-item className="mt-9">
             <DefButton
               href="#open-roles"
               size="large"
