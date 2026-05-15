@@ -64,7 +64,9 @@ function renderTypewriterTitle(title: string) {
 }
 
 interface AboutSectionCardProps {
-  cardRef: ((el: HTMLDivElement | null) => void) | RefObject<HTMLDivElement | null>;
+  cardRef:
+    | ((el: HTMLDivElement | null) => void)
+    | RefObject<HTMLDivElement | null>;
   title: string;
   description: string;
   image: string;
@@ -83,15 +85,9 @@ function AboutSectionCard({
     <div
       ref={cardRef as React.RefObject<HTMLDivElement>}
       data-section-index={index}
-      className={`absolute inset-0 rounded-2xl overflow-hidden transition-opacity duration-500 ${isActive ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+      className={`absolute inset-0 rounded-2xl overflow-hidden transition-opacity duration-500 ${isActive ? "opacity-100 z-10" : "opacity-0 z-0"}`}
     >
-      <Image
-        src={image}
-        alt=""
-        fill
-        className="object-cover"
-        priority
-      />
+      <Image src={image} alt="" fill className="object-cover" priority />
       <div className="absolute inset-0 bg-gradient-to-b from-[#041B21]/0 to-[#041B21]/100 opacity-70" />
       <div className="absolute inset-0 p-8 md:p-12 flex flex-col justify-center items-start">
         <p className="text-white text-lg md:text-xl leading-relaxed max-w-sm">
@@ -103,30 +99,43 @@ function AboutSectionCard({
 }
 
 interface AboutSectionNavItemProps {
-  section: typeof aboutAtomixSections[0];
+  section: (typeof aboutAtomixSections)[0];
   isActive: boolean;
   onClick: () => void;
-  itemRef: ((el: HTMLButtonElement | null) => void) | RefObject<HTMLButtonElement | null>;
+  itemRef:
+    | ((el: HTMLButtonElement | null) => void)
+    | RefObject<HTMLButtonElement | null>;
 }
 
-function AboutSectionNavItem({ section, isActive, onClick, itemRef }: AboutSectionNavItemProps) {
+function AboutSectionNavItem({
+  section,
+  isActive,
+  onClick,
+  itemRef,
+}: AboutSectionNavItemProps) {
   return (
     <button
       ref={itemRef as React.RefObject<HTMLButtonElement>}
       data-nav-item
       onClick={onClick}
       className={`group w-full text-left flex items-center justify-between py-4 transition-all duration-300 ${
-        isActive ? 'text-[#1BA8CE]' : 'text-[#011F27] hover:text-[#1BA8CE]'
+        isActive ? "text-[#1BA8CE]" : "text-[#011F27] hover:text-[#1BA8CE]"
       }`}
     >
-      <span className={`text-2xl font-medium transition-all duration-300 ${
-        isActive ? 'translate-x-2' : 'group-hover:translate-x-1'
-      }`}>
+      <span
+        className={`text-2xl font-medium transition-all duration-300 ${
+          isActive ? "translate-x-2" : "group-hover:translate-x-1"
+        }`}
+      >
         {section.title}
       </span>
-      <FaArrowRight className={`w-5 h-5 transition-all duration-300 ${
-        isActive ? 'opacity-100 translate-x-0 text-[#1BA8CE]' : 'group-hover:translate-x-0'
-      }`} />
+      <FaArrowRight
+        className={`w-5 h-5 transition-all duration-300 ${
+          isActive
+            ? "opacity-100 translate-x-0 text-[#1BA8CE]"
+            : "group-hover:translate-x-0"
+        }`}
+      />
     </button>
   );
 }
@@ -141,7 +150,6 @@ export default function MainHero() {
   const clickTargetSectionRef = useRef<number | null>(null);
 
   useGSAP(() => {
-
     // --- PAGE LOAD ANIMATION ---
     const loadTl = gsap.timeline({ delay: 0.15 });
 
@@ -178,7 +186,7 @@ export default function MainHero() {
       xPercent: 0,
       force3D: true,
     });
-    
+
     // About cards use React isActive + CSS only (no scroll-driven GSAP opacity on cards).
 
     // --- SCROLL TIMELINE (scrub, no snap) ---
@@ -249,9 +257,13 @@ export default function MainHero() {
       // Keep white shader visible - don't fade it out since we scroll to next section after
       // Section 1 active
       .addLabel("section1", "aboutVisible+=0.8")
-      .call(() => {
-        if (clickTargetSectionRef.current == null) setActiveSection(0);
-      }, undefined, "section1")
+      .call(
+        () => {
+          if (clickTargetSectionRef.current == null) setActiveSection(0);
+        },
+        undefined,
+        "section1",
+      )
       .addLabel("aboutComplete", "section1+=0.15")
       .to({}, { duration: 1.2 }, "aboutComplete");
   }, []);
@@ -398,8 +410,10 @@ export default function MainHero() {
               <h2 className="text-3xl md:text-[40px] font-semibold text-[#011F27] mb-3">
                 Atomix it is.
               </h2>
-              <p className="text-[#485E64] text-xl">
-                Property lending is overdue for a rebuild.
+              <p className="text-[#485E64] text-xl max-w-[600px]">
+                Property lending is overdue for a rebuild. Atomix automates the
+                full lifecycle of property loans for lenders, capital providers,
+                brokers, and borrowers.
               </p>
             </div>
 
@@ -414,18 +428,22 @@ export default function MainHero() {
                       section={section}
                       isActive={activeSection === index}
                       onClick={() => handleAboutSectionClick(index)}
-                      itemRef={(el) => { aboutNavRefs.current[index] = el; }}
+                      itemRef={(el) => {
+                        aboutNavRefs.current[index] = el;
+                      }}
                     />
                   ))}
                 </div>
               </div>
 
               {/* Right side - Image cards */}
-              <div className="lg:col-span-3 relative h-[270px]">
+              <div className="lg:col-span-3 relative h-[340px] md:h-[400px]">
                 {aboutAtomixSections.map((section, index) => (
                   <AboutSectionCard
                     key={section.id}
-                    cardRef={(el) => { aboutCardRefs.current[index] = el; }}
+                    cardRef={(el) => {
+                      aboutCardRefs.current[index] = el;
+                    }}
                     title={section.title}
                     description={section.description}
                     image={section.image}
