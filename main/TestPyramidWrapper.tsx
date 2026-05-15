@@ -203,7 +203,7 @@ function PyramidNavArrow({
 }
 
 type PyramidApi = {
-  setSlider: (v: number) => void;
+  setSlider: (v: number, instant?: boolean) => void;
   setFinalHighlightOnly: (locked: boolean) => void;
 };
 
@@ -225,6 +225,15 @@ export default function TestPyramidWrapper() {
   const lastHighlightIndexRef = useRef(0);
   const lastIsPastPyramidSequenceRef = useRef(false);
   const isFirstRenderRef = useRef(true);
+  // Backward-skip state: once the user has scrolled past the highlight
+  // sequence (into the icon-box phase), the next time they scroll
+  // upward past Disconnected stacks we snap them straight out of the
+  // section so they don't traverse Bespoke builds + Simple SaaS in
+  // reverse. The scroll back from icon-box -> Disconnected itself is
+  // left alone so the pyramid translates at the user's natural pace.
+  const hasReachedIconBoxRef = useRef(false);
+  const isProgrammaticScrollRef = useRef(false);
+  const isExitSnappingRef = useRef(false);
 
   useGSAP(() => {
     const section = pyramidSectionRef.current;
@@ -259,6 +268,77 @@ export default function TestPyramidWrapper() {
         pinSpacing: true,
         scrub: true,
         invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          // Skip our own snap tweens so onUpdate only reacts to genuine
+          // user-driven scrolling.
+          if (isProgrammaticScrollRef.current) return;
+          if (self.direction !== -1) return;
+          if (!hasReachedIconBoxRef.current) return;
+
+          const tlDur = tl.duration();
+          if (tlDur === 0) return;
+
+          // Trigger the exit snap the moment the user, while scrolling
+          // up, would cross out of the Disconnected stacks phase and
+          // into the Bespoke builds phase. Up until this threshold the
+          // user is free to scroll back from the icon-box phase through
+          // Disconnected stacks at their own pace so the pyramid
+          // translation stays tied to scroll speed.
+          const bespokeThresholdPyramidProgress =
+            HIGHLIGHT_PHASE_2_END * HIGHLIGHT_SEQUENCE_END;
+          const bespokeThresholdTime =
+            PYRAMID_PROGRESS_TWEEN_START + bespokeThresholdPyramidProgress;
+          const scrollLen = self.end - self.start;
+          const bespokeThresholdScrollY =
+            self.start + scrollLen * (bespokeThresholdTime / tlDur);
+
+          if (self.scroll() >= bespokeThresholdScrollY) return;
+
+          hasReachedIconBoxRef.current = false;
+          isExitSnappingRef.current = true;
+          pyramidApiRef.current?.setFinalHighlightOnly(true);
+          if (lastHighlightIndexRef.current !== 2) {
+            lastHighlightIndexRef.current = 2;
+            setHighlightIndex(2);
+          }
+          isProgrammaticScrollRef.current = true;
+          const firstSide = PYRAMID_SIDES[0];
+          const releaseExitLock = () => {
+            isProgrammaticScrollRef.current = false;
+            isExitSnappingRef.current = false;
+            // Hard-reset the pyramid's smoothed slider state to 0
+            // BEFORE unlocking. Without `instant: true`, the
+            // pyramid's per-frame lerp would lag the slider behind
+            // the actual scroll position and the user would see the
+            // 3rd side briefly highlighted before it settles back
+            // onto the 1st side.
+            pyramidApiRef.current?.setSlider(0, true);
+            pyramidApiRef.current?.setFinalHighlightOnly(false);
+            // Reset to the first active side so the next downward
+            // scroll starts the highlight sequence from the
+            // beginning (Simple SaaS), instead of briefly showing
+            // Disconnected stacks during the intro animations.
+            if (lastHighlightIndexRef.current !== firstSide.highlightIndex) {
+              lastHighlightIndexRef.current = firstSide.highlightIndex;
+              setHighlightIndex(firstSide.highlightIndex);
+            }
+            if (lastIsPastPyramidSequenceRef.current) {
+              lastIsPastPyramidSequenceRef.current = false;
+              setIsPastPyramidSequence(false);
+            }
+          };
+          gsap.to(window, {
+            scrollTo: {
+              y: Math.max(0, self.start - 1),
+              autoKill: false,
+            },
+            duration: 0.6,
+            ease: "power2.inOut",
+            overwrite: true,
+            onComplete: releaseExitLock,
+            onInterrupt: releaseExitLock,
+          });
+        },
       },
     });
     timelineRef.current = tl;
@@ -311,7 +391,13 @@ export default function TestPyramidWrapper() {
             pyramidApiRef.current?.setSlider(progress);
 
             let newIndex = lastHighlightIndexRef.current;
-            if (progress < HIGHLIGHT_SEQUENCE_END) {
+            if (isExitSnappingRef.current) {
+              // While the user is being snapped out of the section
+              // backwards, freeze the highlight content on Disconnected
+              // stacks so they don't see the title flash through the
+              // earlier sides as the scrub races back to the start.
+              newIndex = 2;
+            } else if (progress < HIGHLIGHT_SEQUENCE_END) {
               const introT = Math.min(1, progress / HIGHLIGHT_SEQUENCE_END);
               if (introT <= HIGHLIGHT_PHASE_1_END) {
                 newIndex = 1;
@@ -331,6 +417,13 @@ export default function TestPyramidWrapper() {
             if (past !== lastIsPastPyramidSequenceRef.current) {
               lastIsPastPyramidSequenceRef.current = past;
               setIsPastPyramidSequence(past);
+            }
+            // Latch on entering the icon-box phase. Stays latched
+            // through the scroll back across Disconnected stacks so
+            // the exit snap can fire once the user reaches the
+            // Bespoke threshold.
+            if (past) {
+              hasReachedIconBoxRef.current = true;
             }
           },
         },
@@ -391,11 +484,22 @@ export default function TestPyramidWrapper() {
     const targetScroll =
       st.start + (st.end - st.start) * targetTimelineProgress;
 
+    // Manual arrow navigation overrides the backward-skip state — the
+    // user explicitly picked a side, so further scrolling should behave
+    // like a fresh interaction.
+    hasReachedIconBoxRef.current = false;
+    isProgrammaticScrollRef.current = true;
     gsap.to(window, {
       duration: 0.6,
       scrollTo: { y: targetScroll, autoKill: false },
       ease: "power2.inOut",
       overwrite: true,
+      onComplete: () => {
+        isProgrammaticScrollRef.current = false;
+      },
+      onInterrupt: () => {
+        isProgrammaticScrollRef.current = false;
+      },
     });
   };
 

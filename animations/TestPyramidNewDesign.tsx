@@ -187,7 +187,7 @@ export interface TestPyramidNewDesignProps {
   style?: CSSProperties;
   initialSliderValue?: number;
   onReady?: (api: {
-    setSlider: (v: number) => void;
+    setSlider: (v: number, instant?: boolean) => void;
     setFinalHighlightOnly: (locked: boolean) => void;
   }) => void;
   onInfiniteSpinStart?: () => void;
@@ -725,8 +725,18 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
 
     afId = requestAnimationFrame(animate);
     onReady?.({
-      setSlider: (v: number) => {
-        scrollProgressRef.current = clamp01(v);
+      setSlider: (v: number, instant?: boolean) => {
+        const clamped = clamp01(v);
+        scrollProgressRef.current = clamped;
+        if (instant) {
+          // Bypass the per-frame smoothing so the visible pyramid
+          // state matches `v` immediately. Useful when callers need to
+          // hard-reset the pyramid (e.g. after a programmatic snap)
+          // and don't want curTRef to lag behind into the wrong phase.
+          curTRef.current = clamped;
+          spinRef.current = 0;
+          hasTriggeredInfiniteSpinRef.current = false;
+        }
       },
       setFinalHighlightOnly: (locked: boolean) => {
         finalHighlightOnlyRef.current = locked;
