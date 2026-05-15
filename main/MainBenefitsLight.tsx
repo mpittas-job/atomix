@@ -19,6 +19,7 @@ const TAB_ANIMATION = {
   contentStagger: 0.22,
   cardDuration: 1.2,
   cardStagger: 0.18,
+  imageDelay: 0.5,
   buttonEase: "power1.out",
   contentEase: "power2.out",
   cardEase: "power2.out",
@@ -188,15 +189,45 @@ export default function MainBenefitsLight() {
       gsap.set(smallImageRef.current, { autoAlpha: 0, x: -40 });
 
     const tl = gsap.timeline({ defaults: { overwrite: "auto" } });
+    const contentStart = 0;
 
-    // Animate left side content
+    if (mainImageRef.current) {
+      tl.to(
+        mainImageRef.current,
+        {
+          autoAlpha: 1,
+          x: 0,
+          duration: TAB_ANIMATION.contentDuration,
+          ease: TAB_ANIMATION.contentEase,
+        },
+        contentStart + TAB_ANIMATION.imageDelay,
+      );
+    }
+
+    if (smallImageRef.current) {
+      tl.to(
+        smallImageRef.current,
+        {
+          autoAlpha: 1,
+          x: 0,
+          duration: TAB_ANIMATION.contentDuration,
+          ease: TAB_ANIMATION.contentEase,
+        },
+        contentStart + TAB_ANIMATION.imageDelay + 0.12,
+      );
+    }
+
     if (titleRef.current) {
-      tl.to(titleRef.current, {
-        autoAlpha: 1,
-        y: 0,
-        duration: TAB_ANIMATION.contentDuration,
-        ease: TAB_ANIMATION.contentEase,
-      });
+      tl.to(
+        titleRef.current,
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: TAB_ANIMATION.contentDuration,
+          ease: TAB_ANIMATION.contentEase,
+        },
+        contentStart,
+      );
     }
 
     if (descRef.current) {
@@ -208,7 +239,7 @@ export default function MainBenefitsLight() {
           duration: TAB_ANIMATION.contentDuration,
           ease: TAB_ANIMATION.contentEase,
         },
-        "-=0.6",
+        contentStart + 0.08,
       );
     }
 
@@ -222,34 +253,7 @@ export default function MainBenefitsLight() {
           stagger: TAB_ANIMATION.contentStagger,
           ease: TAB_ANIMATION.contentEase,
         },
-        "-=0.5",
-      );
-    }
-
-    // Animate right side images
-    if (mainImageRef.current) {
-      tl.to(
-        mainImageRef.current,
-        {
-          autoAlpha: 1,
-          x: 0,
-          duration: TAB_ANIMATION.contentDuration,
-          ease: TAB_ANIMATION.contentEase,
-        },
-        "-=0.8",
-      );
-    }
-
-    if (smallImageRef.current) {
-      tl.to(
-        smallImageRef.current,
-        {
-          autoAlpha: 1,
-          x: 0,
-          duration: TAB_ANIMATION.contentDuration,
-          ease: TAB_ANIMATION.contentEase,
-        },
-        "-=0.9",
+        contentStart + 0.14,
       );
     }
   };
@@ -362,7 +366,7 @@ export default function MainBenefitsLight() {
       );
     }
 
-    // Step 3: Animate left side elements - title, description, list items (slower with more stagger)
+    // Step 3: Left content first; images follow 1s after title begins
     if (titleRef.current) {
       tl.to(
         titleRef.current,
@@ -374,7 +378,9 @@ export default function MainBenefitsLight() {
         },
         "-=0.6",
       );
+      tl.addLabel("panelContent", "<");
     }
+
     if (descRef.current) {
       tl.to(
         descRef.current,
@@ -384,9 +390,10 @@ export default function MainBenefitsLight() {
           duration: TAB_ANIMATION.cardDuration,
           ease: TAB_ANIMATION.cardEase,
         },
-        "-=0.85",
+        "panelContent+=0.08",
       );
     }
+
     if (listRef.current && listRef.current.children.length) {
       tl.to(
         listRef.current.children,
@@ -397,11 +404,10 @@ export default function MainBenefitsLight() {
           stagger: TAB_ANIMATION.cardStagger,
           ease: TAB_ANIMATION.cardEase,
         },
-        "-=0.75",
+        "panelContent+=0.14",
       );
     }
 
-    // Step 4: Animate main image from right - STARTS EARLIER (overlaps with list items)
     if (mainImageRef.current) {
       tl.to(
         mainImageRef.current,
@@ -411,11 +417,10 @@ export default function MainBenefitsLight() {
           duration: TAB_ANIMATION.cardDuration * 1.4,
           ease: TAB_ANIMATION.cardEase,
         },
-        "-=2.2",
+        `panelContent+=${TAB_ANIMATION.imageDelay}`,
       );
     }
 
-    // Step 5: Animate small image from right - STARTS EARLIER (overlaps with list items)
     if (smallImageRef.current) {
       tl.to(
         smallImageRef.current,
@@ -425,7 +430,7 @@ export default function MainBenefitsLight() {
           duration: TAB_ANIMATION.cardDuration * 1.4,
           ease: TAB_ANIMATION.cardEase,
         },
-        "-=2.4",
+        `panelContent+=${TAB_ANIMATION.imageDelay + 0.12}`,
       );
     }
   }, []);
@@ -673,7 +678,7 @@ export default function MainBenefitsLight() {
                 {/* Right side - Images */}
                 <div
                   ref={rightColumnRef}
-                  className="bg-[#004152] rounded-2xl relative min-h-[400px] lg:min-h-full overflow-hidden"
+                  className="bg-[#499DB8] rounded-2xl relative min-h-[400px] lg:min-h-full overflow-hidden"
                 >
                   <div
                     ref={rightColumnBlurRef}
@@ -706,7 +711,9 @@ export default function MainBenefitsLight() {
                       alt=""
                       width={600}
                       height={400}
-                      className="absolute top-1/2 left-20 -translate-y-1/2 object-contain rounded-lg w-[40%] h-auto"
+                      className={`absolute top-1/2 left-20 -translate-y-1/2 object-contain rounded-lg h-auto ${
+                        activeIndex === 2 ? "w-[34%]" : "w-[40%]"
+                      }`}
                     />
                   </div>
                 </div>
