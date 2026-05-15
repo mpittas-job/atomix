@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useRef, useState, useEffect, useLayoutEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { useGSAP } from "@gsap/react";
 import TestPyramidNewDesign from "@/animations/TestPyramidNewDesign";
-import { FiCheck, FiX } from "react-icons/fi";
+import { FiCheck, FiChevronLeft, FiChevronRight, FiX } from "react-icons/fi";
 import SoftAurora from "@/components/backgrounds/SoftAurora";
 import DefHeading from "@/components/typo/DefHeading";
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 const PYRAMID_SECTION_SCROLL_DISTANCE_MULTIPLIER = 6;
 
@@ -132,26 +133,74 @@ const HIGHLIGHT_SEQUENCE_END = 0.78;
 const HIGHLIGHT_PHASE_1_END = 0.3;
 const HIGHLIGHT_PHASE_2_END = 0.6;
 
-const PYRAMID_TABS = [
+/**
+ * Position of the `pyramidProgress` sub-tween inside the master timeline.
+ * Keep in sync with the `.to(pyramidProgress, ...)` call below.
+ */
+const PYRAMID_PROGRESS_TWEEN_START = 0.32;
+
+/**
+ * The three triangle sides in the order they appear as the user scrolls
+ * (and that the left/right arrows step through).
+ *
+ * `introT` is the midpoint of the side's highlight phase, expressed in the
+ * 0–1 range of the highlight intro sequence. We convert this to a target
+ * scroll position so the timeline lands exactly on that side.
+ */
+const PYRAMID_SIDES = [
   {
     id: "simple-saas",
-    label: "Simple SaaS",
     highlightIndex: 1,
     sectionIndex: 0,
+    introT: HIGHLIGHT_PHASE_1_END * 0.5,
   },
   {
     id: "bespoke-builds",
-    label: "Bespoke builds",
     highlightIndex: 0,
     sectionIndex: 1,
+    introT: (HIGHLIGHT_PHASE_1_END + HIGHLIGHT_PHASE_2_END) * 0.5,
   },
   {
     id: "disconnected-stacks",
-    label: "Disconnected stacks",
     highlightIndex: 2,
     sectionIndex: 2,
+    introT: (HIGHLIGHT_PHASE_2_END + 1) * 0.5,
   },
 ] as const;
+
+function PyramidNavArrow({
+  direction,
+  disabled,
+  onClick,
+}: {
+  direction: "prev" | "next";
+  disabled: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-label={direction === "prev" ? "Previous side" : "Next side"}
+      onClick={onClick}
+      disabled={disabled}
+      className={[
+        "absolute top-1/2 z-20 flex size-15 -translate-y-1/2 items-center justify-center rounded-full border border-white/35 bg-white/10 text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white/20",
+        direction === "prev" ? "left-6" : "right-6",
+        disabled
+          ? "cursor-not-allowed opacity-35"
+          : "cursor-pointer opacity-100",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
+      {direction === "prev" ? (
+        <FiChevronLeft className="size-6 shrink-0" aria-hidden />
+      ) : (
+        <FiChevronRight className="size-6 shrink-0" aria-hidden />
+      )}
+    </button>
+  );
+}
 
 type PyramidApi = {
   setSlider: (v: number) => void;
@@ -170,18 +219,10 @@ export default function TestPyramidWrapper() {
   const highlightTitleRef = useRef<HTMLHeadingElement>(null);
   const highlightDescRef = useRef<HTMLParagraphElement>(null);
   const highlightItemsRef = useRef<Array<HTMLLIElement | null>>([]);
+  const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const [highlightIndex, setHighlightIndex] = useState(0);
-  const [activeTabIndex, setActiveTabIndex] = useState(1);
   const lastHighlightIndexRef = useRef(0);
   const isFirstRenderRef = useRef(true);
-  const tabListRef = useRef<HTMLDivElement | null>(null);
-  const tabThumbRef = useRef<HTMLDivElement | null>(null);
-  const tabButtonRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const isFirstTabThumbRef = useRef(true);
-  const hasScrolledPastPyramidRef = useRef(false);
-  const isFinalHighlightLockedRef = useRef(false);
-  const activeTabIndexRef = useRef(activeTabIndex);
-  activeTabIndexRef.current = activeTabIndex;
 
   useGSAP(() => {
     const section = pyramidSectionRef.current;
@@ -200,19 +241,6 @@ export default function TestPyramidWrapper() {
     )
       return;
 
-    const setFinalHighlightLock = (locked: boolean) => {
-      if (isFinalHighlightLockedRef.current === locked) return;
-      isFinalHighlightLockedRef.current = locked;
-      pyramidApiRef.current?.setFinalHighlightOnly(locked);
-
-      if (locked) {
-        lastHighlightIndexRef.current = 2;
-        setHighlightIndex(2);
-      }
-    };
-
-    // Initial state: pyramid on the right side of the wrapper,
-    // icon boxes hidden, highlight box visible with first content.
     gsap.set(headingWrap, { autoAlpha: 0, y: 32 });
     gsap.set(animationWrap, { autoAlpha: 0, y: 28 });
     gsap.set(pyramidCol, { xPercent: 85 });
@@ -229,29 +257,9 @@ export default function TestPyramidWrapper() {
         pinSpacing: true,
         scrub: true,
         invalidateOnRefresh: true,
-        onEnter: () => {
-          setFinalHighlightLock(false);
-        },
-        onLeave: () => {
-          hasScrolledPastPyramidRef.current = true;
-          setFinalHighlightLock(false);
-        },
-        onEnterBack: () => {
-          if (hasScrolledPastPyramidRef.current) {
-            setFinalHighlightLock(true);
-          }
-        },
-        onUpdate: (self) => {
-          if (self.direction > 0) {
-            setFinalHighlightLock(false);
-          }
-        },
-        onLeaveBack: () => {
-          setFinalHighlightLock(false);
-          hasScrolledPastPyramidRef.current = false;
-        },
       },
     });
+    timelineRef.current = tl;
     const pyramidProgress = { value: 0 };
 
     // Upstream sections (e.g. MainProblemsTabs) change height when their
@@ -300,18 +308,15 @@ export default function TestPyramidWrapper() {
             const progress = pyramidProgress.value;
             pyramidApiRef.current?.setSlider(progress);
 
-            if (isFinalHighlightLockedRef.current) return;
-
-            // Update highlight box content based on pyramid highlight phase
             let newIndex = lastHighlightIndexRef.current;
             if (progress < HIGHLIGHT_SEQUENCE_END) {
               const introT = Math.min(1, progress / HIGHLIGHT_SEQUENCE_END);
               if (introT <= HIGHLIGHT_PHASE_1_END) {
-                newIndex = 1; // Both left & right highlighted -> Simple SaaS (side 2)
+                newIndex = 1;
               } else if (introT <= HIGHLIGHT_PHASE_2_END) {
-                newIndex = 0; // Transitioning to bottom -> Bespoke builds (side 1)
+                newIndex = 0;
               } else {
-                newIndex = 2; // Bottom highlighted -> Disconnected stacks (side 3)
+                newIndex = 2;
               }
             }
 
@@ -321,17 +326,17 @@ export default function TestPyramidWrapper() {
             }
           },
         },
-        0.32,
+        PYRAMID_PROGRESS_TWEEN_START,
       )
       .to(
         pyramidCol,
         { xPercent: 0, ease: "none", duration: 0.22 },
-        0.32 + HIGHLIGHT_SEQUENCE_END,
+        PYRAMID_PROGRESS_TWEEN_START + HIGHLIGHT_SEQUENCE_END,
       )
       .to(
         highlightBoxRef.current,
         { autoAlpha: 0, ease: "power2.out", duration: 0.15 },
-        0.32 + HIGHLIGHT_SEQUENCE_END,
+        PYRAMID_PROGRESS_TWEEN_START + HIGHLIGHT_SEQUENCE_END,
       )
       .to(
         boxes,
@@ -350,76 +355,50 @@ export default function TestPyramidWrapper() {
       if (rafId) cancelAnimationFrame(rafId);
       tl.scrollTrigger?.kill();
       tl.kill();
+      timelineRef.current = null;
     };
   }, []);
 
-  useEffect(() => {
-    const tabIndex = PYRAMID_TABS.findIndex(
-      (tab) => tab.highlightIndex === highlightIndex,
+  /**
+   * Step the timeline to a target side by tweening the page scroll position.
+   * The pyramid timeline is scrubbed by ScrollTrigger, so smoothly moving
+   * window.scrollY drives every animation (slider, highlight content,
+   * pyramid translation) in lockstep — no parallel state, no jank.
+   */
+  const goToSide = (sideIndex: number) => {
+    const tl = timelineRef.current;
+    const st = tl?.scrollTrigger;
+    if (!tl || !st) return;
+
+    const side = PYRAMID_SIDES[sideIndex];
+    if (!side) return;
+
+    const targetPyramidProgress = side.introT * HIGHLIGHT_SEQUENCE_END;
+    const targetTimelineTime =
+      PYRAMID_PROGRESS_TWEEN_START + targetPyramidProgress;
+    const targetTimelineProgress = Math.min(
+      1,
+      Math.max(0, targetTimelineTime / tl.duration()),
     );
-    if (tabIndex >= 0) setActiveTabIndex(tabIndex);
-  }, [highlightIndex]);
+    const targetScroll =
+      st.start + (st.end - st.start) * targetTimelineProgress;
 
-  useLayoutEffect(() => {
-    const list = tabListRef.current;
-    const thumb = tabThumbRef.current;
-    const activeBtn = tabButtonRefs.current[activeTabIndex];
-    if (!list || !thumb || !activeBtn) return;
-
-    const listRect = list.getBoundingClientRect();
-    const btnRect = activeBtn.getBoundingClientRect();
-    const x = btnRect.left - listRect.left;
-    const width = btnRect.width;
-
-    if (isFirstTabThumbRef.current) {
-      gsap.set(thumb, { x, width });
-      isFirstTabThumbRef.current = false;
-    } else {
-      gsap.to(thumb, {
-        x,
-        width,
-        duration: 0.22,
-        ease: "power2.out",
-        overwrite: "auto",
-      });
-    }
-  }, [activeTabIndex]);
-
-  useLayoutEffect(() => {
-    const list = tabListRef.current;
-    if (!list) return;
-
-    const applyInstantFromLayout = () => {
-      const thumb = tabThumbRef.current;
-      const idx = activeTabIndexRef.current;
-      const activeBtn = tabButtonRefs.current[idx];
-      if (!thumb || !activeBtn) return;
-      const listRect = list.getBoundingClientRect();
-      const btnRect = activeBtn.getBoundingClientRect();
-      gsap.set(thumb, {
-        x: btnRect.left - listRect.left,
-        width: btnRect.width,
-      });
-    };
-
-    const ro = new ResizeObserver(applyInstantFromLayout);
-    ro.observe(list);
-    return () => ro.disconnect();
-  }, []);
-
-  const handleTabClick = (tabIndex: number) => {
-    const tab = PYRAMID_TABS[tabIndex];
-    if (!tab) return;
-
-    setActiveTabIndex(tabIndex);
-    setHighlightIndex(tab.highlightIndex);
-    iconBoxRefs.current[tab.sectionIndex]?.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
+    gsap.to(window, {
+      duration: 0.6,
+      scrollTo: { y: targetScroll, autoKill: false },
+      ease: "power2.inOut",
+      overwrite: true,
     });
   };
 
-  // Animate highlight content when highlightIndex changes
+  const activeSideIndex = Math.max(
+    0,
+    PYRAMID_SIDES.findIndex((side) => side.highlightIndex === highlightIndex),
+  );
+
+  const handlePrevSide = () => goToSide(activeSideIndex - 1);
+  const handleNextSide = () => goToSide(activeSideIndex + 1);
+
   useEffect(() => {
     const content = highlightContentRef.current;
     const title = highlightTitleRef.current;
@@ -431,17 +410,14 @@ export default function TestPyramidWrapper() {
     if (!content || !title) return;
 
     const ctx = gsap.context(() => {
-      // Set initial state for animation
       gsap.set(title, { opacity: 0, y: 16 });
       if (desc) gsap.set(desc, { opacity: 0, y: 12 });
       gsap.set(items, { opacity: 0, x: -12 });
 
-      // Create entrance animation timeline
       const tl = gsap.timeline({
         defaults: { ease: "power2.out" },
       });
 
-      // Animate title first, then description, then items staggered
       tl.to(title, {
         opacity: 1,
         y: 0,
@@ -504,6 +480,17 @@ export default function TestPyramidWrapper() {
         />
       </div>
 
+      <PyramidNavArrow
+        direction="prev"
+        disabled={activeSideIndex === 0}
+        onClick={handlePrevSide}
+      />
+      <PyramidNavArrow
+        direction="next"
+        disabled={activeSideIndex === PYRAMID_SIDES.length - 1}
+        onClick={handleNextSide}
+      />
+
       <div className="relative z-10 my-auto flex w-full max-w-[1200px] flex-col items-center justify-center gap-4 px-6">
         <div ref={headingWrapRef} className="w-full mt-20">
           <DefHeading
@@ -521,53 +508,6 @@ export default function TestPyramidWrapper() {
             ref={highlightBoxRef}
             className="absolute left-34 top-1/2 -translate-y-1/2 w-[440px] opacity-0"
           >
-            <div
-              ref={tabListRef}
-              role="tablist"
-              aria-label="Pyramid categories"
-              className="relative mb-10 flex flex-wrap items-center rounded-full border border-white/30 bg-white/15 p-1 text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]"
-            >
-              <div
-                ref={tabThumbRef}
-                aria-hidden
-                className="pointer-events-none absolute top-1 bottom-1 left-0 z-0 rounded-full bg-white shadow-sm shadow-slate-900/10 will-change-[transform,width]"
-              />
-              {PYRAMID_TABS.map((tab, tabIndex) => {
-                const isActive = tabIndex === activeTabIndex;
-                const prevTab =
-                  tabIndex > 0 ? PYRAMID_TABS[tabIndex - 1] : null;
-                const prevIsActive =
-                  !!prevTab && tabIndex - 1 === activeTabIndex;
-                const showLeftSeparator =
-                  tabIndex > 0 && !isActive && !prevIsActive;
-                return (
-                  <button
-                    key={tab.id}
-                    ref={(el) => {
-                      tabButtonRefs.current[tabIndex] = el;
-                    }}
-                    type="button"
-                    role="tab"
-                    aria-selected={isActive}
-                    onClick={() => handleTabClick(tabIndex)}
-                    className={[
-                      "relative z-[1] flex-1 cursor-pointer whitespace-nowrap bg-transparent px-4 py-2 text-[14px] leading-tight font-semibold",
-                      showLeftSeparator
-                        ? "before:pointer-events-none before:absolute before:left-0 before:top-1/2 before:z-10 before:h-[15px] before:w-px before:-translate-y-1/2 before:bg-slate-300/80 before:content-['']"
-                        : "",
-                      isActive
-                        ? "text-slate-900"
-                        : "rounded-none text-white/80",
-                    ]
-                      .filter(Boolean)
-                      .join(" ")}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
-
             <div
               ref={highlightContentRef}
               className="highlight-content rounded-2xl"
@@ -633,7 +573,7 @@ export default function TestPyramidWrapper() {
           <div className="flex-1 flex flex-col justify-center gap-8 pl-20 max-w-lg">
             {iconBoxesData.map((box, index) => {
               const sectionId =
-                PYRAMID_TABS.find((tab) => tab.sectionIndex === index)?.id ??
+                PYRAMID_SIDES.find((side) => side.sectionIndex === index)?.id ??
                 `pyramid-section-${index}`;
               return (
                 <div
