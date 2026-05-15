@@ -10,36 +10,40 @@ import SoftAurora from "@/components/backgrounds/SoftAurora";
 
 gsap.registerPlugin(useGSAP);
 
-/** Offsets from section center; clamp + vw/vh so faces clear copy on all widths */
+/**
+ * Offsets from section center (clamp + vw/vh).
+ * Left: one large top avatar, two smaller ones below side-by-side.
+ * Right: small top, large bottom.
+ */
 const FACE_SLOTS = [
   {
-    sizeClass: "w-[clamp(4rem,9vw,6.75rem)]",
+    sizeClass: "w-[clamp(5.25rem,11vw,8.5rem)]",
     transform:
-      "translate(calc(-50% + clamp(-380px, -30vw, -200px)), calc(-50% + clamp(-228px, -24vh, -155px)))",
+      "translate(calc(-50% + clamp(-480px, -41vw, -330px)), calc(-50% + clamp(-128px, -13vh, -72px)))",
     slotClass: "max-sm:hidden",
   },
   {
-    sizeClass: "w-[clamp(3.75rem,8.5vw,6.25rem)]",
+    sizeClass: "w-[clamp(8rem,9.5vw,7.25rem)]",
     transform:
-      "translate(calc(-50% + clamp(-340px, -28vw, -190px)), calc(-50% + clamp(145px, 22vh, 248px)))",
+      "translate(calc(-50% + clamp(-650px, -49vw, -380px)), calc(-50% + clamp(88px, 12vh, 158px)))",
     slotClass: "max-sm:hidden",
   },
   {
-    sizeClass: "w-[clamp(3rem,6.5vw,4.75rem)]",
+    sizeClass: "w-[clamp(4.5rem,9.5vw,7.25rem)]",
     transform:
-      "translate(calc(-50% + clamp(-420px, -36vw, -240px)), calc(-50% + clamp(-82px, -5vh, -32px)))",
+      "translate(calc(-50% + clamp(-420px, -36vw, -290px)), calc(-50% + clamp(48px, 7vh, 108px)))",
     slotClass: "max-sm:hidden",
   },
   {
-    sizeClass: "w-[clamp(4rem,9vw,6.75rem)]",
+    sizeClass: "w-[clamp(4.25rem,8.5vw,6.5rem)]",
     transform:
-      "translate(calc(-50% + clamp(200px, 30vw, 380px)), calc(-50% + clamp(-232px, -24vh, -150px)))",
+      "translate(calc(-50% + clamp(380px, 35vw, 460px)), calc(-50% + clamp(-158px, -15vh, -98px)))",
     slotClass: "max-sm:hidden",
   },
   {
-    sizeClass: "w-[clamp(4.5rem,9.5vw,7.5rem)]",
+    sizeClass: "w-[clamp(6.25rem,13.5vw,10.75rem)]",
     transform:
-      "translate(calc(-50% + clamp(140px, 24vw, 300px)), calc(-50% + clamp(118px, 17vh, 222px)))",
+      "translate(calc(-50% + clamp(360px, 32vw, 560px)), calc(-50% + clamp(60px, 14vh, 0px)))",
     slotClass: "",
   },
 ] as const;
@@ -84,11 +88,25 @@ function randDrift(magnitude: number) {
   };
 }
 
+function randRestingOffset() {
+  return {
+    x: gsap.utils.random(-34, 34),
+    y: gsap.utils.random(-24, 24),
+  };
+}
+
 function nextSwapDelay() {
   if (Math.random() < 0.65) {
-    return gsap.utils.random(0.9, 2.8);
+    return gsap.utils.random(2.2, 4.8);
   }
-  return gsap.utils.random(2.8, 5.2);
+  return gsap.utils.random(4.8, 8.5);
+}
+
+function nextHiddenDelay() {
+  if (Math.random() < 0.7) {
+    return gsap.utils.random(0.35, 1.1);
+  }
+  return gsap.utils.random(1.1, 2);
 }
 
 function WaveBackdrop() {
@@ -191,8 +209,8 @@ export default function HeroCareers() {
           autoAlpha: 0,
           x: outDrift.x,
           y: outDrift.y,
-          duration: 0.58,
-          ease: "back.in(1.32)",
+          duration: 0.88,
+          ease: "back.in(1.9)",
           overwrite: "auto",
           onComplete: safe(() => {
             setSlotFaces((prev) => {
@@ -203,7 +221,7 @@ export default function HeroCareers() {
             });
 
             const waitPaint = gsap.delayedCall(
-              0.05,
+              nextHiddenDelay(),
               safe(() => {
                 requestAnimationFrame(() => {
                   requestAnimationFrame(() => {
@@ -215,12 +233,12 @@ export default function HeroCareers() {
                     }
 
                     const fromDrift = randDrift(26);
-                    const toDrift = randDrift(12);
+                    const toDrift = randRestingOffset();
 
                     gsap.fromTo(
                       elIn,
                       {
-                        scale: 0,
+                        scale: 0.2,
                         autoAlpha: 0,
                         x: fromDrift.x,
                         y: fromDrift.y,
@@ -230,8 +248,8 @@ export default function HeroCareers() {
                         autoAlpha: 1,
                         x: toDrift.x,
                         y: toDrift.y,
-                        duration: 0.78,
-                        ease: "back.out(1.34)",
+                        duration: 1.12,
+                        ease: "back.out(2.75)",
                         overwrite: "auto",
                         onComplete: safe(() => {
                           slotBusyRef.current[slot] = false;
@@ -284,17 +302,17 @@ export default function HeroCareers() {
         gsap.to(faceElements, {
           scale: 1,
           autoAlpha: 1,
-          x: 0,
-          y: 0,
-          duration: 0.72,
-          ease: "back.out(1.38)",
-          stagger: { amount: 0.62, from: "random" },
+          x: () => randRestingOffset().x,
+          y: () => randRestingOffset().y,
+          duration: 1.05,
+          ease: "back.out(2.5)",
+          stagger: { amount: 0.95, from: "random" },
           overwrite: "auto",
           onComplete: safe(() => {
             for (let slot = 0; slot < FACE_COUNT; slot++) {
               const firstDelay =
-                gsap.utils.random(0.65, 2.1) +
-                slot * gsap.utils.random(0.08, 0.28);
+                gsap.utils.random(1.6, 4) +
+                slot * gsap.utils.random(0.15, 0.42);
               slotSwapTimersRef.current[slot]?.kill();
               slotSwapTimersRef.current[slot] = gsap.delayedCall(
                 firstDelay,
@@ -339,7 +357,7 @@ export default function HeroCareers() {
                   }}
                   className="h-full w-full will-change-transform"
                 >
-                  <div className="relative h-full w-full overflow-hidden rounded-full shadow-[0_10px_28px_rgba(1,31,39,0.1)]">
+                  <div className="relative h-full w-full overflow-hidden rounded-full">
                     <Image
                       key={faceIdx}
                       src={face.src}
