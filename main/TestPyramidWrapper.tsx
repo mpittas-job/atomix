@@ -221,7 +221,9 @@ export default function TestPyramidWrapper() {
   const highlightItemsRef = useRef<Array<HTMLLIElement | null>>([]);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const [highlightIndex, setHighlightIndex] = useState(0);
+  const [isPastPyramidSequence, setIsPastPyramidSequence] = useState(false);
   const lastHighlightIndexRef = useRef(0);
+  const lastIsPastPyramidSequenceRef = useRef(false);
   const isFirstRenderRef = useRef(true);
 
   useGSAP(() => {
@@ -324,6 +326,12 @@ export default function TestPyramidWrapper() {
               lastHighlightIndexRef.current = newIndex;
               setHighlightIndex(newIndex);
             }
+
+            const past = progress >= HIGHLIGHT_SEQUENCE_END;
+            if (past !== lastIsPastPyramidSequenceRef.current) {
+              lastIsPastPyramidSequenceRef.current = past;
+              setIsPastPyramidSequence(past);
+            }
           },
         },
         PYRAMID_PROGRESS_TWEEN_START,
@@ -391,13 +399,27 @@ export default function TestPyramidWrapper() {
     });
   };
 
-  const activeSideIndex = Math.max(
-    0,
-    PYRAMID_SIDES.findIndex((side) => side.highlightIndex === highlightIndex),
-  );
+  // Once the user has scrolled past the highlight sequence (the icon-box
+  // phase), treat the "current" position as beyond the last side so the
+  // left arrow brings them back to side 2 (Disconnected stacks) — the last
+  // visible side — instead of stepping back to whatever `highlightIndex`
+  // happens to be sticky at.
+  const activeSideIndex = isPastPyramidSequence
+    ? PYRAMID_SIDES.length
+    : Math.max(
+        0,
+        PYRAMID_SIDES.findIndex(
+          (side) => side.highlightIndex === highlightIndex,
+        ),
+      );
 
-  const handlePrevSide = () => goToSide(activeSideIndex - 1);
-  const handleNextSide = () => goToSide(activeSideIndex + 1);
+  const handlePrevSide = () =>
+    goToSide(Math.max(0, activeSideIndex - 1));
+  const handleNextSide = () =>
+    goToSide(Math.min(PYRAMID_SIDES.length - 1, activeSideIndex + 1));
+
+  const prevDisabled = activeSideIndex === 0;
+  const nextDisabled = activeSideIndex >= PYRAMID_SIDES.length - 1;
 
   useEffect(() => {
     const content = highlightContentRef.current;
@@ -482,12 +504,12 @@ export default function TestPyramidWrapper() {
 
       <PyramidNavArrow
         direction="prev"
-        disabled={activeSideIndex === 0}
+        disabled={prevDisabled}
         onClick={handlePrevSide}
       />
       <PyramidNavArrow
         direction="next"
-        disabled={activeSideIndex === PYRAMID_SIDES.length - 1}
+        disabled={nextDisabled}
         onClick={handleNextSide}
       />
 
