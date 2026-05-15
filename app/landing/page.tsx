@@ -10,6 +10,7 @@ import DefCta from "@/components/DefCta";
 import Footer from "@/components/Footer";
 import MainProblemsTabs from "@/main/MainProblemsTabs";
 import MainPyramidWrapper from "@/main/MainPyramidWrapper";
+import TestPyramidWrapper from "@/main/TestPyramidWrapper";
 import MainSolutionsAnimation from "@/main/MainSolutionsAnimation";
 import MainBenefitsTabs from "@/main/benefits-tabs/";
 import MainTheMarket from "@/main/MainTheMarket";
@@ -183,7 +184,8 @@ export default function LandingGradientV1Page() {
 
         {/* <MainProblemsTabs /> */}
 
-        <MainPyramidWrapper />
+        {/* <MainPyramidWrapper /> */}
+        <TestPyramidWrapper />
 
         <MainSolutionsAnimation />
 
