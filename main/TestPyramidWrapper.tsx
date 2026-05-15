@@ -483,18 +483,18 @@ export default function TestPyramidWrapper() {
   return (
     <div
       ref={pyramidSectionRef}
-      className="h-[calc(100vh-130px)] rounded-3xl bg-[#499DB8] relative overflow-hidden flex flex-col justify-center items-center"
+      className="h-[calc(100vh-130px)] rounded-3xl bg-gradient-to-b from-[#014355] to-[#247691] relative overflow-hidden flex flex-col justify-center items-center"
     >
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
         <SoftAurora
           speed={1.3}
           scale={1.2}
-          brightness={0.58}
-          color1="#2A6D8C"
-          color2="#124A62"
+          brightness={0.65}
+          color1="#78cfe3"
+          color2="#87b9d4"
           noiseFrequency={1}
           noiseAmplitude={3.5}
-          bandHeight={0.9}
+          bandHeight={0.85}
           bandSpread={1}
           octaveDecay={0.12}
           layerOffset={0.5}
