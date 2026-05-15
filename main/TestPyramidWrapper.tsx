@@ -525,7 +525,7 @@ export default function TestPyramidWrapper() {
               ref={tabListRef}
               role="tablist"
               aria-label="Pyramid categories"
-              className="relative mb-5 flex flex-wrap items-center rounded-full border border-white bg-[#ECF0F2] p-1 text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]"
+              className="relative mb-10 flex flex-wrap items-center rounded-full border border-white/30 bg-white/15 p-1 text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]"
             >
               <div
                 ref={tabThumbRef}
@@ -557,7 +557,7 @@ export default function TestPyramidWrapper() {
                         : "",
                       isActive
                         ? "text-slate-900"
-                        : "rounded-none text-[#617379]",
+                        : "rounded-none text-white/80",
                     ]
                       .filter(Boolean)
                       .join(" ")}
@@ -572,51 +572,51 @@ export default function TestPyramidWrapper() {
               ref={highlightContentRef}
               className="highlight-content rounded-2xl"
             >
-                  <h3
-                    ref={highlightTitleRef}
-                    className="text-white font-semibold text-3xl mb-3"
+              <h3
+                ref={highlightTitleRef}
+                className="text-white font-semibold text-3xl mb-3"
+              >
+                {highlightInfo.title}
+              </h3>
+              <p
+                ref={highlightDescRef}
+                className="text-white/70 text-md leading-relaxed mb-9"
+              >
+                {highlightInfo.description}
+              </p>
+              <ul className="space-y-6">
+                {highlightInfo.items.map((item, idx) => (
+                  <li
+                    key={idx}
+                    ref={(el) => {
+                      highlightItemsRef.current[idx] = el;
+                    }}
+                    className="flex items-start gap-4"
                   >
-                    {highlightInfo.title}
-                  </h3>
-                  <p
-                    ref={highlightDescRef}
-                    className="text-white/70 text-md leading-relaxed mb-9"
-                  >
-                    {highlightInfo.description}
-                  </p>
-                  <ul className="space-y-6">
-                    {highlightInfo.items.map((item, idx) => (
-                      <li
-                        key={idx}
-                        ref={(el) => {
-                          highlightItemsRef.current[idx] = el;
-                        }}
-                        className="flex items-start gap-4"
-                      >
-                        <div
-                          className={`w-13 h-13 rounded-xl flex items-center justify-center shrink-0 border-2 ${
-                            item.positive
-                              ? "border-white/0 bg-[#2b7187]"
-                              : "border-white/30 bg-transparent"
-                          }`}
-                        >
-                          {item.positive ? (
-                            <FiCheck className="w-6 h-6 text-white" />
-                          ) : (
-                            <FiX className="w-6 h-6 text-white/60" />
-                          )}
-                        </div>
-                        <div className="flex flex-col pt-0.5">
-                          <span className="text-white font-semibold text-base leading-tight">
-                            {item.title}
-                          </span>
-                          <span className="text-white/70 text-md leading-relaxed mt-0.5">
-                            {item.description}
-                          </span>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
+                    <div
+                      className={`w-13 h-13 rounded-xl flex items-center justify-center shrink-0 border-2 ${
+                        item.positive
+                          ? "border-white/0 bg-[#2b7187]"
+                          : "border-white/30 bg-transparent"
+                      }`}
+                    >
+                      {item.positive ? (
+                        <FiCheck className="w-6 h-6 text-white" />
+                      ) : (
+                        <FiX className="w-6 h-6 text-white/60" />
+                      )}
+                    </div>
+                    <div className="flex flex-col pt-0.5">
+                      <span className="text-white font-semibold text-base leading-tight">
+                        {item.title}
+                      </span>
+                      <span className="text-white/70 text-md leading-relaxed mt-0.5">
+                        {item.description}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
 
@@ -636,43 +636,43 @@ export default function TestPyramidWrapper() {
                 PYRAMID_TABS.find((tab) => tab.sectionIndex === index)?.id ??
                 `pyramid-section-${index}`;
               return (
-              <div
-                key={index}
-                id={sectionId}
-                ref={(el) => {
-                  iconBoxRefs.current[index] = el;
-                }}
-                className="flex scroll-mt-28 items-start gap-6 md:scroll-mt-32"
-              >
-                <div className="w-13 h-13 shrink-0 flex justify-center items-center rounded-xl bg-[#2b7187]">
-                  <img src={box.icon} alt={box.title} className="w-8 h-8" />
+                <div
+                  key={index}
+                  id={sectionId}
+                  ref={(el) => {
+                    iconBoxRefs.current[index] = el;
+                  }}
+                  className="flex scroll-mt-28 items-start gap-6 md:scroll-mt-32"
+                >
+                  <div className="w-13 h-13 shrink-0 flex justify-center items-center rounded-xl bg-[#2b7187]">
+                    <img src={box.icon} alt={box.title} className="w-8 h-8" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-semibold text-lg mb-1">
+                      {box.title}
+                    </h3>
+                    <p
+                      className={`text-white/70 text-base leading-relaxed ${
+                        box.items ? "mb-4" : ""
+                      }`}
+                    >
+                      {box.description}
+                    </p>
+                    {box.items && (
+                      <ul className="space-y-1">
+                        {box.items.map((item, itemIndex) => (
+                          <li
+                            key={itemIndex}
+                            className="flex items-center gap-3 text-white/70"
+                          >
+                            {item.icon} {item.text}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-white font-semibold text-lg mb-1">
-                    {box.title}
-                  </h3>
-                  <p
-                    className={`text-white/70 text-base leading-relaxed ${
-                      box.items ? "mb-4" : ""
-                    }`}
-                  >
-                    {box.description}
-                  </p>
-                  {box.items && (
-                    <ul className="space-y-1">
-                      {box.items.map((item, itemIndex) => (
-                        <li
-                          key={itemIndex}
-                          className="flex items-center gap-3 text-white/70"
-                        >
-                          {item.icon} {item.text}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </div>
-            );
+              );
             })}
           </div>
         </div>
