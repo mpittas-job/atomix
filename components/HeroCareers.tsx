@@ -11,41 +11,66 @@ import SoftAurora from "@/components/backgrounds/SoftAurora";
 gsap.registerPlugin(useGSAP);
 
 /**
- * Offsets from section center (clamp + vw/vh).
- * Left: one large top avatar, two smaller ones below side-by-side.
- * Right: small top, large bottom.
+ * Offsets from section center (clamp + vw/vh). Each side has three possible
+ * positions, but only five avatars are active so one side always has two.
  */
-const FACE_SLOTS = [
+const LEFT_FACE_POSITIONS = [
   {
     sizeClass: "w-[clamp(5.25rem,11vw,8.5rem)]",
     transform:
-      "translate(calc(-50% + clamp(-480px, -41vw, -330px)), calc(-50% + clamp(-128px, -13vh, -72px)))",
-    slotClass: "max-sm:hidden",
+      "translate(calc(-50% + clamp(-520px, -43vw, -360px)), calc(-50% + clamp(-172px, -16vh, -102px)))",
   },
   {
-    sizeClass: "w-[clamp(8rem,9.5vw,7.25rem)]",
+    sizeClass: "w-[clamp(6.75rem,9vw,8rem)]",
     transform:
-      "translate(calc(-50% + clamp(-650px, -49vw, -380px)), calc(-50% + clamp(88px, 12vh, 158px)))",
-    slotClass: "max-sm:hidden",
+      "translate(calc(-50% + clamp(-660px, -52vw, -430px)), calc(-50% + clamp(118px, 15vh, 188px)))",
   },
   {
-    sizeClass: "w-[clamp(4.5rem,9.5vw,7.25rem)]",
+    sizeClass: "w-[clamp(4.25rem,7.2vw,5.75rem)]",
     transform:
-      "translate(calc(-50% + clamp(-420px, -36vw, -290px)), calc(-50% + clamp(48px, 7vh, 108px)))",
-    slotClass: "max-sm:hidden",
+      "translate(calc(-50% + clamp(-360px, -31vw, -255px)), calc(-50% + clamp(112px, 14vh, 172px)))",
+  },
+] as const;
+
+const RIGHT_FACE_POSITIONS = [
+  {
+    sizeClass: "w-[clamp(4.25rem,7.5vw,5.75rem)]",
+    transform:
+      "translate(calc(-50% + clamp(365px, 34vw, 455px)), calc(-50% + clamp(-170px, -16vh, -110px)))",
   },
   {
-    sizeClass: "w-[clamp(4.25rem,8.5vw,6.5rem)]",
+    sizeClass: "w-[clamp(5.75rem,10vw,8.75rem)]",
     transform:
-      "translate(calc(-50% + clamp(380px, 35vw, 460px)), calc(-50% + clamp(-158px, -15vh, -98px)))",
-    slotClass: "max-sm:hidden",
+      "translate(calc(-50% + clamp(340px, 30vw, 500px)), calc(-50% + clamp(102px, 14vh, 170px)))",
   },
   {
-    sizeClass: "w-[clamp(6.25rem,13.5vw,10.75rem)]",
+    sizeClass: "w-[clamp(4.25rem,7.2vw,5.75rem)]",
     transform:
-      "translate(calc(-50% + clamp(360px, 32vw, 560px)), calc(-50% + clamp(60px, 14vh, 0px)))",
-    slotClass: "",
+      "translate(calc(-50% + clamp(570px, 48vw, 690px)), calc(-50% + clamp(112px, 13vh, 176px)))",
   },
+] as const;
+
+type FaceSide = "left" | "right";
+
+type FacePlacement = {
+  side: FaceSide;
+  position: number;
+};
+
+const INITIAL_FACE_PLACEMENTS: FacePlacement[] = [
+  { side: "left", position: 0 },
+  { side: "left", position: 1 },
+  { side: "left", position: 2 },
+  { side: "right", position: 0 },
+  { side: "right", position: 1 },
+];
+
+const FACE_SLOT_VISIBILITY = [
+  "max-sm:hidden",
+  "max-sm:hidden",
+  "max-sm:hidden",
+  "max-sm:hidden",
+  "",
 ] as const;
 
 const FACE_ASSETS = [
@@ -71,7 +96,53 @@ const FACE_ASSETS = [
   },
 ] as const;
 
-const FACE_COUNT = FACE_SLOTS.length;
+const FACE_COUNT = INITIAL_FACE_PLACEMENTS.length;
+
+function getFacePosition(placement: FacePlacement) {
+  const positions =
+    placement.side === "left" ? LEFT_FACE_POSITIONS : RIGHT_FACE_POSITIONS;
+  return positions[placement.position] ?? positions[0];
+}
+
+function countPlacementsOnSide(
+  placements: FacePlacement[],
+  side: FaceSide,
+): number {
+  return placements.filter((placement) => placement.side === side).length;
+}
+
+function pickOpenPosition(placements: FacePlacement[], side: FaceSide): number {
+  const positions =
+    side === "left" ? LEFT_FACE_POSITIONS : RIGHT_FACE_POSITIONS;
+  const occupied = new Set(
+    placements
+      .filter((placement) => placement.side === side)
+      .map((placement) => placement.position),
+  );
+  const choices = positions
+    .map((_, index) => index)
+    .filter((index) => !occupied.has(index));
+
+  return choices[Math.floor(Math.random() * choices.length)] ?? 0;
+}
+
+function pickNextPlacement(
+  placements: FacePlacement[],
+  slot: number,
+): FacePlacement {
+  const current = placements[slot]!;
+  const leftCount = countPlacementsOnSide(placements, "left");
+
+  if (leftCount === 3 && current.side === "left") {
+    return { side: "right", position: pickOpenPosition(placements, "right") };
+  }
+
+  if (leftCount === 2 && current.side === "right") {
+    return { side: "left", position: pickOpenPosition(placements, "left") };
+  }
+
+  return current;
+}
 
 function pickOtherFaceIndex(current: number): number {
   const choices = Array.from({ length: FACE_COUNT }, (_, i) => i).filter(
@@ -90,8 +161,8 @@ function randDrift(magnitude: number) {
 
 function randRestingOffset() {
   return {
-    x: gsap.utils.random(-34, 34),
-    y: gsap.utils.random(-24, 24),
+    x: gsap.utils.random(-12, 12),
+    y: gsap.utils.random(-10, 10),
   };
 }
 
@@ -152,6 +223,9 @@ export default function HeroCareers() {
 
   const [slotFaces, setSlotFaces] = useState<number[]>(() =>
     Array.from({ length: FACE_COUNT }, (_, i) => i),
+  );
+  const [facePlacements, setFacePlacements] = useState<FacePlacement[]>(
+    INITIAL_FACE_PLACEMENTS,
   );
 
   useGSAP(
@@ -244,6 +318,12 @@ export default function HeroCareers() {
           ease: "back.in(1.9)",
           overwrite: "auto",
           onComplete: safe(() => {
+            setFacePlacements((prev) => {
+              const next = [...prev];
+              next[slot] = pickNextPlacement(prev, slot);
+              return next;
+            });
+
             setSlotFaces((prev) => {
               const next = [...prev];
               const cur = next[slot]!;
@@ -373,13 +453,15 @@ export default function HeroCareers() {
           ref={facesScopeRef}
           className="relative mx-auto h-full w-full max-w-[1240px]"
         >
-          {FACE_SLOTS.map((slot, index) => {
+          {facePlacements.map((placement, index) => {
+            const slot = getFacePosition(placement);
             const faceIdx = slotFaces[index] ?? index;
             const face = FACE_ASSETS[faceIdx] ?? FACE_ASSETS[index];
+            const visibilityClass = FACE_SLOT_VISIBILITY[index] ?? "";
             return (
               <div
                 key={`face-slot-${index}`}
-                className={`absolute left-1/2 top-1/2 aspect-square ${slot.sizeClass} ${slot.slotClass}`}
+                className={`absolute left-1/2 top-1/2 aspect-square ${slot.sizeClass} ${visibilityClass}`}
                 style={{ transform: slot.transform }}
               >
                 <div
