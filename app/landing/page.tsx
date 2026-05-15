@@ -12,6 +12,7 @@ import MainProblemsTabs from "@/main/MainProblemsTabs";
 import MainPyramidWrapper from "@/main/MainPyramidWrapper";
 import TestPyramidWrapper from "@/main/TestPyramidWrapper";
 import MainSolutionsAnimation from "@/main/MainSolutionsAnimation";
+import MainSolutionsAnimationLight from "@/main/MainSolutionsAnimationLight";
 import MainBenefitsTabs from "@/main/benefits-tabs/";
 import MainTheMarket from "@/main/MainTheMarket";
 import MainWhyWorkWithUs from "@/main/MainWhyWorkWithUs";
@@ -194,7 +195,8 @@ export default function LandingGradientV1Page() {
         {/* <MainPyramidWrapper /> */}
         <TestPyramidWrapper />
 
-        <MainSolutionsAnimation />
+        {/* <MainSolutionsAnimation /> */}
+        <MainSolutionsAnimationLight />
 
         {/* <MainBenefitsTabs /> */}
         <MainBenefitsLight />
