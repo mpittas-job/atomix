@@ -29,12 +29,12 @@ type HighlightInfo = {
 
 const iconBoxesData: IconBoxData[] = [
   {
-    icon: "/icons/white/shield-check-white.svg",
+    icon: "/icons/gradient/shield-blue-gradient.png",
     title: "Simple SaaS",
     description: "automated and easy to change, but simple products only",
   },
   {
-    icon: "/icons/white/target-arrow.svg",
+    icon: "/icons/gradient/target-blue-gradient.png",
     title: "Bespoke builds",
     description:
       "automated and complex, but £500k+ upfront and expensive to change",
@@ -54,7 +54,7 @@ const iconBoxesData: IconBoxData[] = [
     ],
   },
   {
-    icon: "/icons/white/module-simple.svg",
+    icon: "/icons/gradient/links-blue-gradient.png",
     title: "Disconnected stacks",
     description:
       "complex and configurable, but humans are the glue; nothing is truly automated",
@@ -496,8 +496,8 @@ export default function TestPyramidWrapper() {
           <DefHeading
             theme="light"
             badgeText=""
-            title="The Existing Problems"
-            description="Property lending is manual, opaque and structurally exposed to fraud — not by intent, but by design. Legacy infrastructure was never built to handle the volume, complexity or transparency this market demands."
+            title="Title explaining the image"
+            description="Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet"
             showBadge={false}
           />
         </div>
@@ -536,12 +536,12 @@ export default function TestPyramidWrapper() {
                     <div
                       className={`w-13 h-13 rounded-xl flex items-center justify-center shrink-0 border-2 ${
                         item.positive
-                          ? "border-white/0 bg-[#2b7187]"
+                          ? "border-white/0 bg-[#015167]"
                           : "border-white/30 bg-transparent"
                       }`}
                     >
                       {item.positive ? (
-                        <FiCheck className="w-6 h-6 text-white" />
+                        <FiCheck className="w-6 h-6 text-[#39C6ED]" />
                       ) : (
                         <FiX className="w-6 h-6 text-white/60" />
                       )}
@@ -584,7 +584,7 @@ export default function TestPyramidWrapper() {
                   }}
                   className="flex scroll-mt-28 items-start gap-6 md:scroll-mt-32"
                 >
-                  <div className="w-13 h-13 shrink-0 flex justify-center items-center rounded-xl bg-[#2b7187]">
+                  <div className="w-13 h-13 shrink-0 flex justify-center items-center rounded-xl bg-[#015167]">
                     <img src={box.icon} alt={box.title} className="w-8 h-8" />
                   </div>
                   <div>
