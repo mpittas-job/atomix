@@ -263,7 +263,7 @@ export default function MainHero() {
 
   return (
     <section
-      className="flex flex-col h-[calc(100vh-116px)] bg-[#004054] rounded-3xl overflow-hidden relative"
+      className="flex flex-col h-[calc(100vh-var(--header-height,5.5rem)-(var(--hero-y-gap,1rem)*2))] bg-[#004054] rounded-3xl overflow-hidden relative"
       id="atomix-playground-v1"
     >
       <SoftAurora
