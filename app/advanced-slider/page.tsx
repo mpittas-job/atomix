@@ -25,6 +25,11 @@ import {
   ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT,
   ADV_SLIDER_STEP_ANIMATION_START_EVENT,
 } from "@/components/AdvSliderTooltip";
+import {
+  ADV_SLIDER_TOOLTIP_ENTER_LAST,
+  AdvSliderTooltipNavProvider,
+  useAdvSliderTooltipNav,
+} from "@/components/advSliderTooltipNavContext";
 
 function CarouselNavArrow({
   direction,
@@ -63,7 +68,22 @@ function CarouselNavArrow({
 }
 
 export default function AdvancedSliderPage() {
+  return (
+    <AdvSliderTooltipNavProvider>
+      <AdvancedSliderPageContent />
+    </AdvSliderTooltipNavProvider>
+  );
+}
+
+function AdvancedSliderPageContent() {
   gsap.registerPlugin(useGSAP);
+
+  const {
+    activeTooltipIndex,
+    setActiveTooltipIndex,
+    setPendingEnterTooltipIndex,
+    getSlideApi,
+  } = useAdvSliderTooltipNav();
 
   const [activeSectionId, setActiveSectionId] = useState(SECTIONS[0]?.id ?? "");
   const [isPlaying, setIsPlaying] = useState(true);
@@ -117,6 +137,16 @@ export default function AdvancedSliderPage() {
   const playProgressCircleRef = useRef<SVGCircleElement | null>(null);
   const playProgressTweenRef = useRef<gsap.core.Tween | null>(null);
   const playProgressTotalMsRef = useRef<number | null>(null);
+  const activeTooltipIndexRef = useRef(activeTooltipIndex);
+  activeTooltipIndexRef.current = activeTooltipIndex;
+
+  const setActiveTooltipIndexSynced = useCallback(
+    (index: number) => {
+      activeTooltipIndexRef.current = index;
+      setActiveTooltipIndex(index);
+    },
+    [setActiveTooltipIndex],
+  );
 
   const PLAY_PROGRESS_AUTOPLAY_WAIT_MS = 3000;
   const PLAY_PROGRESS_RADIUS = 18;
@@ -212,20 +242,46 @@ export default function AdvancedSliderPage() {
     return () => ro.disconnect();
   }, [showSectionTabChrome]);
 
+  const activeSlideTooltipApi = getSlideApi(activeSlideId);
+  const activeSlideTooltipCount = activeSlideTooltipApi?.count ?? 1;
+  const currentTooltipIndex = Math.max(
+    0,
+    Math.min(activeTooltipIndex, activeSlideTooltipCount - 1),
+  );
+  const isAtFirstTooltip = currentTooltipIndex <= 0;
+  const isAtLastTooltip = currentTooltipIndex >= activeSlideTooltipCount - 1;
+
   const isAtVeryStart =
     activeSectionIndex === 0 &&
     activeTabIndex === 0 &&
-    derivedActiveSlideIndex === 0;
+    derivedActiveSlideIndex === 0 &&
+    isAtFirstTooltip;
   const isAtVeryEnd =
     activeSectionIndex === SECTIONS.length - 1 &&
     activeTabIndex === tabs.length - 1 &&
-    derivedActiveSlideIndex === Math.max(0, slides.length - 1);
+    derivedActiveSlideIndex === Math.max(0, slides.length - 1) &&
+    isAtLastTooltip;
 
   const goPrev = useCallback(() => {
     if (tabs.length === 0) return;
     if (isAtVeryStart) return;
 
+    const tooltipIndex = activeTooltipIndexRef.current;
+    const clampedTooltipIndex = Math.max(
+      0,
+      Math.min(tooltipIndex, activeSlideTooltipCount - 1),
+    );
+
+    if (activeSlideTooltipApi && clampedTooltipIndex > 0) {
+      const prev = clampedTooltipIndex - 1;
+      setActiveTooltipIndexSynced(prev);
+      activeSlideTooltipApi.navigateTo(prev, { skipSceneIntro: true });
+      setIsAnimationComplete(false);
+      return;
+    }
+
     if (derivedActiveSlideIndex > 0) {
+      setPendingEnterTooltipIndex(ADV_SLIDER_TOOLTIP_ENTER_LAST);
       setActiveSlideIndex((v) => Math.max(0, v - 1));
       return;
     }
@@ -238,6 +294,7 @@ export default function AdvancedSliderPage() {
       setActiveSectionId(prevSection.id);
       setActiveTabId(prevSection.tabs[prevSection.tabs.length - 1]?.id ?? "");
       const prevTab = prevSection.tabs[prevSection.tabs.length - 1];
+      setPendingEnterTooltipIndex(ADV_SLIDER_TOOLTIP_ENTER_LAST);
       setActiveSlideIndex(Math.max(0, (prevTab?.slides?.length ?? 1) - 1));
       if (typeof window !== "undefined") {
         window.history.replaceState(null, "", `#${prevSection.id}`);
@@ -246,14 +303,20 @@ export default function AdvancedSliderPage() {
     }
 
     setActiveTabId(tabs[activeTabIndex - 1]?.id ?? "");
+    setPendingEnterTooltipIndex(ADV_SLIDER_TOOLTIP_ENTER_LAST);
     setActiveSlideIndex(
       Math.max(0, (tabs[activeTabIndex - 1]?.slides?.length ?? 1) - 1),
     );
   }, [
     activeSectionIndex,
+    activeSlideTooltipApi,
+    activeSlideTooltipCount,
     activeTabIndex,
     derivedActiveSlideIndex,
+    isAtFirstTooltip,
     isAtVeryStart,
+    setActiveTooltipIndexSynced,
+    setPendingEnterTooltipIndex,
     tabs,
   ]);
 
@@ -261,7 +324,25 @@ export default function AdvancedSliderPage() {
     if (tabs.length === 0) return;
     if (isAtVeryEnd) return;
 
+    const tooltipIndex = activeTooltipIndexRef.current;
+    const clampedTooltipIndex = Math.max(
+      0,
+      Math.min(tooltipIndex, activeSlideTooltipCount - 1),
+    );
+
+    if (
+      activeSlideTooltipApi &&
+      clampedTooltipIndex < activeSlideTooltipCount - 1
+    ) {
+      const next = clampedTooltipIndex + 1;
+      setActiveTooltipIndexSynced(next);
+      activeSlideTooltipApi.navigateTo(next, { skipSceneIntro: true });
+      setIsAnimationComplete(false);
+      return;
+    }
+
     if (derivedActiveSlideIndex < Math.max(0, slides.length - 1)) {
+      setActiveTooltipIndexSynced(0);
       setActiveSlideIndex((v) =>
         Math.min(Math.max(0, slides.length - 1), v + 1),
       );
@@ -278,6 +359,7 @@ export default function AdvancedSliderPage() {
 
       setActiveSectionId(nextSection.id);
       setActiveTabId(nextSection.tabs[0]?.id ?? "");
+      setActiveTooltipIndexSynced(0);
       setActiveSlideIndex(0);
       if (typeof window !== "undefined") {
         window.history.replaceState(null, "", `#${nextSection.id}`);
@@ -286,12 +368,17 @@ export default function AdvancedSliderPage() {
     }
 
     setActiveTabId(tabs[activeTabIndex + 1]?.id ?? "");
+    setActiveTooltipIndexSynced(0);
     setActiveSlideIndex(0);
   }, [
     activeSectionIndex,
+    activeSlideTooltipApi,
+    activeSlideTooltipCount,
     activeTabIndex,
     derivedActiveSlideIndex,
+    isAtLastTooltip,
     isAtVeryEnd,
+    setActiveTooltipIndexSynced,
     slides.length,
     tabs,
   ]);
@@ -454,6 +541,8 @@ export default function AdvancedSliderPage() {
                                 setActiveSectionId(section.id);
                                 setActiveTabId(section.tabs[0]?.id ?? "");
                                 setActiveSlideIndex(0);
+                                setActiveTooltipIndexSynced(0);
+                                setPendingEnterTooltipIndex(null);
                                 document
                                   .getElementById("advanced-slider")
                                   ?.scrollIntoView({
@@ -581,7 +670,11 @@ export default function AdvancedSliderPage() {
                       role="tab"
                       aria-selected={isActive}
                       onClick={() => setActiveTabId(tab.id)}
-                      onMouseDown={() => setActiveSlideIndex(0)}
+                      onMouseDown={() => {
+                        setActiveSlideIndex(0);
+                        setActiveTooltipIndexSynced(0);
+                        setPendingEnterTooltipIndex(null);
+                      }}
                       className={[
                         "relative z-[1] min-w-0 flex-1 cursor-pointer overflow-hidden py-2 px-2 leading-tight font-semibold text-[14px] bg-transparent sm:px-3",
                         showLeftSeparator

@@ -1,8 +1,5 @@
 import type { Tab } from "@/app/advanced-slider/content/types";
 import FetchAutomationDataSlide01 from "./steps/01-slide";
-import FetchAutomationDataSlide02 from "./steps/02-slide";
-import FetchAutomationDataSlide03 from "./steps/03-slide";
-import FetchAutomationDataSlide04 from "./steps/04-slide";
 
 export const fetchAutomationDataTab: Tab = {
   id: "fetch-automation-data",
@@ -12,18 +9,6 @@ export const fetchAutomationDataTab: Tab = {
     {
       id: "bj-fetch-automation-data-1",
       content: <FetchAutomationDataSlide01 />,
-    },
-    {
-      id: "bj-fetch-automation-data-2",
-      content: <FetchAutomationDataSlide02 />,
-    },
-    {
-      id: "bj-fetch-automation-data-3",
-      content: <FetchAutomationDataSlide03 />,
-    },
-    {
-      id: "bj-fetch-automation-data-4",
-      content: <FetchAutomationDataSlide04 />,
     },
   ],
 };
