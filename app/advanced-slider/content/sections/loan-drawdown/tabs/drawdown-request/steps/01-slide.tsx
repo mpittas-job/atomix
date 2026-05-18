@@ -1,7 +1,33 @@
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
 import AdvSliderOverlayImage from "@/components/AdvSliderOverlayImage";
-import AdvSliderTooltip from "@/components/AdvSliderTooltip";
+import AdvSliderTooltipSequence, {
+  type AdvSliderTooltipSequenceStep,
+} from "@/components/AdvSliderTooltipSequence";
 import { FaClock } from "react-icons/fa6";
+
+const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
+  {
+    icon: FaClock,
+    title:
+      "The platform validates that all pre-drawdown tasks are complete and compliant.",
+    lineHeight: 370,
+    connectorLeft: "1%",
+  },
+  {
+    icon: FaClock,
+    title:
+      "Final bankruptcy and priority searches must be confirmed before funds are released.",
+    lineHeight: 350,
+    connectorLeft: "10%",
+  },
+  {
+    icon: FaClock,
+    title:
+      "This marks the formal instruction to the Lender Partner to release funds in accordance with the agreed loan terms.",
+    lineHeight: 250,
+    connectorLeft: "20%",
+  },
+];
 
 export default function DrawdownRequestSlide01() {
   return (
@@ -20,11 +46,7 @@ export default function DrawdownRequestSlide01() {
         imageClassName="block h-auto max-w-[680px] border-2 border-[#499DB8] shadow-xl shadow-neutral-500/20 rounded-xl relative"
       />
 
-      <AdvSliderTooltip
-        icon={FaClock}
-        title="The platform validates that all pre-drawdown tasks are complete and compliant."
-        lineHeight={80}
-      />
+      <AdvSliderTooltipSequence steps={TOOLTIP_STEPS} />
     </div>
   );
 }

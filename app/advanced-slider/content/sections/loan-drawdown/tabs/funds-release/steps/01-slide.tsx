@@ -1,7 +1,33 @@
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
 import AdvSliderOverlayImage from "@/components/AdvSliderOverlayImage";
-import AdvSliderTooltip from "@/components/AdvSliderTooltip";
+import AdvSliderTooltipSequence, {
+  type AdvSliderTooltipSequenceStep,
+} from "@/components/AdvSliderTooltipSequence";
 import { IoIosCheckmarkCircle } from "react-icons/io";
+
+const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
+  {
+    icon: IoIosCheckmarkCircle,
+    title:
+      "Prior to the drawdown process the lender can request from the platform a credit paper for manual review.",
+    lineHeight: 419,
+    connectorLeft: "65%",
+  },
+  {
+    icon: IoIosCheckmarkCircle,
+    title:
+      "Transfer details are recorded on-platform and visible to all relevant parties.",
+    lineHeight: 260,
+    connectorLeft: "6%",
+  },
+  {
+    icon: IoIosCheckmarkCircle,
+    title:
+      "Funds are transferred only after all pre-drawdown conditions are satisfied. This can be automated or carried out manually, subject to the lender's preference.",
+    lineHeight: 70,
+    connectorLeft: "50%",
+  },
+];
 
 export default function FundsReleaseSlide01() {
   return (
@@ -20,12 +46,7 @@ export default function FundsReleaseSlide01() {
         imageClassName="block h-auto max-w-[640px] border-2 border-[#499DB8] rounded-xl relative"
       />
 
-      <AdvSliderTooltip
-        icon={IoIosCheckmarkCircle}
-        title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos."
-        lineHeight={50}
-        connectorLeft="50%"
-      />
+      <AdvSliderTooltipSequence steps={TOOLTIP_STEPS} />
     </div>
   );
 }
