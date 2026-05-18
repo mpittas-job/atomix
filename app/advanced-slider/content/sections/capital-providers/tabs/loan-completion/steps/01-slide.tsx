@@ -32,9 +32,9 @@ export default function LoanCompletionSlide01() {
 
       <AdvSliderTooltip
         icon={FaFlagCheckered}
-        title="Loan completion is recorded with full visibility for capital providers and the lender."
-        lineHeight={120}
-        connectorLeft="66%"
+        title="This immutable registration provides a transparent and verifiable record of the transaction. Borrowers are then directed to the loan management area of the platform."
+        lineHeight={385}
+        connectorLeft="85%"
       />
     </div>
   );

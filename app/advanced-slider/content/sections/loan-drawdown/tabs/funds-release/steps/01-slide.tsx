@@ -22,7 +22,7 @@ export default function FundsReleaseSlide01() {
 
       <AdvSliderTooltip
         icon={IoIosCheckmarkCircle}
-        title="Funds are released once all conditions are satisfied and approvals are complete."
+        title="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos."
         lineHeight={50}
         connectorLeft="50%"
       />

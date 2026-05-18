@@ -22,7 +22,7 @@ export default function DrawdownRequestSlide01() {
 
       <AdvSliderTooltip
         icon={FaClock}
-        title="Drawdown requests are submitted and reviewed within a structured workflow."
+        title="The platform validates that all pre-drawdown tasks are complete and compliant."
         lineHeight={80}
       />
     </div>

@@ -12,8 +12,9 @@ export default function FundsAllocationSlide01() {
 
       <AdvSliderTooltip
         icon={FaChartPie}
-        title="Committed capital is allocated across tranches and facilities with clear audit trails."
-        lineHeight={320}
+        title="Multiple capital funding structures - including syndicated loans, institutional credit lines, and other capital provider models - with built-in tools for allocation and tracking."
+        lineHeight={185}
+        connectorLeft="6%"
       />
     </div>
   );

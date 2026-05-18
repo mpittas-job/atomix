@@ -12,8 +12,9 @@ export default function DrawdownStatusSlide01() {
 
       <AdvSliderTooltip
         icon={RiLoopLeftLine}
-        title="All parties have real-time visibility into drawdown status and outstanding actions."
-        lineHeight={330}
+        title="A full audit trail of the instruction and timing is captured for lender records."
+        lineHeight={430}
+        connectorLeft="10%"
       />
     </div>
   );

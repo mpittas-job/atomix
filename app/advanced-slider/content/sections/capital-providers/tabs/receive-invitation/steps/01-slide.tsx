@@ -12,9 +12,8 @@ export default function ReceiveInvitationSlide01() {
 
       <AdvSliderTooltip
         icon={FaEnvelope}
-        title="Capital providers receive an email invitation to participate in a loan facility."
-        lineHeight={300}
-        connectorLeft="33%"
+        title="Secure platform links guide investors directly to the participation and funding process."
+        lineHeight={95}
       />
     </div>
   );

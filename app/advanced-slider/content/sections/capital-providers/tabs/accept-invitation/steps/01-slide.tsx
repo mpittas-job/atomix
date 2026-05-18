@@ -22,8 +22,9 @@ export default function AcceptInvitationSlide01() {
 
       <AdvSliderTooltip
         icon={FaHandshake}
-        title="Capital providers review invitation details and accept to join the loan process."
-        lineHeight={80}
+        title="Capital providers can select the amount they wish to invest in the loan, up to the limit defined by the lender. The platform automatically validates the investment against the available allocation."
+        lineHeight={90}
+        connectorLeft="65%"
       />
     </div>
   );

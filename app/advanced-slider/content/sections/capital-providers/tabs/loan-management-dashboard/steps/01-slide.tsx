@@ -23,7 +23,7 @@ export default function LoanManagementDashboardSlide01() {
 
       <AdvSliderTooltip
         icon={MdDashboard}
-        title="Capital providers access a dedicated dashboard for portfolio visibility and loan management."
+        title="They can view all active and past investments, along with key loan information, performance metrics, and upcoming maturity dates."
         lineHeight={350}
         connectorLeft="40%"
       />

@@ -22,9 +22,9 @@ export default function TransferFundsSlide01() {
 
       <AdvSliderTooltip
         icon={FaMoneyBillTransfer}
-        title="Capital providers transfer committed funds through a secure, auditable workflow."
-        lineHeight={50}
-        connectorLeft="50%"
+        title="The platform links the transfer reference to the investment so funding can be automatically reconciled."
+        lineHeight={190}
+        connectorLeft="20%"
       />
     </div>
   );

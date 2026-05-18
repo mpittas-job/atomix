@@ -12,7 +12,7 @@ export default function FundingConfirmedSlide01() {
 
       <AdvSliderTooltip
         icon={IoIosCheckmarkCircle}
-        title="All parties receive confirmation once capital provider funding is verified and recorded."
+        title="Once funds are received, the system confirms the investment and moves the loan to the funded stage."
         lineHeight={280}
         connectorLeft="45%"
       />

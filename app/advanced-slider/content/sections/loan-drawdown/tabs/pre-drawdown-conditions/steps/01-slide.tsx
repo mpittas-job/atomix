@@ -22,7 +22,7 @@ export default function PreDrawdownConditionsSlide01() {
 
       <AdvSliderTooltip
         icon={PiListChecksFill}
-        title="Pre-drawdown conditions are tracked and cleared before funds can be released."
+        title="Once all tasks are completed and all eligibility criteria are met and verified, the lender's solicitor initiates the drawdown process."
         lineHeight={30}
         connectorLeft="85%"
       />

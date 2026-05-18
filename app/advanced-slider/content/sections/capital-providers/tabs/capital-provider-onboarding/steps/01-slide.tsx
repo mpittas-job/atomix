@@ -12,14 +12,9 @@ export default function CapitalProviderOnboardingSlide01() {
 
       <AdvSliderTooltip
         icon={PiJoystickFill}
-        title={
-          <>
-            <strong className="font-bold">Flexible onboarding:</strong> Capital
-            providers are onboarded with workflows tailored to lender
-            requirements and funding roles.
-          </>
-        }
-        lineHeight={400}
+        title="Capital providers create their account and complete an onboarding process to verify investor status and eligibility. This ensures only verified participants can fund loans on the platform."
+        lineHeight={415}
+        connectorLeft="20%"
       />
     </div>
   );
