@@ -6,6 +6,7 @@ import { useGSAP } from "@gsap/react";
 import { Button } from "@/components/ui";
 import GridDistortion from "@/react-bits/GridDistortion";
 import DotGrid, { type DotGridProps } from "@/react-bits/DotGrid";
+import { HERO_FIXED_TILE_MOSAIC } from "@/components/heroFixedTileMosaic";
 
 gsap.registerPlugin(useGSAP);
 
@@ -141,6 +142,32 @@ function TileCell({ index }: { index: number }) {
   );
 }
 
+const fixedTileCols = HERO_FIXED_TILE_MOSAIC.columns;
+const fixedTileRows = HERO_FIXED_TILE_MOSAIC.rows;
+
+function FixedTilePanel() {
+  return (
+    <div
+      className="grid h-full min-h-0 w-full min-w-0"
+      style={{
+        gridTemplateColumns: `repeat(${fixedTileCols}, minmax(0, 1fr))`,
+        gridTemplateRows: `repeat(${fixedTileRows}, minmax(0, 1fr))`,
+      }}
+    >
+      {HERO_FIXED_TILE_MOSAIC.colors.map((row, rowIndex) =>
+        row.map((color, colIndex) => (
+          <div
+            key={`${rowIndex}-${colIndex}`}
+            className="min-h-0 min-w-0"
+            style={{ backgroundColor: color }}
+            aria-hidden
+          />
+        )),
+      )}
+    </div>
+  );
+}
+
 function TilePanel({
   panelKey,
   driftActive,
@@ -170,7 +197,11 @@ function TilePanel({
   );
 }
 
-export type HeroAnimatedBgTileDisplayMode = "drift" | "gradient" | "static";
+export type HeroAnimatedBgTileDisplayMode =
+  | "drift"
+  | "gradient"
+  | "static"
+  | "fixedMosaic";
 
 export type HeroAnimatedBgProps = {
   /**
@@ -183,6 +214,7 @@ export type HeroAnimatedBgProps = {
    * tile gradients stay fixed per cell.
    * `gradient` — rotating linear-gradient per tile; no mosaic drift.
    * `static` — solid card background only; no tile layer or background motion.
+   * `fixedMosaic` — 12×4 solid-color tiles (see `HERO_FIXED_TILE_MOSAIC`); count stays fixed at all widths.
    */
   tileDisplayMode?: HeroAnimatedBgTileDisplayMode;
   /**
@@ -218,6 +250,7 @@ export default function HeroAnimatedBg({
   heroCardDotGridProps,
 }: HeroAnimatedBgProps = {}) {
   const staticBg = tileDisplayMode === "static";
+  const fixedMosaicBg = tileDisplayMode === "fixedMosaic";
   const dotGridBg = staticBg && heroCardDotGrid;
   const hasHeroCardImage =
     heroCardBackgroundImage != null && heroCardBackgroundImage !== "";
@@ -239,7 +272,7 @@ export default function HeroAnimatedBg({
   // Tile gradients are driven only from this effect (not React `style`), so parent
   // re-renders cannot reset `--tile-angle` / background each frame.
   useLayoutEffect(() => {
-    if (staticBg) return;
+    if (staticBg || fixedMosaicBg) return;
 
     const root = tilesLayerRef.current;
     const track = tilesTrackRef.current;
@@ -302,7 +335,7 @@ export default function HeroAnimatedBg({
       gsap.ticker.remove(tick);
       driftTween?.kill();
     };
-  }, [driftActive, staticBg]);
+  }, [driftActive, fixedMosaicBg, staticBg]);
 
   useGSAP(
     () => {
@@ -386,29 +419,33 @@ export default function HeroAnimatedBg({
             className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
             aria-hidden
           >
-            <div
-              ref={tilesTrackRef}
-              className={
-                driftActive
-                  ? driftIsVertical
-                    ? "flex h-[200%] w-full min-w-0 flex-col will-change-transform"
-                    : "flex h-full w-[200%] min-w-0 flex-row will-change-transform"
-                  : "flex h-full w-full min-w-0 flex-row"
-              }
-            >
-              <TilePanel
-                panelKey="a"
-                driftActive={driftActive}
-                driftIsVertical={driftIsVertical}
-              />
-              {driftActive ? (
+            {fixedMosaicBg ? (
+              <FixedTilePanel />
+            ) : (
+              <div
+                ref={tilesTrackRef}
+                className={
+                  driftActive
+                    ? driftIsVertical
+                      ? "flex h-[200%] w-full min-w-0 flex-col will-change-transform"
+                      : "flex h-full w-[200%] min-w-0 flex-row will-change-transform"
+                    : "flex h-full w-full min-w-0 flex-row"
+                }
+              >
                 <TilePanel
-                  panelKey="b"
+                  panelKey="a"
                   driftActive={driftActive}
                   driftIsVertical={driftIsVertical}
                 />
-              ) : null}
-            </div>
+                {driftActive ? (
+                  <TilePanel
+                    panelKey="b"
+                    driftActive={driftActive}
+                    driftIsVertical={driftIsVertical}
+                  />
+                ) : null}
+              </div>
+            )}
           </div>
         ) : null}
 

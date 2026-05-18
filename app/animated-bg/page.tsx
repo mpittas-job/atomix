@@ -45,6 +45,26 @@ export default function AnimatedBgPage() {
 
       <section
         className="flex flex-col gap-3"
+        aria-labelledby="animated-bg-fixed-mosaic-heading"
+      >
+        <h2
+          id="animated-bg-fixed-mosaic-heading"
+          className="m-0 text-2xl font-semibold text-neutral-900 dark:text-neutral-100"
+        >
+          Fixed teal mosaic
+        </h2>
+        <p className="mb-3 max-w-4xl text-sm text-neutral-600 dark:text-neutral-400">
+          A 12×4 grid of solid tiles (48 cells). Tile count stays fixed at every
+          breakpoint.
+        </p>
+        <HeroAnimatedBg
+          heroTitleId="animated-bg-hero-fixed-mosaic"
+          tileDisplayMode="fixedMosaic"
+        />
+      </section>
+
+      <section
+        className="flex flex-col gap-3"
         aria-labelledby="animated-bg-grid-distortion-heading"
       >
         <h2
