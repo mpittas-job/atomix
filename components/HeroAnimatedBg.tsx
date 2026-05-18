@@ -6,7 +6,11 @@ import { useGSAP } from "@gsap/react";
 import { Button } from "@/components/ui";
 import GridDistortion from "@/react-bits/GridDistortion";
 import DotGrid, { type DotGridProps } from "@/react-bits/DotGrid";
-import { HERO_FIXED_TILE_MOSAIC } from "@/components/heroFixedTileMosaic";
+import {
+  HERO_FIXED_TILE_MOSAIC,
+  normalizeTileHex,
+  shiftFixedTileColor,
+} from "@/components/heroFixedTileMosaic";
 
 gsap.registerPlugin(useGSAP);
 
@@ -155,14 +159,19 @@ function FixedTilePanel() {
       }}
     >
       {HERO_FIXED_TILE_MOSAIC.colors.map((row, rowIndex) =>
-        row.map((color, colIndex) => (
-          <div
-            key={`${rowIndex}-${colIndex}`}
-            className="min-h-0 min-w-0"
-            style={{ backgroundColor: color }}
-            aria-hidden
-          />
-        )),
+        row.map((color, colIndex) => {
+          const base = normalizeTileHex(color);
+          return (
+            <div
+              key={`${rowIndex}-${colIndex}`}
+              data-fixed-tile
+              data-tile-color={base}
+              className="min-h-0 min-w-0"
+              style={{ backgroundColor: base }}
+              aria-hidden
+            />
+          );
+        }),
       )}
     </div>
   );
@@ -336,6 +345,59 @@ export default function HeroAnimatedBg({
       driftTween?.kill();
     };
   }, [driftActive, fixedMosaicBg, staticBg]);
+
+  useGSAP(
+    () => {
+      if (!fixedMosaicBg) return;
+
+      const root = tilesLayerRef.current;
+      if (!root) return;
+
+      const tiles = root.querySelectorAll<HTMLElement>("[data-fixed-tile]");
+      if (!tiles.length) return;
+
+      const prefersReduced = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      if (prefersReduced) return;
+
+      const { motion } = HERO_FIXED_TILE_MOSAIC;
+      const { min: durMin, max: durMax } = motion.durationSec;
+      const durSpan = durMax - durMin;
+
+      tiles.forEach((tile, index) => {
+        const base = tile.dataset.tileColor;
+        if (!base) return;
+
+        const col = index % fixedTileCols;
+        const row = Math.floor(index / fixedTileCols);
+        const seed = col * 928371 + row * 482711 + index * 131;
+        const norm = ((seed % 10000) + 10000) % 10000;
+        const direction: 1 | -1 = norm % 2 === 0 ? 1 : -1;
+        const target = shiftFixedTileColor(base, direction);
+        const duration = durMin + (norm / 10000) * durSpan;
+        const delay = (norm * 0.00031) % motion.delaySpreadSec;
+
+        gsap.fromTo(
+          tile,
+          { backgroundColor: base },
+          {
+            backgroundColor: target,
+            duration,
+            delay,
+            yoyo: true,
+            repeat: -1,
+            ease: "sine.inOut",
+          },
+        );
+      });
+    },
+    {
+      scope: tilesLayerRef,
+      dependencies: [fixedMosaicBg],
+      revertOnUpdate: true,
+    },
+  );
 
   useGSAP(
     () => {

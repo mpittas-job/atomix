@@ -1,7 +1,14 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { cloneElement, isValidElement, useEffect, useId, useMemo, useRef } from "react";
+import {
+  cloneElement,
+  isValidElement,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+} from "react";
 import {
   FiArrowLeft,
   FiArrowRight,
@@ -12,9 +19,7 @@ import {
 } from "react-icons/fi";
 import { Button as DefButton } from "@/components/ui";
 import { CgArrowsHAlt } from "react-icons/cg";
-import { FaUsers, FaMicrochip, FaKey , FaRocket, FaGlobe } from "react-icons/fa";
-
-
+import { FaUsers, FaMicrochip, FaKey, FaRocket, FaGlobe } from "react-icons/fa";
 
 interface WhyCardProps {
   title: string;
@@ -57,9 +62,18 @@ function WhyCard({
 }: WhyCardProps) {
   return (
     <div className={`${className} flex flex-col items-start gap-y-7 max-w-md`}>
-      <div className={`text-[52px] font-semibold uppercase ${titleClassName}`}>{title}</div>
-      <div className={`text-xl leading-[1.5em] ${descriptionClassName}`}>{description}</div>
-      <DefButton href={linkText || "#"} variant={buttonVariant} size="medium" className={buttonClassName}>
+      <div className={`text-[52px] font-semibold uppercase ${titleClassName}`}>
+        {title}
+      </div>
+      <div className={`text-xl leading-[1.5em] ${descriptionClassName}`}>
+        {description}
+      </div>
+      <DefButton
+        href={linkText || "#"}
+        variant={buttonVariant}
+        size="medium"
+        className={buttonClassName}
+      >
         {buttonText || "See Opportunities"}
       </DefButton>
     </div>
@@ -122,6 +136,20 @@ function OverlayItemCard({
 
 const ICON_CLASS_NAME = "h-8 w-8";
 
+/** Full-section vertical background (top → bottom). */
+const SECTION_BG_GRADIENT = "linear-gradient(180deg, #014355 0%, #247691 100%)";
+
+/** Right column panel (Opportunities / overlay left column). */
+const SECTION_RIGHT_PANEL_BG = "#EBEFF2";
+
+const SEAMLESS_TWO_COLUMN_GRID_STYLE = {
+  gridTemplateColumns: "calc(50% + 1px) calc(50% + 1px)",
+} as const;
+
+const SEAMLESS_RIGHT_COLUMN_STYLE = {
+  marginLeft: "-1px",
+} as const;
+
 const OVERLAY_ITEMS: OverlayItemCardProps[] = [
   {
     icon: <FaUsers className={ICON_CLASS_NAME} aria-hidden="true" />,
@@ -170,20 +198,21 @@ function OverlayContent({
   innerRef?: React.RefObject<HTMLDivElement | null>;
 }) {
   const leftGradientId = useId().replace(/:/g, "");
-  const leftGradientUrl = useMemo(() => `url(#${leftGradientId})`, [leftGradientId]);
+  const leftGradientUrl = useMemo(
+    () => `url(#${leftGradientId})`,
+    [leftGradientId],
+  );
 
   return (
     <div
       ref={innerRef}
-      className="relative grid h-full w-full grid-cols-2 items-stretch gap-0"
-      style={{
-        backgroundImage:
-          "linear-gradient(90deg, #EBEFF2 0%, #EBEFF2 calc(50% + 2px), #499DB8 calc(50% + 2px), #499DB8 100%)",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "100% 100%",
-      }}
+      className="relative grid h-full w-full items-stretch gap-0"
+      style={SEAMLESS_TWO_COLUMN_GRID_STYLE}
     >
-      <div className="relative flex min-h-[100px] min-w-0 items-center justify-center bg-transparent">
+      <div
+        className="relative flex min-h-full min-w-0 items-center justify-center"
+        style={{ backgroundColor: SECTION_RIGHT_PANEL_BG }}
+      >
         <div
           className="relative max-w-lg flex flex-col items-end text-white text-center gap-y-3"
           data-overlay-content
@@ -191,7 +220,13 @@ function OverlayContent({
         >
           <svg width="0" height="0" className="absolute" aria-hidden="true">
             <defs>
-              <linearGradient id={leftGradientId} x1="0%" y1="0%" x2="100%" y2="100%">
+              <linearGradient
+                id={leftGradientId}
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="100%"
+              >
                 <stop offset="0%" stopColor="#0693B9" />
                 <stop offset="100%" stopColor="#39C6ED" />
               </linearGradient>
@@ -212,7 +247,13 @@ function OverlayContent({
         </div>
       </div>
 
-      <div className="flex min-h-[100px] min-w-0 items-center justify-center bg-transparent">
+      <div
+        className="flex min-h-full min-w-0 items-center justify-center"
+        style={{
+          ...SEAMLESS_RIGHT_COLUMN_STYLE,
+          backgroundImage: SECTION_BG_GRADIENT,
+        }}
+      >
         <div
           className="max-w-lg flex flex-col items-end text-white text-center gap-y-3"
           data-overlay-content
@@ -253,13 +294,20 @@ export default function SliderWhyWorkWithUs() {
     const overlay = overlayRef.current;
     const fadeCard = fadeCardRef.current;
     const overlayContent = overlayContentRef.current;
-    if (!container || !handle || !handleWrap || !overlay || !fadeCard || !overlayContent)
+    if (
+      !container ||
+      !handle ||
+      !handleWrap ||
+      !overlay ||
+      !fadeCard ||
+      !overlayContent
+    )
       return;
 
     let maxX = container.clientWidth / 2;
 
     const overlayContentEls = Array.from(
-      overlayContent.querySelectorAll<HTMLElement>("[data-overlay-content]")
+      overlayContent.querySelectorAll<HTMLElement>("[data-overlay-content]"),
     );
 
     let rafId: number | null = null;
@@ -280,15 +328,12 @@ export default function SliderWhyWorkWithUs() {
       const leftInset = (1 - leftProgress) * 50;
       const rightInset = (1 - rightProgress) * 50;
       const visiblePct = 100 - leftInset - rightInset;
-      // When both sides are 50%, the overlay must be fully clipped out. Do NOT shrink insets with
-      // `calc(... - 1px)` here — that leaves a ~2px vertical sliver in the middle (looks like a white line).
-      // Only apply a 1px overlap once the revealed region is non-zero, to hide subpixel seams vs #EBEFF2.
       if (DEBUG_SHOW_FULL_OVERLAY) {
         overlay.style.clipPath = "inset(0 0 0 0)";
       } else if (visiblePct <= 0.01) {
-        overlay.style.clipPath = "inset(0 50% 0 50%)"; 
+        overlay.style.clipPath = "inset(0 50% 0 50%)";
       } else {
-        overlay.style.clipPath = `inset(0 calc(${rightInset}% - 1px) 0 calc(${leftInset}% - 1px))`;
+        overlay.style.clipPath = `inset(0 ${rightInset}% 0 ${leftInset}%)`;
       }
 
       fadeCard.style.opacity = String(1 - rightProgress);
@@ -343,14 +388,21 @@ export default function SliderWhyWorkWithUs() {
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "Home" && e.key !== "End")
+      if (
+        e.key !== "ArrowLeft" &&
+        e.key !== "ArrowRight" &&
+        e.key !== "Home" &&
+        e.key !== "End"
+      )
         return;
       e.preventDefault();
       const step = Math.max(12, Math.round(maxX * 0.08));
       if (e.key === "Home") currentX = 0;
       else if (e.key === "End") currentX = maxX;
-      else if (e.key === "ArrowLeft") currentX = clamp(-maxX, maxX, currentX - step);
-      else if (e.key === "ArrowRight") currentX = clamp(-maxX, maxX, currentX + step);
+      else if (e.key === "ArrowLeft")
+        currentX = clamp(-maxX, maxX, currentX - step);
+      else if (e.key === "ArrowRight")
+        currentX = clamp(-maxX, maxX, currentX + step);
       scheduleApply(currentX);
     };
 
@@ -375,44 +427,48 @@ export default function SliderWhyWorkWithUs() {
   return (
     <div
       ref={containerRef}
-      className="min-h-[calc(100vh-126px)] rounded-3xl bg-[#499DB8] relative overflow-hidden flex flex-col justify-center items-center"
+      className="min-h-[calc(100vh-126px)] rounded-3xl relative overflow-hidden flex flex-col justify-center items-center"
     >
       {/* Base content */}
       <div className="w-full relative z-10 flex-1 flex flex-col justify-center">
         <div
-          className="relative grid w-full flex-1 grid-cols-2 items-stretch gap-0"
-          style={{
-            backgroundImage:
-              "linear-gradient(90deg, #499DB8 0%, #499DB8 calc(50% + 2px), #EBEFF2 calc(50% + 2px), #EBEFF2 100%)",
-            backgroundRepeat: "no-repeat",
-            backgroundSize: "100% 100%",
-          }}
+          className="relative grid h-full w-full flex-1 items-stretch gap-0"
+          style={SEAMLESS_TWO_COLUMN_GRID_STYLE}
         >
-            <div className="flex min-w-0 flex-col items-center justify-center bg-transparent">
-              <WhyCard
-                title="Team"
-                description="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          <div
+            className="flex min-h-full min-w-0 flex-col items-center justify-center"
+            style={{ backgroundImage: SECTION_BG_GRADIENT }}
+          >
+            <WhyCard
+              title="Team"
+              description="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                 Suspendisse varius lorem eget leo vehicula consectetur."
-                buttonText="See Team"
+              buttonText="See Team"
+              linkText="#"
+              buttonVariant="outline-white"
+            />
+          </div>
+          <div
+            className="flex min-h-full min-w-0 flex-col items-center justify-center"
+            style={{
+              ...SEAMLESS_RIGHT_COLUMN_STYLE,
+              backgroundColor: SECTION_RIGHT_PANEL_BG,
+            }}
+          >
+            <div ref={fadeCardRef}>
+              <WhyCard
+                title="OPPORTUNITIES"
+                description="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  Suspendisse varius lorem eget leo vehicula consectetur."
+                buttonText="See Opportunities"
                 linkText="#"
-                buttonVariant="outline-white"
+                className="text-[#011F27]"
+                descriptionClassName="text-[#4B6166]"
+                buttonVariant="outline"
+                buttonClassName="border-[#d2d5d8] hover:bg-[#d2d5d8] bg-transparent text-[#011F27] hover:text-[#011F27] focus:ring-[#d2d5d8] focus:ring-offset-0"
               />
             </div>
-            <div className="flex min-w-0 flex-col items-center justify-center bg-transparent">
-              <div ref={fadeCardRef}>
-                <WhyCard
-                  title="OPPORTUNITIES"
-                  description="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse varius lorem eget leo vehicula consectetur."
-                  buttonText="See Opportunities"
-                  linkText="#"
-                  className="text-[#011F27]"
-                  descriptionClassName="text-[#4B6166]"
-                  buttonVariant="outline"
-                  buttonClassName="border-[#d2d5d8] hover:bg-[#d2d5d8] bg-transparent text-[#011F27] hover:text-[#011F27] focus:ring-[#d2d5d8] focus:ring-offset-0"
-                />
-              </div>
-            </div>
+          </div>
         </div>
       </div>
 
@@ -433,7 +489,7 @@ export default function SliderWhyWorkWithUs() {
       >
         <div
           ref={handleRef}
-          className="w-[72px] h-[72px] rounded-full border-2 border-white flex items-center justify-center bg-[#499DB8] cursor-ew-resize focus:outline-none focus:ring-2 focus:ring-white/50 will-change-transform"
+          className="w-[72px] h-[72px] rounded-full border-2 border-white flex items-center justify-center bg-[#247691] cursor-ew-resize focus:outline-none focus:ring-2 focus:ring-white/50 will-change-transform"
           style={{ touchAction: "none" }}
           aria-label="Drag to reveal"
           role="slider"
