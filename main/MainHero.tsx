@@ -275,7 +275,7 @@ export default function MainHero() {
 
   return (
     <section
-      className="flex flex-col h-[calc(100vh-var(--header-height,5.5rem)-(var(--hero-y-gap,1rem)*2))] bg-[#004054] rounded-3xl overflow-hidden relative"
+      className="flex flex-col h-[calc(100vh-var(--header-height,5.5rem)-(var(--hero-y-gap,1rem)*2))] bg-gradient-to-b from-[#014355] to-[#247691] rounded-3xl overflow-hidden relative"
       id="atomix-playground-v1"
     >
       <SoftAurora

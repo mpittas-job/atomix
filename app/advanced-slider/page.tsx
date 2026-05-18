@@ -398,7 +398,7 @@ export default function AdvancedSliderPage() {
 
       {/* Fixed header does not consume layout height — reserve its space so hero sits below it */}
       <div className="pt-26.5">
-        <HeroAnimatedBg />
+        <HeroAnimatedBg tileDisplayMode="fixedMosaic" />
       </div>
 
       <div className="relative w-full">
