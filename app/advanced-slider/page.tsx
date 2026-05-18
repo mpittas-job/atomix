@@ -172,9 +172,7 @@ function AdvancedSliderPageContent() {
 
   const tabs = activeSection?.tabs ?? [];
   /** Single-tab sections hide in-page tab chrome (see Referral Journey). */
-  const showSectionTabChrome =
-    activeSectionId !== "referral-journey" &&
-    activeSectionId !== "loan-completion";
+  const showSectionTabChrome = activeSectionId !== "loan-completion";
   const activeSectionIndex = useMemo(() => {
     return Math.max(
       0,
