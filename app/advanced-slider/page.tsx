@@ -555,7 +555,7 @@ export default function AdvancedSliderPage() {
                 ref={tabListRef}
                 role="tablist"
                 aria-label="Tabs"
-                className="relative flex flex-wrap items-center rounded-full bg-[#ECF0F2] p-1 mb-5 border border-white text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]"
+                className="relative flex flex-nowrap items-center rounded-full bg-[#ECF0F2] p-1 mb-5 border border-white text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]"
               >
                 <div
                   ref={tabThumbRef}
@@ -581,7 +581,7 @@ export default function AdvancedSliderPage() {
                       onClick={() => setActiveTabId(tab.id)}
                       onMouseDown={() => setActiveSlideIndex(0)}
                       className={[
-                        "relative z-[1] cursor-pointer py-2 px-4 leading-tight whitespace-nowrap flex-1 font-semibold text-[14px] bg-transparent",
+                        "relative z-[1] min-w-0 flex-1 cursor-pointer overflow-hidden py-2 px-2 leading-tight font-semibold text-[14px] bg-transparent sm:px-3",
                         showLeftSeparator
                           ? "before:pointer-events-none before:absolute before:left-0 before:top-1/2 before:z-10 before:h-[15px] before:w-px before:-translate-y-1/2 before:bg-slate-300/80 before:content-['']"
                           : "",
@@ -592,7 +592,9 @@ export default function AdvancedSliderPage() {
                         .filter(Boolean)
                         .join(" ")}
                     >
-                      {tab.label}
+                      <span className="block truncate" title={tab.label}>
+                        {tab.label}
+                      </span>
                     </button>
                   );
                 })}
