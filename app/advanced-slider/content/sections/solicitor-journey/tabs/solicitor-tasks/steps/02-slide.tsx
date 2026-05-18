@@ -1,22 +1,42 @@
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
-import AdvSliderTooltip from "@/components/AdvSliderTooltip";
+import AdvSliderTooltipSequence, {
+  type AdvSliderTooltipSequenceStep,
+} from "@/components/AdvSliderTooltipSequence";
 import { IoMdCheckmark } from "react-icons/io";
+
+const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
+  {
+    icon: IoMdCheckmark,
+    title: "Provide Legal opinion.",
+    lineHeight: 470,
+    connectorLeft: "12%",
+    iconColor: "#00AE3A",
+  },
+  {
+    icon: IoMdCheckmark,
+    title: "Send any Documents for signing via DocuSign.",
+    lineHeight: 470,
+    connectorLeft: "19%",
+    iconColor: "#00AE3A",
+  },
+  {
+    icon: IoMdCheckmark,
+    title: "Provide any Confirmations and Undertakings",
+    lineHeight: 470,
+    connectorLeft: "36%",
+    iconColor: "#00AE3A",
+  },
+];
 
 export default function SolicitorTasksSlide02() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src={"/advanced-slider/section-2/tab-2/sj-tab2-step1-main.svg"}
-        alt={"Accept invitation — solicitor email invitation"}
+        src="/advanced-slider/section-2/tab-2/sj-tab2-step1-main.svg"
+        alt="Solicitor tasks — legal opinion and documents"
       />
 
-      <AdvSliderTooltip
-        icon={IoMdCheckmark}
-        title="Provide Legal opinion."
-        lineHeight={470}
-        connectorLeft="12%"
-        iconColor="#00AE3A"
-      />
+      <AdvSliderTooltipSequence steps={TOOLTIP_STEPS} />
     </div>
   );
 }
