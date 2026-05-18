@@ -141,8 +141,10 @@ export default function AdvancedSliderPage() {
   );
 
   const tabs = activeSection?.tabs ?? [];
-  /** Referral Journey is a single flow without in-page tabs. */
-  const showReferralTabChrome = activeSectionId !== "referral-journey";
+  /** Single-tab sections hide in-page tab chrome (see Referral Journey). */
+  const showSectionTabChrome =
+    activeSectionId !== "referral-journey" &&
+    activeSectionId !== "loan-completion";
   const activeSectionIndex = useMemo(() => {
     return Math.max(
       0,
@@ -188,7 +190,7 @@ export default function AdvancedSliderPage() {
   }, [activeTabIndex, activeSectionId, tabs.length]);
 
   useLayoutEffect(() => {
-    if (!showReferralTabChrome) return;
+    if (!showSectionTabChrome) return;
     const list = tabListRef.current;
     if (!list) return;
 
@@ -208,7 +210,7 @@ export default function AdvancedSliderPage() {
     const ro = new ResizeObserver(applyInstantFromLayout);
     ro.observe(list);
     return () => ro.disconnect();
-  }, [showReferralTabChrome]);
+  }, [showSectionTabChrome]);
 
   const isAtVeryStart =
     activeSectionIndex === 0 &&
@@ -550,7 +552,7 @@ export default function AdvancedSliderPage() {
               {activeSection?.title}
             </h1>
 
-            {showReferralTabChrome ? (
+            {showSectionTabChrome ? (
               <div
                 ref={tabListRef}
                 role="tablist"
@@ -663,7 +665,7 @@ export default function AdvancedSliderPage() {
                 </div>
               </div>
 
-              {showReferralTabChrome ? (
+              {showSectionTabChrome ? (
                 <div
                   aria-label="Tab counter"
                   className="mt-2 text-[10px] opacity-50 flex  mt-5"
