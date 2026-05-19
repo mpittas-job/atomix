@@ -622,9 +622,9 @@ function AdvancedSliderPageContent() {
               theme="dark"
               className="max-w-5xl"
             />
-            <div className="mt-12 flex justify-center md:mt-16">
+            <div className="mt-12 w-full min-w-0 md:mt-16">
               <AtomixJourneyFlowChart
-                className="max-w-6xl rounded-2xl"
+                className="w-full"
                 onHotspotClick={handleJourneyFlowHotspotClick}
               />
             </div>

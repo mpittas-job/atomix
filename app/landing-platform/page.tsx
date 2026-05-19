@@ -8,7 +8,7 @@ import ScrollableTabsPlatform from "@/components/ScrollableTabsPlatform";
 import { SliderAnimationPage } from "@/slider-animation/SliderAnimationPage";
 import { useIsDesktop } from "@/hooks/useIsDesktop";
 import DefHeading from "@/components/typo/DefHeading";
-import Image from "next/image";
+import AtomixJourneyFlowChart from "@/components/AtomixJourneyFlowChart";
 
 export default function LandingPlatformPage() {
   const isDesktop = useIsDesktop();
@@ -32,18 +32,10 @@ collaboration, and continuous loan management beyond completion."
             />
           </div>
 
-          <div className="w-full mt-16">
-            <Image
-              src="/dashboard/atomix-journey.svg"
-              alt="The Atomix Journey"
-              width={0}
-              height={0}
-              sizes="100vw"
-              className="w-full h-auto"
-              style={{ width: "100%", height: "auto" }}
-            />
+          <div className="mt-16 w-full min-w-0">
+            <AtomixJourneyFlowChart className="w-full" />
           </div>
-        </div>
+          </div>
       </div>
 
       <SliderAnimationPage isDesktop={isDesktop} />
