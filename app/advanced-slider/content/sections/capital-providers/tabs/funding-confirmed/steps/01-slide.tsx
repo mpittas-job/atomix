@@ -1,6 +1,6 @@
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
-import { IoIosCheckmarkCircle } from "react-icons/io";
+import { IoMdCheckmarkCircle } from "react-icons/io";
 
 export default function FundingConfirmedSlide01() {
   return (
@@ -11,7 +11,7 @@ export default function FundingConfirmedSlide01() {
       />
 
       <AdvSliderTooltip
-        icon={IoIosCheckmarkCircle}
+        icon={IoMdCheckmarkCircle}
         title="Once funds are received, the system confirms the investment and moves the loan to the funded stage."
         lineHeight={280}
         connectorLeft="60%"

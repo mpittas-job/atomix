@@ -1,6 +1,6 @@
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
-import { FaScaleBalanced } from "react-icons/fa6";
+import { RiFoldersFill } from "react-icons/ri";
 
 export default function SolicitorViewSlide01() {
   return (
@@ -11,7 +11,7 @@ export default function SolicitorViewSlide01() {
       />
 
       <AdvSliderTooltip
-        icon={FaScaleBalanced}
+        icon={RiFoldersFill}
         title="Solicitors can view active case files, complete post-drawdown tasks, upload required documents, and track the status of each transaction in real time."
         lineHeight={160}
         connectorLeft="42%"

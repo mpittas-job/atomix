@@ -1,6 +1,6 @@
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
-import { RiLoopLeftLine } from "react-icons/ri";
+import { FaFolderTree } from "react-icons/fa6";
 
 export default function DrawdownStatusSlide01() {
   return (
@@ -11,7 +11,7 @@ export default function DrawdownStatusSlide01() {
       />
 
       <AdvSliderTooltip
-        icon={RiLoopLeftLine}
+        icon={FaFolderTree}
         title="A full audit trail of the instruction and timing is captured for lender records."
         lineHeight={430}
         connectorLeft="10%"

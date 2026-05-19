@@ -13,7 +13,8 @@ export default function CompletedTasksSlide02() {
       <AdvSliderTooltip
         icon={HiCheckBadge}
         title="The lender reviews the case and can approve, adjust, or reject the application, with any changes reflected instantly on the platform."
-        lineHeight={200}
+        lineHeight={110}
+        connectorLeft="70%"
       />
     </div>
   );

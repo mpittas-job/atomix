@@ -3,23 +3,26 @@ import AdvSliderTooltipSequence, {
   type AdvSliderTooltipSequenceStep,
 } from "@/components/AdvSliderTooltipSequence";
 import { FaChartPie } from "react-icons/fa6";
+import { PiListChecksFill } from "react-icons/pi";
+import { FaEdit } from "react-icons/fa";
+import { MdConnectWithoutContact } from "react-icons/md";
 
 const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
   {
-    icon: FaChartPie,
+    icon: PiListChecksFill,
     title:
       "Multiple capital funding structures - including syndicated loans, institutional credit lines, and other capital provider models - with built-in tools for allocation and tracking.",
     lineHeight: 200,
     connectorLeft: "10%",
   },
   {
-    icon: FaChartPie,
+    icon: FaEdit,
     title: "Full transparency and auditability.",
     lineHeight: 380,
     connectorLeft: "40%",
   },
   {
-    icon: FaChartPie,
+    icon: MdConnectWithoutContact,
     title:
       "Automatic and reliable enforcement of the capital provider's credit policy.",
     lineHeight: 225,

@@ -4,17 +4,19 @@ import AdvSliderTooltipSequence, {
   type AdvSliderTooltipSequenceStep,
 } from "@/components/AdvSliderTooltipSequence";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
+import { FaRepeat } from "react-icons/fa6";
+import { RiBankFill } from "react-icons/ri";
 
 const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
   {
-    icon: FaMoneyBillTransfer,
+    icon: FaRepeat,
     title:
       "The platform links the transfer reference to the investment so funding can be automatically reconciled.",
     lineHeight: 200,
     connectorLeft: "22%",
   },
   {
-    icon: FaMoneyBillTransfer,
+    icon: RiBankFill,
     title:
       "Clear payment instructions are provided to ensure funds are transferred correctly.",
     lineHeight: 225,

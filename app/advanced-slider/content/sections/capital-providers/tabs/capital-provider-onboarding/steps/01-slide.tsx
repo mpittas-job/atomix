@@ -2,18 +2,19 @@ import AdvSliderMainImage from "@/components/AdvSliderMainImage";
 import AdvSliderTooltipSequence, {
   type AdvSliderTooltipSequenceStep,
 } from "@/components/AdvSliderTooltipSequence";
-import { PiJoystickFill } from "react-icons/pi";
+import { HiCheckBadge } from "react-icons/hi2";
+import { PiListChecksFill } from "react-icons/pi";
 
 const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
   {
-    icon: PiJoystickFill,
+    icon: HiCheckBadge,
     title:
       "Capital providers create their account and complete an onboarding process to verify investor status and eligibility. This ensures only verified participants can fund loans on the platform.",
     lineHeight: 430,
     connectorLeft: "21%",
   },
   {
-    icon: PiJoystickFill,
+    icon: PiListChecksFill,
     title:
       "Onboarding can include integrated KYC, KYB and AML. Additional APIs are available, depending on lender requirements.",
     lineHeight: 300,

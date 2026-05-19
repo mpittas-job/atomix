@@ -3,25 +3,27 @@ import AdvSliderOverlayImage from "@/components/AdvSliderOverlayImage";
 import AdvSliderTooltipSequence, {
   type AdvSliderTooltipSequenceStep,
 } from "@/components/AdvSliderTooltipSequence";
-import { IoIosCheckmarkCircle } from "react-icons/io";
+import { RiUserSearchFill } from "react-icons/ri";
+import { FaEdit } from "react-icons/fa";
+import { FaMoneyBillTransfer } from "react-icons/fa6";
 
 const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
   {
-    icon: IoIosCheckmarkCircle,
+    icon: RiUserSearchFill,
     title:
       "Prior to the drawdown process the lender can request from the platform a credit paper for manual review.",
     lineHeight: 419,
     connectorLeft: "65%",
   },
   {
-    icon: IoIosCheckmarkCircle,
+    icon: FaEdit,
     title:
       "Transfer details are recorded on-platform and visible to all relevant parties.",
     lineHeight: 260,
     connectorLeft: "6%",
   },
   {
-    icon: IoIosCheckmarkCircle,
+    icon: FaMoneyBillTransfer,
     title:
       "Funds are transferred only after all pre-drawdown conditions are satisfied. This can be automated or carried out manually, subject to the lender's preference.",
     lineHeight: 70,

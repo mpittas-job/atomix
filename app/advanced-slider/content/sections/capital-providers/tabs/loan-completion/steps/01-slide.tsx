@@ -1,7 +1,7 @@
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
 import AdvSliderOverlayImage from "@/components/AdvSliderOverlayImage";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
-import { FaFlagCheckered } from "react-icons/fa6";
+import { IoMdCheckmarkCircle } from "react-icons/io";
 
 export default function LoanCompletionSlide01() {
   return (
@@ -31,7 +31,7 @@ export default function LoanCompletionSlide01() {
       />
 
       <AdvSliderTooltip
-        icon={FaFlagCheckered}
+        icon={IoMdCheckmarkCircle}
         title="Solicitor confirms the loan as completed."
         lineHeight={385}
         connectorLeft="85%"

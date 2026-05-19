@@ -4,10 +4,11 @@ import AdvSliderTooltipSequence, {
   type AdvSliderTooltipSequenceStep,
 } from "@/components/AdvSliderTooltipSequence";
 import { PiListChecksFill } from "react-icons/pi";
+import { FaCircleCheck } from "react-icons/fa6";
 
 const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
   {
-    icon: PiListChecksFill,
+    icon: FaCircleCheck,
     title:
       "Once all tasks are completed and all eligibility criteria are met and verified, the lender's solicitor initiates the drawdown process.",
     lineHeight: 30,

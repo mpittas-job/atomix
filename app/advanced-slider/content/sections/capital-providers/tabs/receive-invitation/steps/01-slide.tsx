@@ -1,6 +1,7 @@
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
 import AdvSliderTooltip from "@/components/AdvSliderTooltip";
 import { FaEnvelope } from "react-icons/fa6";
+import { FaLink } from "react-icons/fa6";
 
 export default function ReceiveInvitationSlide01() {
   return (
@@ -11,7 +12,7 @@ export default function ReceiveInvitationSlide01() {
       />
 
       <AdvSliderTooltip
-        icon={FaEnvelope}
+        icon={FaLink}
         title="Secure platform links guide investors directly to the participation and funding process."
         lineHeight={95}
       />

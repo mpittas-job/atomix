@@ -4,6 +4,7 @@ import AdvSliderTooltipSequence, {
   type AdvSliderTooltipSequenceStep,
 } from "@/components/AdvSliderTooltipSequence";
 import { FaUsers } from "react-icons/fa";
+import { RiKey2Line } from "react-icons/ri";
 import { MdConnectWithoutContact } from "react-icons/md";
 
 const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
@@ -20,6 +21,12 @@ const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
       "All signatures are time-stamped and recorded for audit and compliance. ",
     lineHeight: 120,
     connectorLeft: "83%",
+  },
+  {
+    icon: RiKey2Line,
+    title: "Signed documents remain accessible to the borrower at all times.",
+    lineHeight: 220,
+    connectorLeft: "23%",
   },
 ];
 

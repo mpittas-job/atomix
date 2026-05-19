@@ -4,24 +4,27 @@ import AdvSliderTooltipSequence, {
   type AdvSliderTooltipSequenceStep,
 } from "@/components/AdvSliderTooltipSequence";
 import { FaClock } from "react-icons/fa6";
+import { FaBuildingCircleCheck } from "react-icons/fa6";
+import { FaBuildingCircleExclamation } from "react-icons/fa6";
+import { FaMoneyBills } from "react-icons/fa6";
 
 const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
   {
-    icon: FaClock,
+    icon: FaBuildingCircleCheck,
     title:
       "The platform validates that all pre-drawdown tasks are complete and compliant.",
     lineHeight: 370,
     connectorLeft: "1%",
   },
   {
-    icon: FaClock,
+    icon: FaBuildingCircleExclamation,
     title:
       "Final bankruptcy and priority searches must be confirmed before funds are released.",
     lineHeight: 350,
     connectorLeft: "10%",
   },
   {
-    icon: FaClock,
+    icon: FaMoneyBills,
     title:
       "This marks the formal instruction to the Lender Partner to release funds in accordance with the agreed loan terms.",
     lineHeight: 250,

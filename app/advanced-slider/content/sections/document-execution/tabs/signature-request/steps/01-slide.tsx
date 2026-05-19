@@ -19,13 +19,13 @@ const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
     title:
       "DocuSign can be used for all borrower and solicitor signatures where permitted.",
     lineHeight: 340,
-    connectorLeft: "49%",
+    connectorLeft: "50%",
   },
   {
     icon: TbFileDownloadFilled,
     title: "Legal charge downloaded and handled directly by the solicitor.",
     lineHeight: 235,
-    connectorLeft: "1.5%",
+    connectorLeft: "10%",
   },
 ];
 
@@ -51,4 +51,3 @@ export default function SignatureRequestSlide01() {
     </div>
   );
 }
-
