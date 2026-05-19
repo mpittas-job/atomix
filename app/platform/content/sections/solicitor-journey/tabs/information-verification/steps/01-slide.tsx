@@ -44,12 +44,12 @@ export default function InformationVerificationSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-2/tab-4/sj-tab3-step3-main.svg"
+        src="/platform-assets/section-2/tab-4/sj-tab3-step3-main.svg"
         alt="Information verification — lender verification methods"
       />
 
       <Image
-        src="/advanced-slider/section-2/tab-4/sj-tab3-step3-main2.svg"
+        src="/platform-assets/section-2/tab-4/sj-tab3-step3-main2.svg"
         alt=""
         width={1984}
         height={996}
@@ -60,7 +60,7 @@ export default function InformationVerificationSlide01() {
 
       <AdvSliderOverlayImage
         className="absolute bottom-[15%] -left-[4%]"
-        src="/advanced-slider/section-2/tab-4/sj-tab2-step3-overlay1.svg"
+        src="/platform-assets/section-2/tab-4/sj-tab2-step3-overlay1.svg"
         alt="Information verification — verification overlay"
         width={820}
         height={300}

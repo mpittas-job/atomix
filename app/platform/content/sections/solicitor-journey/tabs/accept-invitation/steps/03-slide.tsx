@@ -7,14 +7,14 @@ export default function AcceptInvitationSlide03() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src={"/advanced-slider/section-2/tab-1/sj-tab1-step1-main.svg"}
+        src={"/platform-assets/section-2/tab-1/sj-tab1-step1-main.svg"}
         alt={"Get started — welcome and account setup"}
       />
 
       <AdvSliderOverlayImage
         className="absolute bottom-0 -right-[2%]"
         blurBackdropClassName="pointer-events-none absolute -inset-2.5 bottom-0 rounded-t-3xl bg-white/20 backdrop-blur-md"
-        src="/advanced-slider/section-2/tab-1/sj-tab1-step3-overlay1.svg"
+        src="/platform-assets/section-2/tab-1/sj-tab1-step3-overlay1.svg"
         alt="Get started — welcome and account setup"
         width={700}
         height={300}

@@ -26,13 +26,13 @@ export default function BorrowerModificationsSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-2/tab-6/sj-tab-6-step1-main.svg"
+        src="/platform-assets/section-2/tab-6/sj-tab-6-step1-main.svg"
         alt="Borrower modifications — re-verification and responsibility"
       />
 
       <AdvSliderOverlayImage
         className="absolute bottom-[8%] -left-[5%]"
-        src="/advanced-slider/section-2/tab-6/sj-tab6-step1-overlay1.svg"
+        src="/platform-assets/section-2/tab-6/sj-tab6-step1-overlay1.svg"
         alt="Borrower modifications — modification overlay"
         width={700}
         height={300}

@@ -27,7 +27,7 @@ export default function LoanDetailsDashboardSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-6/cp-tab9-step1-main.svg"
+        src="/platform-assets/section-6/cp-tab9-step1-main.svg"
         alt="Capital providers — loan details dashboard"
       />
 

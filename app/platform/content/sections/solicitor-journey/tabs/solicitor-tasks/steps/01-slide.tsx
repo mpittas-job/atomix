@@ -7,13 +7,13 @@ export default function SolicitorTasksSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src={"/advanced-slider/section-2/tab-2/sj-tab2-step1-main.svg"}
+        src={"/platform-assets/section-2/tab-2/sj-tab2-step1-main.svg"}
         alt={"Accept invitation — solicitor email invitation"}
       />
 
       <AdvSliderOverlayImage
         className="absolute bottom-[18%] -left-[5%]"
-        src="/advanced-slider/section-2/tab-2/sj-tab2-step1-overlay1.svg"
+        src="/platform-assets/section-2/tab-2/sj-tab2-step1-overlay1.svg"
         alt="Get started — welcome and account setup"
         width={720}
         height={300}

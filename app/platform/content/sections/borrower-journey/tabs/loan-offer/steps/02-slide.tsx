@@ -7,14 +7,14 @@ export default function LoanOfferSlide02() {
   return (
     <div className="w-full min-w-0">
       <AdvSliderMainImage
-        src={"/advanced-slider/section-1/tab-2/bj-tab2-step1-main.svg"}
+        src={"/platform-assets/section-1/tab-2/bj-tab2-step1-main.svg"}
         alt={""}
       />
 
       <div className="absolute flex gap-4 bottom-[5%] left-[5%]">
         <AdvSliderOverlayImage
           className="relative"
-          src="/advanced-slider/section-1/tab-2/bj-tab2-step2-overlay1.svg"
+          src="/platform-assets/section-1/tab-2/bj-tab2-step2-overlay1.svg"
           alt=""
           width={700}
           height={300}
@@ -22,7 +22,7 @@ export default function LoanOfferSlide02() {
         />
         <AdvSliderOverlayImage
           className="relative"
-          src="/advanced-slider/section-1/tab-2/bj-tab2-step2-overlay2.svg"
+          src="/platform-assets/section-1/tab-2/bj-tab2-step2-overlay2.svg"
           alt=""
           width={700}
           height={300}

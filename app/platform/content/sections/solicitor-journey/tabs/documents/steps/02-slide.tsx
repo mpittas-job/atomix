@@ -7,13 +7,13 @@ export default function DocumentsSlide02() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src={"/advanced-slider/section-2/tab-3/sj-tab3-step1-main.svg"}
+        src={"/platform-assets/section-2/tab-3/sj-tab3-step1-main.svg"}
         alt={"Documents — request and upload pack"}
       />
 
       <AdvSliderOverlayImage
         className="absolute bottom-[15%] -right-[5%]"
-        src="/advanced-slider/section-2/tab-3/sj-tab3-step2-overlay1.svg"
+        src="/platform-assets/section-2/tab-3/sj-tab3-step2-overlay1.svg"
         alt="Get started — welcome and account setup"
         width={700}
         height={300}

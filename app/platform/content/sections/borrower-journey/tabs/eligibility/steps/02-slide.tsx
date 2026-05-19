@@ -7,13 +7,13 @@ export default function EligibilitySlide02() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src={"/advanced-slider/section-1/tab-4/bj-tab4-step1-main.svg"}
+        src={"/platform-assets/section-1/tab-4/bj-tab4-step1-main.svg"}
         alt={"Get started — welcome and account setup"}
       />
 
       <AdvSliderOverlayImage
         className="absolute top-[18%] right-[2%]"
-        src="/advanced-slider/section-1/tab-4/bj-tab4-step2-overlay1.svg"
+        src="/platform-assets/section-1/tab-4/bj-tab4-step2-overlay1.svg"
         alt="Get started — welcome and account setup"
         width={700}
         height={300}

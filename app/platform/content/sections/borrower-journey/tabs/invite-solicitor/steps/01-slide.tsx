@@ -32,12 +32,12 @@ export default function InviteSolicitorSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-1/tab-8/bj-tab8-step1-main.svg"
+        src="/platform-assets/section-1/tab-8/bj-tab8-step1-main.svg"
         alt="Invite solicitor — representation and panel selection"
       />
 
       <Image
-        src="/advanced-slider/section-1/tab-8/bj-tab8-step1-main2.svg"
+        src="/platform-assets/section-1/tab-8/bj-tab8-step1-main2.svg"
         alt=""
         width={1984}
         height={996}
@@ -47,7 +47,7 @@ export default function InviteSolicitorSlide01() {
       />
 
       <Image
-        src="/advanced-slider/section-1/tab-8/bj-tab8-step1-main3.svg"
+        src="/platform-assets/section-1/tab-8/bj-tab8-step1-main3.svg"
         alt=""
         width={1984}
         height={996}
@@ -58,7 +58,7 @@ export default function InviteSolicitorSlide01() {
 
       <AdvSliderOverlayImage
         className="absolute bottom-[10%] -left-[5%]"
-        src="/advanced-slider/section-1/tab-8/bj-tab8-step1-overlay1.svg"
+        src="/platform-assets/section-1/tab-8/bj-tab8-step1-overlay1.svg"
         alt="Invite solicitor — solicitor panel overlay"
         width={820}
         height={300}

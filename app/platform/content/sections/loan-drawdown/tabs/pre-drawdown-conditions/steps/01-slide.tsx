@@ -34,13 +34,13 @@ export default function PreDrawdownConditionsSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-5/ld-tab1-step1-main.svg"
+        src="/platform-assets/section-5/ld-tab1-step1-main.svg"
         alt="Loan drawdown — pre-drawdown conditions"
       />
 
       <AdvSliderOverlayImage
         className="absolute bottom-[3%] -right-[5%]"
-        src="/advanced-slider/section-5/ld-tab1-step1-overlay.svg"
+        src="/platform-assets/section-5/ld-tab1-step1-overlay.svg"
         alt="Loan drawdown — pre-drawdown conditions detail"
         width={700}
         height={300}

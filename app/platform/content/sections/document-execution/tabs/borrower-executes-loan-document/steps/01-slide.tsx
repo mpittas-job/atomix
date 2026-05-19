@@ -34,14 +34,14 @@ export default function BorrowerExecutesLoanDocumentSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-4/tab-2/de-tab2-step1-main.svg"
+        src="/platform-assets/section-4/tab-2/de-tab2-step1-main.svg"
         alt="Borrower executes the loan document — guided signing"
       />
 
       <AdvSliderOverlayImage
         className="absolute bottom-0 -right-[4%]"
         blurBackdropClassName="pointer-events-none absolute -inset-2.5 bottom-0 rounded-t-3xl bg-white/20 backdrop-blur-md"
-        src="/advanced-slider/section-4/tab-2/de-tab2-step2-overlay.svg"
+        src="/platform-assets/section-4/tab-2/de-tab2-step2-overlay.svg"
         alt="Borrower executes the loan document — signing overlay"
         width={700}
         height={300}

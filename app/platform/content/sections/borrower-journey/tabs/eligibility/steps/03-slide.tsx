@@ -7,13 +7,13 @@ export default function EligibilitySlide03() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src={"/advanced-slider/section-1/tab-4/bj-tab4-step1-main.svg"}
+        src={"/platform-assets/section-1/tab-4/bj-tab4-step1-main.svg"}
         alt={"Get started — welcome and account setup"}
       />
 
       <AdvSliderOverlayImage
         className="absolute -right-15 top-20"
-        src="/advanced-slider/section-1/tab-4/bj-tab4-step3-overlay2.svg"
+        src="/platform-assets/section-1/tab-4/bj-tab4-step3-overlay2.svg"
         alt=""
         width={700}
         height={300}
@@ -22,7 +22,7 @@ export default function EligibilitySlide03() {
 
       <AdvSliderOverlayImage
         className="absolute -right-15 top-60"
-        src="/advanced-slider/section-1/tab-4/bj-tab4-step3-overlay1.svg"
+        src="/platform-assets/section-1/tab-4/bj-tab4-step3-overlay1.svg"
         alt=""
         width={700}
         height={300}

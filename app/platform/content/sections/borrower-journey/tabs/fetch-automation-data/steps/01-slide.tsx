@@ -42,13 +42,13 @@ export default function FetchAutomationDataSlide01() {
   return (
     <div className="w-full min-w-0">
       <AdvSliderMainImage
-        src="/advanced-slider/section-1/tab-6/bj-tab6-step1-main.svg"
+        src="/platform-assets/section-1/tab-6/bj-tab6-step1-main.svg"
         alt="Fetch automation data — third-party integrations"
       />
 
       <AdvSliderOverlayImage
         className="absolute top-[8%] left-1/2 -translate-x-1/2"
-        src="/advanced-slider/section-1/tab-6/bj-tab6-step1-overlay1.svg"
+        src="/platform-assets/section-1/tab-6/bj-tab6-step1-overlay1.svg"
         alt="Fetch automation data — data provider overlay"
         width={700}
         height={300}

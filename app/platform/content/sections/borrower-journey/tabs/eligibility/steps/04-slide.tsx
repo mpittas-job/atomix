@@ -6,7 +6,7 @@ export default function EligibilitySlide04() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src={"/advanced-slider/section-1/tab-4/bj-tab4-step1-main.svg"}
+        src={"/platform-assets/section-1/tab-4/bj-tab4-step1-main.svg"}
         alt={"Get started — welcome and account setup"}
       />
 

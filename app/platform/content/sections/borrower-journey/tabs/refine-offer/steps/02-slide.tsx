@@ -7,13 +7,13 @@ export default function RefineOfferSlide02() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src={"/advanced-slider/section-1/tab-3/bj-tab3-step1-main-2.svg"}
+        src={"/platform-assets/section-1/tab-3/bj-tab3-step1-main-2.svg"}
         alt={"Get started — welcome and account setup"}
       />
 
       <AdvSliderOverlayImage
         className="absolute right-9 top-25"
-        src="/advanced-slider/section-1/tab-3/bj-tab3-step2-overlay1.svg"
+        src="/platform-assets/section-1/tab-3/bj-tab3-step2-overlay1.svg"
         alt=""
         width={700}
         height={300}
@@ -22,7 +22,7 @@ export default function RefineOfferSlide02() {
 
       <AdvSliderOverlayImage
         className="absolute -right-10 top-55"
-        src="/advanced-slider/section-1/tab-3/bj-tab3-step2-overlay2.svg"
+        src="/platform-assets/section-1/tab-3/bj-tab3-step2-overlay2.svg"
         alt=""
         width={700}
         height={300}

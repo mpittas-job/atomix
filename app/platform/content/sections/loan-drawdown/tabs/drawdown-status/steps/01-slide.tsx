@@ -6,7 +6,7 @@ export default function DrawdownStatusSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-5/ld-tab3-step1-main.svg"
+        src="/platform-assets/section-5/ld-tab3-step1-main.svg"
         alt="Loan drawdown — status and visibility"
       />
 

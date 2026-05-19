@@ -6,7 +6,7 @@ export default function FundingConfirmedSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-6/cp-tab5-step1-main.svg"
+        src="/platform-assets/section-6/cp-tab5-step1-main.svg"
         alt="Capital providers — funding confirmed"
       />
 

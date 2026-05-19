@@ -26,7 +26,7 @@ export default function AcceptInvitationSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-2/tab-1/sj-tab1-step1-main.svg"
+        src="/platform-assets/section-2/tab-1/sj-tab1-step1-main.svg"
         alt="Accept invitation — solicitor email invitation"
       />
 

@@ -36,13 +36,13 @@ export default function DrawdownRequestSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-5/ld-tab2-step1-main.svg"
+        src="/platform-assets/section-5/ld-tab2-step1-main.svg"
         alt="Loan drawdown — drawdown request"
       />
 
       <AdvSliderOverlayImage
         className="absolute top-[25%] -left-[3%]"
-        src="/advanced-slider/section-5/ld-tab2-step1-overlay.svg"
+        src="/platform-assets/section-5/ld-tab2-step1-overlay.svg"
         alt="Loan drawdown — drawdown request detail"
         width={700}
         height={300}

@@ -6,7 +6,7 @@ export default function CompletedTasksSlide02() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-3/tab-2/rj-tab2-step2-main.svg"
+        src="/platform-assets/section-3/tab-2/rj-tab2-step2-main.svg"
         alt="Completed tasks — completed items"
       />
 

@@ -34,13 +34,13 @@ export default function AcceptInvitationSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-6/cp-tab3-step1-main.svg"
+        src="/platform-assets/section-6/cp-tab3-step1-main.svg"
         alt="Capital providers — accept invitation"
       />
 
       <AdvSliderOverlayImage
         className="absolute bottom-[15%] -right-[5%]"
-        src="/advanced-slider/section-6/cp-tab3-step1-overlay.svg"
+        src="/platform-assets/section-6/cp-tab3-step1-overlay.svg"
         alt="Capital providers — accept invitation detail"
         width={700}
         height={300}

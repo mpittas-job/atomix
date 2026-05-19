@@ -6,7 +6,7 @@ export default function OfferConfirmedSlide01() {
   return (
     <div className="w-full min-w-0">
       <AdvSliderMainImage
-        src={"/advanced-slider/section-1/tab-7/bj-tab7-step1-main.svg"}
+        src={"/platform-assets/section-1/tab-7/bj-tab7-step1-main.svg"}
         alt={""}
       />
 

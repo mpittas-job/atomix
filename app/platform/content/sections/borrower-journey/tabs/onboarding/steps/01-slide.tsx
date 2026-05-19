@@ -38,7 +38,7 @@ export default function OnboardingSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-1/tab-5/bj-tab5-step1-main.svg"
+        src="/platform-assets/section-1/tab-5/bj-tab5-step1-main.svg"
         alt="Onboarding — flexible lender-controlled setup"
       />
 

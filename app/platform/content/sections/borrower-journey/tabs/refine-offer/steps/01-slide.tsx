@@ -7,12 +7,12 @@ export default function RefineOfferSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src={"/advanced-slider/section-1/tab-3/bj-tab3-step1-main.svg"}
+        src={"/platform-assets/section-1/tab-3/bj-tab3-step1-main.svg"}
         alt={"Get started — welcome and account setup"}
       />
 
       <Image
-        src="/advanced-slider/section-1/tab-3/bj-tab3-step1-main-2.svg"
+        src="/platform-assets/section-1/tab-3/bj-tab3-step1-main-2.svg"
         alt="Get started — welcome and account setup"
         width={1984}
         height={996}

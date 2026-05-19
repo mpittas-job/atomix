@@ -27,13 +27,13 @@ export default function ResolveConflictsSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-2/tab-5/sj-tab-5-step1-main.svg"
+        src="/platform-assets/section-2/tab-5/sj-tab-5-step1-main.svg"
         alt="Resolve conflicts — discrepancy highlighting"
       />
 
       <AdvSliderOverlayImage
         className="absolute bottom-[15%] -left-[5%]"
-        src="/advanced-slider/section-2/tab-5/sj-tab5-step1-overlay1.svg"
+        src="/platform-assets/section-2/tab-5/sj-tab5-step1-overlay1.svg"
         alt="Resolve conflicts — conflict resolution overlay"
         width={700}
         height={300}

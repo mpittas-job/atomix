@@ -33,14 +33,14 @@ export default function SignatureRequestSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-4/tab-1/de-tab1-step1-main.svg"
+        src="/platform-assets/section-4/tab-1/de-tab1-step1-main.svg"
         alt="Signature request — issue signing pack"
       />
 
       <AdvSliderOverlayImage
         className="absolute bottom-0 -right-[4%]"
         blurBackdropClassName="pointer-events-none absolute -inset-2.5 bottom-0 rounded-t-3xl bg-white/20 backdrop-blur-md"
-        src="/advanced-slider/section-4/tab-1/de-tab1-step1-overlay.svg"
+        src="/platform-assets/section-4/tab-1/de-tab1-step1-overlay.svg"
         alt="Signature request — signing pack overlay"
         width={700}
         height={300}

@@ -32,7 +32,7 @@ export default function SolicitorTasksSlide02() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-2/tab-2/sj-tab2-step1-main.svg"
+        src="/platform-assets/section-2/tab-2/sj-tab2-step1-main.svg"
         alt="Solicitor tasks — legal opinion and documents"
       />
 

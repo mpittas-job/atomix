@@ -25,13 +25,13 @@ export default function GetStartedSlide01() {
   return (
     <div className="w-full min-w-0">
       <AdvSliderMainImage
-        src="/advanced-slider/section-1/tab-1/bj-tab1-step1-main.svg"
+        src="/platform-assets/section-1/tab-1/bj-tab1-step1-main.svg"
         alt="Get started — welcome and account setup"
       />
 
       <AdvSliderOverlayImage
         className="absolute bottom-[31%] left-[5%]"
-        src="/advanced-slider/section-1/tab-1/bj-tab1-step1-overlay.svg"
+        src="/platform-assets/section-1/tab-1/bj-tab1-step1-overlay.svg"
         alt="Get started — welcome and account setup"
         width={700}
         height={300}

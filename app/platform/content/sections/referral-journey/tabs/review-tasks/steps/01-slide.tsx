@@ -6,7 +6,7 @@ export default function ReviewTasksSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-3/tab-3/rj-tab3-step1-main.svg"
+        src="/platform-assets/section-3/tab-3/rj-tab3-step1-main.svg"
         alt="Review tasks — task review"
       />
 

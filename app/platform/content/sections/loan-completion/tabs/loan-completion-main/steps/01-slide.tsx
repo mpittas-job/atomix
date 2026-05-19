@@ -7,13 +7,13 @@ export default function LoanCompletionMainSlide01() {
   return (
     <div className="w-full min-w-0 relative">
       <AdvSliderMainImage
-        src="/advanced-slider/section-7/lc-tab1-step1-main.svg"
+        src="/platform-assets/section-7/lc-tab1-step1-main.svg"
         alt="Loan completion"
       />
 
       <AdvSliderOverlayImage
         className="absolute top-[55%] -left-[3%]"
-        src="/advanced-slider/section-7/lc-tab1-step1-overlay.svg"
+        src="/platform-assets/section-7/lc-tab1-step1-overlay.svg"
         alt="Loan completion detail"
         width={700}
         height={300}
