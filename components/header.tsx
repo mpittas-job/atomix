@@ -16,12 +16,10 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
 
   const navLinks = [
-    { name: "About Atomix", href: "#def-hero-main" },
-    { name: "The Platform", href: "#tech-limitations" },
-    { name: "Platform Benefits", href: "/landing-platform-benefits" },
-    { name: "Resources", href: "#info-rows" },
-    { name: "Careers", href: "#why-work-with-us" },
-    { name: "Contact Us", href: "#use-cases" },
+    { name: "Home", href: "/" },
+    { name: "Platform", href: "/platform" },
+    { name: "About us", href: "/about-us" },
+    { name: "Careers", href: "/careers" },
   ];
 
   useEffect(() => {

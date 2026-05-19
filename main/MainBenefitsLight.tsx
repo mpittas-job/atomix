@@ -509,7 +509,7 @@ export default function MainBenefitsLight() {
   }, [startTabsEntrance]);
 
   return (
-    <div className="min-h-[calc(100vh-126px)] rounded-3xl bg-[#EBEFF2] relative overflow-hidden flex flex-col justify-center items-center">
+    <div className="min-h-[calc(100vh-126px)] rounded-3xl bg-gradient-to-b from-[#ebeef1] to-[#f5f5f5] relative overflow-hidden flex flex-col justify-center items-center">
       <div className="relative z-10 flex flex-col gap-y-12 w-full max-w-[1200px] px-8 py-32">
         <DefHeading
           theme="dark"

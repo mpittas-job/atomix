@@ -52,7 +52,7 @@ function IconText({ icon, text }: { icon: string; text: string }) {
 
 function SquareBadge({ text }: { text: string }) {
   return (
-    <div className="relative w-full overflow-hidden rounded-lg bg-white/40 px-3 py-2 text-center backdrop-blur-md">
+    <div className="relative w-full overflow-hidden rounded-lg bg-white/40 px-3 py-2 text-center shadow-[inset_0_1px_2px_rgba(255,255,255,0.6),inset_3px_3px_12px_rgba(10,21,44,0.06)] backdrop-blur-md border border-white">
       <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-lg">
         <div className="absolute -top-5 -right-5 h-[35%] w-[35%] rounded-full bg-white/60 blur-xl" />
         <div className="absolute -bottom-5 -left-5 h-[35%] w-[35%] rounded-full bg-white/60 blur-xl" />
@@ -430,7 +430,7 @@ export default function MainSolutionsAnimationLight() {
   }, []);
 
   return (
-    <div className="min-h-[calc(100vh-126px)] rounded-3xl bg-[#dee0e2] relative overflow-hidden flex flex-col justify-center items-center">
+    <div className="min-h-[calc(100vh-126px)] rounded-3xl bg-gradient-to-b from-[#ebeef1] to-[#f5f5f5] relative overflow-hidden flex flex-col justify-center items-center">
       <div className="relative z-10 flex flex-col gap-y-16 w-full max-w-[1200px] px-8 py-32">
         <DefHeading
           theme="dark"

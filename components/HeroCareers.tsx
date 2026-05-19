@@ -94,9 +94,32 @@ const FACE_ASSETS = [
     src: "/people-faces/face-5.png",
     alt: "Team member portrait",
   },
+  {
+    src: "/people-faces/face-6.png",
+    alt: "Team member portrait",
+  },
+  {
+    src: "/people-faces/face-7.png",
+    alt: "Team member portrait",
+  },
+  {
+    src: "/people-faces/face-8.png",
+    alt: "Team member portrait",
+  },
+  {
+    src: "/people-faces/face-9.png",
+    alt: "Team member portrait",
+  },
+  {
+    src: "/people-faces/face-10.png",
+    alt: "Team member portrait",
+  },
 ] as const;
 
 const FACE_COUNT = INITIAL_FACE_PLACEMENTS.length;
+const FACE_ASSET_COUNT = FACE_ASSETS.length;
+/** Spread initial avatars across the full face pool (hydration-safe). */
+const INITIAL_SLOT_FACES = [0, 2, 4, 6, 8] as const;
 
 function getFacePosition(placement: FacePlacement) {
   const positions =
@@ -145,7 +168,7 @@ function pickNextPlacement(
 }
 
 function pickOtherFaceIndex(current: number): number {
-  const choices = Array.from({ length: FACE_COUNT }, (_, i) => i).filter(
+  const choices = Array.from({ length: FACE_ASSET_COUNT }, (_, i) => i).filter(
     (i) => i !== current,
   );
   return choices[Math.floor(Math.random() * choices.length)]!;
@@ -221,9 +244,9 @@ export default function HeroCareers() {
     Array.from({ length: FACE_COUNT }, () => false),
   );
 
-  const [slotFaces, setSlotFaces] = useState<number[]>(() =>
-    Array.from({ length: FACE_COUNT }, (_, i) => i),
-  );
+  const [slotFaces, setSlotFaces] = useState<number[]>(() => [
+    ...INITIAL_SLOT_FACES,
+  ]);
   const [facePlacements, setFacePlacements] = useState<FacePlacement[]>(
     INITIAL_FACE_PLACEMENTS,
   );
