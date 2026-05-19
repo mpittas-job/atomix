@@ -1,7 +1,26 @@
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
 import AdvSliderOverlayImage from "@/components/AdvSliderOverlayImage";
-import AdvSliderTooltip from "@/components/AdvSliderTooltip";
+import AdvSliderTooltipSequence, {
+  type AdvSliderTooltipSequenceStep,
+} from "@/components/AdvSliderTooltipSequence";
 import { FaMoneyBillTransfer } from "react-icons/fa6";
+
+const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
+  {
+    icon: FaMoneyBillTransfer,
+    title:
+      "The platform links the transfer reference to the investment so funding can be automatically reconciled.",
+    lineHeight: 200,
+    connectorLeft: "22%",
+  },
+  {
+    icon: FaMoneyBillTransfer,
+    title:
+      "Clear payment instructions are provided to ensure funds are transferred correctly.",
+    lineHeight: 225,
+    connectorLeft: "78%",
+  },
+];
 
 export default function TransferFundsSlide01() {
   return (
@@ -20,12 +39,7 @@ export default function TransferFundsSlide01() {
         imageClassName="block h-auto max-w-[250px] border-2 border-[#499DB8] rounded-xl relative"
       />
 
-      <AdvSliderTooltip
-        icon={FaMoneyBillTransfer}
-        title="The platform links the transfer reference to the investment so funding can be automatically reconciled."
-        lineHeight={190}
-        connectorLeft="20%"
-      />
+      <AdvSliderTooltipSequence steps={TOOLTIP_STEPS} />
     </div>
   );
 }

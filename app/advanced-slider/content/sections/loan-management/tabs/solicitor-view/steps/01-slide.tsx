@@ -13,7 +13,8 @@ export default function SolicitorViewSlide01() {
       <AdvSliderTooltip
         icon={FaScaleBalanced}
         title="Solicitors can view active case files, complete post-drawdown tasks, upload required documents, and track the status of each transaction in real time."
-        lineHeight={120}
+        lineHeight={160}
+        connectorLeft="42%"
       />
     </div>
   );

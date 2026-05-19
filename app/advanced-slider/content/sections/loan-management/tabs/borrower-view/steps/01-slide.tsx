@@ -1,6 +1,32 @@
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
-import AdvSliderTooltip from "@/components/AdvSliderTooltip";
+import AdvSliderTooltipSequence, {
+  type AdvSliderTooltipSequenceStep,
+} from "@/components/AdvSliderTooltipSequence";
 import { FaUser } from "react-icons/fa6";
+
+const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
+  {
+    icon: FaUser,
+    title:
+      "Borrowers can request and arrange loan extensions, renewals, partial repayments, etc. Subject to the lender's rules, these can be dealt with automatically, or as a referral.",
+    lineHeight: 430,
+    connectorLeft: "80%",
+  },
+  {
+    icon: FaUser,
+    title:
+      "Borrowers can generate redemption statements instantly and submit a redemption request directly through the platform - without needing to contact the lender.",
+    lineHeight: 320,
+    connectorLeft: "80%",
+  },
+  {
+    icon: FaUser,
+    title:
+      "Borrowers can access all key documents, review statements, monitor outstanding balances, and see upcoming payments or charges in real time.",
+    lineHeight: 225,
+    connectorLeft: "29%",
+  },
+];
 
 export default function BorrowerViewSlide01() {
   return (
@@ -10,12 +36,7 @@ export default function BorrowerViewSlide01() {
         alt="Loan management — borrower view"
       />
 
-      <AdvSliderTooltip
-        icon={FaUser}
-        title="Borrowers can request and arrange loan extensions, renewals, partial repayments, etc. Subject to the lender's rules, these can be dealt with automatically, or as a referral."
-        lineHeight={410}
-        connectorLeft="80%"
-      />
+      <AdvSliderTooltipSequence steps={TOOLTIP_STEPS} />
     </div>
   );
 }

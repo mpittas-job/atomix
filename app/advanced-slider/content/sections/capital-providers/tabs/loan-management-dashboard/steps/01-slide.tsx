@@ -1,7 +1,25 @@
-import Image from "next/image";
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
-import AdvSliderTooltip from "@/components/AdvSliderTooltip";
+import AdvSliderTooltipSequence, {
+  type AdvSliderTooltipSequenceStep,
+} from "@/components/AdvSliderTooltipSequence";
 import { MdDashboard } from "react-icons/md";
+
+const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
+  {
+    icon: MdDashboard,
+    title:
+      "They can view all active and past investments, along with key loan information, performance metrics, and upcoming maturity dates.",
+    lineHeight: 370,
+    connectorLeft: "50%",
+  },
+  {
+    icon: MdDashboard,
+    title:
+      "They can view all active and past investments, along with key loan information, performance metrics, and upcoming maturity dates.",
+    lineHeight: 320,
+    connectorLeft: "11%",
+  },
+];
 
 export default function LoanManagementDashboardSlide01() {
   return (
@@ -11,22 +29,7 @@ export default function LoanManagementDashboardSlide01() {
         alt="Capital providers — loan management dashboard"
       />
 
-      <Image
-        src="/advanced-slider/section-6/cp-tab8-step1-main2.svg"
-        alt="Capital providers — loan management dashboard detail"
-        width={1984}
-        height={996}
-        className="main-img-overlay block h-auto rounded-t-2xl absolute left-0 bottom-0 opacity-0"
-        quality={100}
-        priority
-      />
-
-      <AdvSliderTooltip
-        icon={MdDashboard}
-        title="They can view all active and past investments, along with key loan information, performance metrics, and upcoming maturity dates."
-        lineHeight={350}
-        connectorLeft="40%"
-      />
+      <AdvSliderTooltipSequence steps={TOOLTIP_STEPS} />
     </div>
   );
 }

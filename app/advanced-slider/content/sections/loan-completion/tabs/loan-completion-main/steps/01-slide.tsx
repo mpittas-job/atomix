@@ -23,7 +23,8 @@ export default function LoanCompletionMainSlide01() {
       <AdvSliderTooltip
         icon={FaFlagCheckered}
         title="This immutable registration provides a transparent and verifiable record of the transaction. Borrowers are then directed to the loan management area of the platform."
-        lineHeight={120}
+        lineHeight={290}
+        connectorLeft="60%"
       />
     </div>
   );

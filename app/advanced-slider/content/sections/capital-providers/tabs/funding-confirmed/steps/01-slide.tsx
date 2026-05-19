@@ -14,7 +14,7 @@ export default function FundingConfirmedSlide01() {
         icon={IoIosCheckmarkCircle}
         title="Once funds are received, the system confirms the investment and moves the loan to the funded stage."
         lineHeight={280}
-        connectorLeft="45%"
+        connectorLeft="60%"
       />
     </div>
   );

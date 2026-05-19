@@ -1,6 +1,25 @@
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
-import AdvSliderTooltip from "@/components/AdvSliderTooltip";
+import AdvSliderTooltipSequence, {
+  type AdvSliderTooltipSequenceStep,
+} from "@/components/AdvSliderTooltipSequence";
 import { FaHandshake } from "react-icons/fa6";
+
+const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
+  {
+    icon: FaHandshake,
+    title:
+      "Capital providers have access to a dedicated, fully customised dashboard that offers full transparency into the loans they are funding, customised analysis and reporting.",
+    lineHeight: 390,
+    connectorLeft: "50%",
+  },
+  {
+    icon: FaHandshake,
+    title:
+      "They can view all active and past investments, along with key loan information, performance metrics, and upcoming maturity dates.",
+    lineHeight: 320,
+    connectorLeft: "20%",
+  },
+];
 
 export default function CapitalProviderViewSlide01() {
   return (
@@ -10,12 +29,7 @@ export default function CapitalProviderViewSlide01() {
         alt="Loan management — capital provider view"
       />
 
-      <AdvSliderTooltip
-        icon={FaHandshake}
-        title="Capital providers have access to a dedicated, fully customised dashboard that offers full transparency into the loans they are funding, customised analysis and reporting."
-        lineHeight={320}
-        connectorLeft="20%"
-      />
+      <AdvSliderTooltipSequence steps={TOOLTIP_STEPS} />
     </div>
   );
 }

@@ -1,6 +1,37 @@
 import AdvSliderMainImage from "@/components/AdvSliderMainImage";
-import AdvSliderTooltip from "@/components/AdvSliderTooltip";
+import AdvSliderTooltipSequence, {
+  type AdvSliderTooltipSequenceStep,
+} from "@/components/AdvSliderTooltipSequence";
 import { FaChartPie } from "react-icons/fa6";
+
+const TOOLTIP_STEPS: AdvSliderTooltipSequenceStep[] = [
+  {
+    icon: FaChartPie,
+    title:
+      "Multiple capital funding structures - including syndicated loans, institutional credit lines, and other capital provider models - with built-in tools for allocation and tracking.",
+    lineHeight: 200,
+    connectorLeft: "10%",
+  },
+  {
+    icon: FaChartPie,
+    title: "Full transparency and auditability.",
+    lineHeight: 380,
+    connectorLeft: "40%",
+  },
+  {
+    icon: FaChartPie,
+    title:
+      "Automatic and reliable enforcement of the capital provider's credit policy.",
+    lineHeight: 225,
+    connectorLeft: "88%",
+  },
+  {
+    icon: FaChartPie,
+    title: "Automated interest and capital distribution.",
+    lineHeight: 120,
+    connectorLeft: "50%",
+  },
+];
 
 export default function FundsAllocationSlide01() {
   return (
@@ -10,12 +41,7 @@ export default function FundsAllocationSlide01() {
         alt="Capital providers — funds allocation"
       />
 
-      <AdvSliderTooltip
-        icon={FaChartPie}
-        title="Multiple capital funding structures - including syndicated loans, institutional credit lines, and other capital provider models - with built-in tools for allocation and tracking."
-        lineHeight={185}
-        connectorLeft="6%"
-      />
+      <AdvSliderTooltipSequence steps={TOOLTIP_STEPS} />
     </div>
   );
 }
