@@ -12,7 +12,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { IoIosPause, IoIosPlay } from "react-icons/io";
-import Image from "next/image";
+import AtomixJourneyFlowChart from "@/components/AtomixJourneyFlowChart";
 import SoftAurora from "@/components/backgrounds/SoftAurora";
 import HeroAnimatedBg from "@/components/HeroAnimatedBg";
 import DefCta from "@/components/DefCta";
@@ -21,6 +21,7 @@ import Header from "@/components/header";
 import DefHeading from "@/components/typo/DefHeading";
 
 import { NAV_CATEGORIES, SECTIONS } from "./content/nav-categories";
+import { JOURNEY_FLOW_CHART_TARGETS } from "./content/journey-flow-chart-targets";
 import {
   ADV_SLIDER_STEP_ANIMATION_COMPLETE_EVENT,
   ADV_SLIDER_STEP_ANIMATION_START_EVENT,
@@ -146,6 +147,33 @@ function AdvancedSliderPageContent() {
       setActiveTooltipIndex(index);
     },
     [setActiveTooltipIndex],
+  );
+
+  const navigateToFlowChartTarget = useCallback(
+    (sectionId: string, tabId: string) => {
+      setActiveSectionId(sectionId);
+      setActiveTabId(tabId);
+      setActiveSlideIndex(0);
+      setActiveTooltipIndexSynced(0);
+      setPendingEnterTooltipIndex(null);
+      document.getElementById("advanced-slider")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+      if (typeof window !== "undefined") {
+        window.history.replaceState(null, "", `#${sectionId}`);
+      }
+    },
+    [setActiveTooltipIndexSynced, setPendingEnterTooltipIndex],
+  );
+
+  const handleJourneyFlowHotspotClick = useCallback(
+    (journeyLinkId: string) => {
+      const target = JOURNEY_FLOW_CHART_TARGETS[journeyLinkId];
+      if (!target) return;
+      navigateToFlowChartTarget(target.sectionId, target.tabId);
+    },
+    [navigateToFlowChartTarget],
   );
 
   const PLAY_PROGRESS_AUTOPLAY_WAIT_MS = 3000;
@@ -595,16 +623,9 @@ function AdvancedSliderPageContent() {
               className="max-w-5xl"
             />
             <div className="mt-12 flex justify-center md:mt-16">
-              <Image
-                src="/advanced-slider/flow-chart.png"
-                alt="The Atomix Journey"
-                width={1200}
-                height={527}
-                sizes="(max-width: 1280px) min(100vw - 48px, 1152px), 1152px"
-                className="h-auto w-full max-w-6xl rounded-2xl object-contain"
-                quality={100}
-                priority
-                unoptimized
+              <AtomixJourneyFlowChart
+                className="max-w-6xl rounded-2xl"
+                onHotspotClick={handleJourneyFlowHotspotClick}
               />
             </div>
           </div>
