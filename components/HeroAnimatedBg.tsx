@@ -246,9 +246,28 @@ export type HeroAnimatedBgProps = {
   heroCardDotGrid?: boolean;
   /** Optional props forwarded to `DotGrid` when `heroCardDotGrid` is true. */
   heroCardDotGridProps?: Partial<DotGridProps>;
+  /** Hero heading copy. */
+  title?: string;
+  /** Hero supporting copy. */
+  description?: string;
+  /** Optional classes for the hero title element. */
+  titleClassName?: string;
+  /** Optional classes for the hero description element. */
+  descriptionClassName?: string;
+  /**
+   * `stacked` — centered title above description (platform default).
+   * `row` — title and description on one row with a shorter hero height.
+   */
+  contentLayout?: "stacked" | "row";
+  /** When false, hides the hero CTA button. */
+  showCta?: boolean;
 };
 
 const DEFAULT_HERO_TITLE_ID = "advanced-slider-hero-title";
+
+const DEFAULT_HERO_TITLE = "Atomix Loan Operating System";
+const DEFAULT_HERO_DESCRIPTION =
+  "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum.";
 
 export default function HeroAnimatedBg({
   heroTitleId = DEFAULT_HERO_TITLE_ID,
@@ -257,6 +276,12 @@ export default function HeroAnimatedBg({
   heroCardGridDistortion = false,
   heroCardDotGrid = false,
   heroCardDotGridProps,
+  title = DEFAULT_HERO_TITLE,
+  description = DEFAULT_HERO_DESCRIPTION,
+  titleClassName = "",
+  descriptionClassName = "",
+  contentLayout = "stacked",
+  showCta = true,
 }: HeroAnimatedBgProps = {}) {
   const staticBg = tileDisplayMode === "static";
   const fixedMosaicBg = tileDisplayMode === "fixedMosaic";
@@ -401,31 +426,39 @@ export default function HeroAnimatedBg({
 
   useGSAP(
     () => {
-      const title = heroTitleRef.current;
+      const titleEl = heroTitleRef.current;
       const desc = heroDescRef.current;
       const cta = heroCtaRef.current;
-      if (!title || !desc || !cta) return;
+      if (!titleEl || !desc) return;
+
+      const animatedTargets =
+        showCta && cta ? [titleEl, desc, cta] : [titleEl, desc];
 
       const prefersReduced =
         typeof window !== "undefined" &&
         window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      gsap.killTweensOf([title, desc, cta]);
+      gsap.killTweensOf(animatedTargets);
 
       if (prefersReduced) {
-        gsap.set([title, desc, cta], { autoAlpha: 1, y: 0 });
+        gsap.set(animatedTargets, { autoAlpha: 1, y: 0 });
         return;
       }
 
-      gsap.set([title, desc, cta], { autoAlpha: 0, y: -28 });
+      gsap.set(animatedTargets, { autoAlpha: 0, y: -28 });
 
-      gsap
-        .timeline({ defaults: { ease: "power2.out" } })
-        .to(title, { autoAlpha: 1, y: 0, duration: 0.88 })
-        .to(desc, { autoAlpha: 1, y: 0, duration: 0.75 }, ">+=0.22")
-        .to(cta, { autoAlpha: 1, y: 0, duration: 0.68 }, ">+=0.22");
+      const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+      tl.to(titleEl, { autoAlpha: 1, y: 0, duration: 0.88 }).to(
+        desc,
+        { autoAlpha: 1, y: 0, duration: 0.75 },
+        ">+=0.22",
+      );
+
+      if (showCta && cta) {
+        tl.to(cta, { autoAlpha: 1, y: 0, duration: 0.68 }, ">+=0.22");
+      }
     },
-    { scope: heroAnimScopeRef, revertOnUpdate: true },
+    { scope: heroAnimScopeRef, revertOnUpdate: true, dependencies: [showCta] },
   );
 
   const heroCardStyle =
@@ -442,6 +475,8 @@ export default function HeroAnimatedBg({
         : undefined;
 
   const heroCardHasCustomBg = hasHeroCardImage || gridDistortionBg || dotGridBg;
+  const isRowLayout = contentLayout === "row";
+  const heroCardPaddingClass = isRowLayout ? "py-14 md:py-16" : "py-24";
 
   return (
     <div>
@@ -450,8 +485,8 @@ export default function HeroAnimatedBg({
         aria-labelledby={heroTitleId}
         className={
           heroCardHasCustomBg
-            ? "relative overflow-hidden rounded-4xl py-24 text-white"
-            : "relative overflow-hidden rounded-4xl bg-[#004152] py-24 text-white"
+            ? `relative overflow-hidden rounded-4xl ${heroCardPaddingClass} text-white`
+            : `relative overflow-hidden rounded-4xl bg-[#004152] ${heroCardPaddingClass} text-white`
         }
         style={heroCardStyle}
       >
@@ -514,33 +549,62 @@ export default function HeroAnimatedBg({
         <div
           ref={heroAnimScopeRef}
           className={
-            gridDistortionBg
-              ? "pointer-events-none relative z-[1] mx-auto flex w-full max-w-[1240px] flex-col items-center gap-6 text-center"
-              : "relative z-[1] mx-auto flex w-full max-w-[1240px] flex-col items-center gap-6 text-center"
+            isRowLayout
+              ? "relative z-[1] mx-auto flex w-full max-w-[1240px] flex-col gap-6 px-8 md:px-12"
+              : gridDistortionBg
+                ? "pointer-events-none relative z-[1] mx-auto flex w-full max-w-[1240px] flex-col items-center gap-6 text-center"
+                : "relative z-[1] mx-auto flex w-full max-w-[1240px] flex-col items-center gap-6 text-center"
           }
         >
-          <h1
-            ref={heroTitleRef}
-            id={heroTitleId}
-            className="m-0 w-full max-w-[500px] text-balance text-[52px] leading-16 font-semibold"
-          >
-            Atomix Loan Operating System
-          </h1>
-          <p
-            ref={heroDescRef}
-            className="m-0 w-full max-w-[36rem] text-[24px] font-normal text-white/70"
-          >
-            Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum
-            dolor sit amet lorem ipsum.
-          </p>
-          <div
-            ref={heroCtaRef}
-            className={gridDistortionBg ? "pointer-events-auto" : undefined}
-          >
-            <Button variant="primary" type="button">
-              Contact us
-            </Button>
-          </div>
+          {isRowLayout ? (
+            <div className="flex w-full flex-row items-end justify-between gap-6 lg:gap-16">
+              <h1
+                ref={heroTitleRef}
+                id={heroTitleId}
+                className="m-0 min-w-0 shrink-0 text-left text-[32px] leading-[1.1] font-semibold sm:text-[40px] md:max-w-[42%] md:text-[52px]"
+              >
+                {title}
+              </h1>
+              <p
+                ref={heroDescRef}
+                className="m-0 min-w-0 text-left text-[16px] font-normal text-white/70 sm:text-[20px] md:max-w-[52%] md:text-[24px]"
+              >
+                {description}
+              </p>
+            </div>
+          ) : (
+            <>
+              <h1
+                ref={heroTitleRef}
+                id={heroTitleId}
+                className={`m-0 w-full max-w-[800px] text-balance text-[52px] leading-16 font-semibold ${titleClassName}`}
+              >
+                {title}
+              </h1>
+              <p
+                ref={heroDescRef}
+                className={`m-0 w-full max-w-[1200px] text-[24px] font-normal text-white/70 ${descriptionClassName}`}
+              >
+                {description}
+              </p>
+            </>
+          )}
+          {showCta ? (
+            <div
+              ref={heroCtaRef}
+              className={
+                isRowLayout
+                  ? undefined
+                  : gridDistortionBg
+                    ? "pointer-events-auto"
+                    : undefined
+              }
+            >
+              <Button variant="primary" type="button">
+                Contact us
+              </Button>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

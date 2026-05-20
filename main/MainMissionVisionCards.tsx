@@ -56,7 +56,7 @@ function MissionVisionCard({
         {description}
       </div>
       <div data-mission-vision-item>
-        <DefButton href="#" size="large">
+        <DefButton href="/about-us" size="large">
           Learn More
         </DefButton>
       </div>
