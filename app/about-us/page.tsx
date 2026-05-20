@@ -9,7 +9,7 @@ export default function AboutUsPage() {
     <>
       <Header />
 
-      <div className="px-12 pt-34">
+      <div className="px-12 pt-34 mb-18">
         <HeroAnimatedBg
           tileDisplayMode="fixedMosaic"
           heroTitleId="about-us-hero-title"
@@ -18,6 +18,8 @@ export default function AboutUsPage() {
           titleClassName="max-w-none whitespace-nowrap"
           descriptionClassName="max-w-none whitespace-nowrap"
           showCta={false}
+          fixedMosaicCols={24}
+          fixedMosaicRows={4}
         />
       </div>
 

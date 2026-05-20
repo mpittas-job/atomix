@@ -45,13 +45,13 @@ function MissionVisionCard({
       ref={cardRef}
       className="absolute left-1/2 top-1/2 -translate-1/2 md:p-8 text-left flex flex-col justify-center gap-5 w-5xl"
     >
-      <h3 className="text-[80px] font-semibold uppercase leading-[1.05]">
+      <h3 className="text-[100px] font-medium uppercase leading-[1.05]">
         {renderTypewriterTitle(title)}
       </h3>
       <div data-mission-vision-item className="w-full h-px bg-white/16 mb-3" />
       <div
         data-mission-vision-item
-        className="text-base md:text-3xl leading-relaxed mb-6"
+        className="text-base md:text-4xl leading-13 mb-6"
       >
         {description}
       </div>
@@ -201,7 +201,7 @@ export default function MainMissionVisionCards() {
   return (
     <section
       ref={sectionRef}
-      className="h-[calc(100vh-110px)] min-h-[calc(100vh-110px)] bg-white flex flex-col justify-center py-6 px-12"
+      className="h-[calc(100vh-110px)] min-h-[calc(100vh-110px)] bg-white flex flex-col justify-center py-24 px-12"
     >
       <div className="relative mx-auto flex w-full min-h-0 flex-1 flex-col justify-center overflow-hidden rounded-3xl bg-linear-to-b from-[#004152] via-[#01485C] to-[#004152] text-white shadow-[0_24px_80px_-12px_rgba(0,30,40,0.35)]">
         <div className="absolute top-0 left-0 h-[500px] w-full">

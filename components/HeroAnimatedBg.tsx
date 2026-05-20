@@ -146,26 +146,52 @@ function TileCell({ index }: { index: number }) {
   );
 }
 
-const fixedTileCols = HERO_FIXED_TILE_MOSAIC.columns;
-const fixedTileRows = HERO_FIXED_TILE_MOSAIC.rows;
+const defaultFixedTileCols = HERO_FIXED_TILE_MOSAIC.columns;
+const defaultFixedTileRows = HERO_FIXED_TILE_MOSAIC.rows;
 
-function FixedTilePanel() {
+function FixedTilePanel({
+  cols = defaultFixedTileCols,
+  rows = defaultFixedTileRows,
+  matchContainer = true,
+}: {
+  cols?: number;
+  rows?: number;
+  matchContainer?: boolean;
+}) {
+  const originalCols = HERO_FIXED_TILE_MOSAIC.columns;
+  const originalRows = HERO_FIXED_TILE_MOSAIC.rows;
+  const colors = HERO_FIXED_TILE_MOSAIC.colors;
+
   return (
     <div
-      className="grid h-full min-h-0 w-full min-w-0"
+      className="grid shrink-0"
       style={{
-        gridTemplateColumns: `repeat(${fixedTileCols}, minmax(0, 1fr))`,
-        gridTemplateRows: `repeat(${fixedTileRows}, minmax(0, 1fr))`,
+        gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`,
+        gridTemplateRows: `repeat(${rows}, minmax(0, 1fr))`,
+        width: "100%",
+        height: "100%",
+        ...(matchContainer
+          ? {}
+          : {
+              minWidth: "100%",
+              minHeight: "100%",
+              aspectRatio: `${cols} / ${rows}`,
+            }),
       }}
     >
-      {HERO_FIXED_TILE_MOSAIC.colors.map((row, rowIndex) =>
-        row.map((color, colIndex) => {
+      {Array.from({ length: rows }).map((_, rowIndex) =>
+        Array.from({ length: cols }).map((_, colIndex) => {
+          const origRow = rowIndex % originalRows;
+          const origCol = colIndex % originalCols;
+          const color = colors[origRow][origCol];
           const base = normalizeTileHex(color);
           return (
             <div
               key={`${rowIndex}-${colIndex}`}
               data-fixed-tile
               data-tile-color={base}
+              data-tile-col={colIndex}
+              data-tile-row={rowIndex}
               className="min-h-0 min-w-0"
               style={{ backgroundColor: base }}
               aria-hidden
@@ -261,6 +287,12 @@ export type HeroAnimatedBgProps = {
   contentLayout?: "stacked" | "row";
   /** When false, hides the hero CTA button. */
   showCta?: boolean;
+  /** Number of columns for fixedMosaic mode (defaults to 12). */
+  fixedMosaicCols?: number;
+  /** Number of rows for fixedMosaic mode (defaults to 4). */
+  fixedMosaicRows?: number;
+  /** When true, stretches fixedMosaic tiles to fit the container exactly with no cropping (defaults to true). */
+  fixedMosaicMatchContainer?: boolean;
 };
 
 const DEFAULT_HERO_TITLE_ID = "advanced-slider-hero-title";
@@ -282,6 +314,9 @@ export default function HeroAnimatedBg({
   descriptionClassName = "",
   contentLayout = "stacked",
   showCta = true,
+  fixedMosaicCols = defaultFixedTileCols,
+  fixedMosaicRows = defaultFixedTileRows,
+  fixedMosaicMatchContainer = true,
 }: HeroAnimatedBgProps = {}) {
   const staticBg = tileDisplayMode === "static";
   const fixedMosaicBg = tileDisplayMode === "fixedMosaic";
@@ -394,8 +429,8 @@ export default function HeroAnimatedBg({
         const base = tile.dataset.tileColor;
         if (!base) return;
 
-        const col = index % fixedTileCols;
-        const row = Math.floor(index / fixedTileCols);
+        const col = Number(tile.dataset.tileCol ?? index % fixedMosaicCols);
+        const row = Number(tile.dataset.tileRow ?? Math.floor(index / fixedMosaicCols));
         const seed = col * 928371 + row * 482711 + index * 131;
         const norm = ((seed % 10000) + 10000) % 10000;
         const direction: 1 | -1 = norm % 2 === 0 ? 1 : -1;
@@ -419,7 +454,7 @@ export default function HeroAnimatedBg({
     },
     {
       scope: tilesLayerRef,
-      dependencies: [fixedMosaicBg],
+      dependencies: [fixedMosaicBg, fixedMosaicCols, fixedMosaicRows],
       revertOnUpdate: true,
     },
   );
@@ -513,11 +548,15 @@ export default function HeroAnimatedBg({
         {!staticBg ? (
           <div
             ref={tilesLayerRef}
-            className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+            className="pointer-events-none absolute inset-0 z-0 overflow-hidden flex items-center justify-center"
             aria-hidden
           >
             {fixedMosaicBg ? (
-              <FixedTilePanel />
+              <FixedTilePanel
+                cols={fixedMosaicCols}
+                rows={fixedMosaicRows}
+                matchContainer={fixedMosaicMatchContainer}
+              />
             ) : (
               <div
                 ref={tilesTrackRef}

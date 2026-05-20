@@ -510,7 +510,11 @@ function AdvancedSliderPageContent() {
 
       {/* Fixed header does not consume layout height — reserve its space so hero sits below it */}
       <div className="px-12 pt-34">
-        <HeroAnimatedBg tileDisplayMode="fixedMosaic" />
+        <HeroAnimatedBg
+          tileDisplayMode="fixedMosaic"
+          fixedMosaicCols={24}
+          fixedMosaicRows={4}
+        />
       </div>
 
       <div className="relative w-full">
@@ -682,7 +686,8 @@ function AdvancedSliderPageContent() {
                     !!prevTab && prevTab.id === derivedActiveTabId;
                   const showLeftSeparator =
                     tabIndex > 0 && !isActive && !prevIsActive;
-                  const isCapitalProviders = activeSectionId === "capital-providers";
+                  const isCapitalProviders =
+                    activeSectionId === "capital-providers";
                   return (
                     <button
                       key={tab.id}
@@ -700,7 +705,9 @@ function AdvancedSliderPageContent() {
                       }}
                       className={[
                         "relative z-[1] min-w-0 cursor-pointer overflow-hidden py-2 leading-tight font-semibold text-[14px] bg-transparent",
-                        isCapitalProviders ? "flex-1 px-2" : "flex-none px-4 sm:px-6",
+                        isCapitalProviders
+                          ? "flex-1 px-2"
+                          : "flex-none px-4 sm:px-6",
                         showLeftSeparator
                           ? "before:pointer-events-none before:absolute before:left-0 before:top-1/2 before:z-10 before:h-[15px] before:w-px before:-translate-y-1/2 before:bg-slate-300/80 before:content-['']"
                           : "",
