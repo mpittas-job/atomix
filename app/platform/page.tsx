@@ -50,9 +50,9 @@ function CarouselNavArrow({
       onClick={onClick}
       disabled={disabled}
       className={[
-        "absolute top-1/2 z-10 flex size-15 -translate-y-1/2 items-center justify-center rounded-full border border-[#D3DADD] bg-transparent transition-colors duration-200 hover:bg-[#D3DADD] text-[#011F27] disabled:pointer-events-none",
+        "absolute top-1/2 z-10 flex size-15 -translate-y-1/2 items-center justify-center rounded-full border border-white bg-white text-[#011F27] shadow-lg shadow-slate-900/10 transition-all duration-200 hover:bg-slate-50 active:scale-[0.98] disabled:pointer-events-none",
         disabled
-          ? "cursor-not-allowed opacity-40"
+          ? "cursor-not-allowed opacity-40 bg-white/20 border-white/20 text-[#011F27]/30"
           : "cursor-pointer opacity-100",
         positionClassName,
       ]

@@ -20,7 +20,7 @@ export default function HeaderRounded() {
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "Platform", href: "/platform" },
-    { name: "Resources", href: "#" },
+    { name: "Resources", href: "/resources" },
     { name: "About us", href: "/about-us" },
     { name: "Careers", href: "/careers" },
   ];

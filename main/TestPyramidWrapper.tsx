@@ -184,10 +184,10 @@ function PyramidNavArrow({
       onClick={onClick}
       disabled={disabled}
       className={[
-        "absolute top-1/2 z-20 flex size-15 -translate-y-1/2 items-center justify-center rounded-full border border-white/35 bg-white/10 text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white/20",
+        "absolute top-1/2 z-20 flex size-15 -translate-y-1/2 items-center justify-center rounded-full border border-white bg-white text-[#014355] shadow-lg shadow-slate-900/15 transition-all duration-200 hover:bg-white/90 active:scale-[0.98]",
         direction === "prev" ? "left-6" : "right-6",
         disabled
-          ? "cursor-not-allowed opacity-35"
+          ? "cursor-not-allowed opacity-40 bg-white/20 border-white/20 text-white/50"
           : "cursor-pointer opacity-100",
       ]
         .filter(Boolean)
@@ -631,7 +631,7 @@ export default function TestPyramidWrapper() {
           {/* Left highlight info box - absolutely positioned on left during pyramid highlight sequence */}
           <div
             ref={highlightBoxRef}
-            className="absolute left-34 top-1/2 -translate-y-1/2 w-[500px] opacity-0"
+            className="absolute left-34 top-1/2 -translate-y-1/2 w-[410px] opacity-0"
           >
             <div
               ref={highlightContentRef}
