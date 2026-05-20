@@ -18,6 +18,7 @@ export interface DefHeadingProps {
   badgeClassName?: string;
   theme?: "dark" | "light";
   showBadge?: boolean;
+  align?: "center" | "left";
   onAnimationComplete?: () => void;
 }
 
@@ -30,6 +31,7 @@ const DefHeading: React.FC<DefHeadingProps> = ({
   badgeClassName = "",
   theme = "dark",
   showBadge = true,
+  align = "center",
   onAnimationComplete,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -95,10 +97,13 @@ const DefHeading: React.FC<DefHeadingProps> = ({
     { scope: containerRef },
   );
 
+  const alignmentClasses =
+    align === "left" ? "items-start text-left" : "items-center text-center";
+
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col gap-y-6 items-center text-center max-w-6xl mx-auto ${className}`}
+      className={`flex flex-col gap-y-6 max-w-6xl mx-auto ${alignmentClasses} ${className}`}
     >
       {showBadge && (
         <div ref={badgeRef} data-badge>
@@ -115,6 +120,7 @@ const DefHeading: React.FC<DefHeadingProps> = ({
         tag="h2"
         className={`text-5xl leading-[1.2em] font-semibold ${titleColor}`}
         duration={0.8}
+        textAlign={align}
         onLetterAnimationComplete={undefined}
       />
 
