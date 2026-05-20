@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
@@ -208,6 +208,8 @@ type PyramidApi = {
 };
 
 export default function TestPyramidWrapper() {
+  const pyramidConfig = useMemo(() => ({ maxWidth: 800 }), []);
+
   const pyramidSectionRef = useRef<HTMLDivElement>(null);
   const headingWrapRef = useRef<HTMLDivElement>(null);
   const animationWrapRef = useRef<HTMLDivElement>(null);
@@ -616,7 +618,7 @@ export default function TestPyramidWrapper() {
         onClick={handleNextSide}
       />
 
-      <div className="relative z-10 my-auto flex w-full max-w-[1200px] flex-col items-center justify-center gap-4 px-6">
+      <div className="relative z-10 my-auto flex w-full max-w-[1600px] flex-col items-center justify-center gap-4">
         <div ref={headingWrapRef} className="w-full mt-20">
           <DefHeading
             theme="light"
@@ -627,11 +629,11 @@ export default function TestPyramidWrapper() {
           />
         </div>
 
-        <div ref={animationWrapRef} className="w-full flex relative -mt-16">
+        <div ref={animationWrapRef} className="w-full flex justify-center relative -mt-16">
           {/* Left highlight info box - absolutely positioned on left during pyramid highlight sequence */}
           <div
             ref={highlightBoxRef}
-            className="absolute left-34 top-1/2 -translate-y-1/2 w-[410px] opacity-0"
+            className="absolute left-34 top-1/2 -translate-y-1/2 w-[520px] opacity-0"
           >
             <div
               ref={highlightContentRef}
@@ -639,13 +641,13 @@ export default function TestPyramidWrapper() {
             >
               <h3
                 ref={highlightTitleRef}
-                className="text-white font-semibold text-[2rem] leading-tight mb-4"
+                className="text-white font-semibold text-4xl leading-tight mb-4"
               >
                 {highlightInfo.title}
               </h3>
               <p
                 ref={highlightDescRef}
-                className="text-white/80 text-xl leading-relaxed mb-9"
+                className="text-white/80 text-2xl leading-relaxed mb-9"
               >
                 {highlightInfo.description}
               </p>
@@ -659,23 +661,23 @@ export default function TestPyramidWrapper() {
                     className="flex items-start gap-4"
                   >
                     <div
-                      className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 border-2 ${
+                      className={`w-18 h-18 rounded-2xl flex items-center justify-center shrink-0 border-2 ${
                         item.positive
                           ? "border-white/0 bg-[#015167]"
                           : "border-white/30 bg-transparent"
                       }`}
                     >
                       {item.positive ? (
-                        <FiCheck className="w-6 h-6 text-[#39C6ED]" />
+                        <FiCheck className="w-8 h-8 text-[#39C6ED]" />
                       ) : (
-                        <FiX className="w-6 h-6 text-white/60" />
+                        <FiX className="w-8 h-8 text-white/60" />
                       )}
                     </div>
                     <div className="flex flex-col pt-0.5">
-                      <span className="text-white font-semibold text-xl leading-tight">
+                      <span className="text-white font-semibold text-2xl leading-tight">
                         {item.title}
                       </span>
-                      <span className="text-white/70 text-base leading-relaxed mt-1">
+                      <span className="text-white/70 text-lg leading-relaxed mt-1">
                         {item.description}
                       </span>
                     </div>
@@ -685,9 +687,10 @@ export default function TestPyramidWrapper() {
             </div>
           </div>
 
-          <div ref={pyramidColRef} className="flex-1">
+          <div ref={pyramidColRef} className="w-1/2 max-w-[800px]">
             <TestPyramidNewDesign
               disableScrollTrigger
+              config={pyramidConfig}
               onReady={(api) => {
                 pyramidApiRef.current = api;
                 api.setSlider(0);
@@ -695,7 +698,7 @@ export default function TestPyramidWrapper() {
             />
           </div>
 
-          <div className="flex-1 flex flex-col justify-center gap-8 pl-20 max-w-xl">
+          <div className="w-1/2 flex flex-col justify-center gap-8 pl-20 max-w-[800px]">
             {iconBoxesData.map((box, index) => {
               const sectionId =
                 PYRAMID_SIDES.find((side) => side.sectionIndex === index)?.id ??

@@ -12,6 +12,7 @@ import {
 import {
   FiArrowLeft,
   FiArrowRight,
+  FiCheck,
   FiCpu,
   FiGlobe,
   FiKey,
@@ -29,8 +30,11 @@ interface WhyCardProps {
   className?: string;
   titleClassName?: string;
   descriptionClassName?: string;
+  checklistClassName?: string;
+  checklistIconClassName?: string;
   buttonVariant?: "primary" | "dark" | "outline" | "outline-white";
   buttonClassName?: string;
+  checklist?: string[];
 }
 
 interface OverlayItemCardProps {
@@ -57,8 +61,11 @@ function WhyCard({
   className = "text-white",
   titleClassName = "",
   descriptionClassName = "",
+  checklistClassName = "",
+  checklistIconClassName = "",
   buttonVariant = "primary",
   buttonClassName = "",
+  checklist,
 }: WhyCardProps) {
   return (
     <div className={`${className} flex flex-col items-start gap-y-7 max-w-lg`}>
@@ -68,6 +75,22 @@ function WhyCard({
       <div className={`text-2xl leading-[1.5em] ${descriptionClassName}`}>
         {description}
       </div>
+      {checklist && (
+        <ul className="space-y-3.5 my-2">
+          {checklist.map((item, idx) => (
+            <li key={idx} className="flex items-start gap-3">
+              <FiCheck
+                className={`w-6 h-6 shrink-0 mt-0.5 opacity-90 ${checklistIconClassName || "text-[#39C6ED]"}`}
+              />
+              <span
+                className={`text-lg md:text-xl leading-relaxed opacity-90 ${checklistClassName}`}
+              >
+                {item}
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
       <DefButton
         href={linkText || "#"}
         variant={buttonVariant}
@@ -436,20 +459,25 @@ export default function SliderWhyWorkWithUs() {
           style={SEAMLESS_TWO_COLUMN_GRID_STYLE}
         >
           <div
-            className="flex min-h-full min-w-0 flex-col items-center justify-center"
+            className="flex min-h-full min-w-0 flex-col items-start justify-center pl-10 md:pl-20 lg:pl-36"
             style={{ backgroundImage: SECTION_BG_GRADIENT }}
           >
             <WhyCard
               title="Team"
-              description="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Suspendisse varius lorem eget leo vehicula consectetur."
+              description="Our culture prioritizes high ownership, high velocity, and zero bureaucracy. We are building property lending technology that scales, from the ground up."
               buttonText="See Team"
               linkText="#"
               buttonVariant="outline-white"
+              checklistIconClassName="text-white"
+              checklist={[
+                "Lorem ipsum dolor sit amet, consectetur.",
+                "Suspendisse varius lorem eget leo vehicula.",
+                "Donec auctor justo nec eleifend eleifend.",
+              ]}
             />
           </div>
           <div
-            className="flex min-h-full min-w-0 flex-col items-center justify-center"
+            className="flex min-h-full min-w-0 flex-col items-end justify-center pr-10 md:pr-20 lg:pr-36"
             style={{
               ...SEAMLESS_RIGHT_COLUMN_STYLE,
               backgroundColor: SECTION_RIGHT_PANEL_BG,
@@ -458,14 +486,20 @@ export default function SliderWhyWorkWithUs() {
             <div ref={fadeCardRef}>
               <WhyCard
                 title="OPPORTUNITIES"
-                description="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                  Suspendisse varius lorem eget leo vehicula consectetur."
+                description="We are actively growing our team with builders, systems thinkers, and engineers who care deeply about craft and real-world impact."
                 buttonText="See Opportunities"
                 linkText="#"
                 className="text-[#011F27]"
                 descriptionClassName="text-[#4B6166]"
+                checklistClassName="text-[#4B6166]"
+                checklistIconClassName="text-neutral-700"
                 buttonVariant="outline"
                 buttonClassName="border-[#d2d5d8] hover:bg-[#d2d5d8] bg-transparent text-[#011F27] hover:text-[#011F27] focus:ring-[#d2d5d8] focus:ring-offset-0"
+                checklist={[
+                  "Lorem ipsum dolor sit amet, consectetur.",
+                  "Suspendisse varius lorem eget leo vehicula.",
+                  "Donec auctor justo nec eleifend eleifend.",
+                ]}
               />
             </div>
           </div>

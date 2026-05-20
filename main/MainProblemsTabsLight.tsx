@@ -364,7 +364,7 @@ export default function MainProblemsTabsLight() {
 
   return (
     <div className="min-h-[calc(100vh-126px)] rounded-3xl bg-[#EBEFF2] relative overflow-hidden flex flex-col justify-center items-center">
-      <div className="relative z-7 flex flex-col gap-y-12 max-w-[1200px] w-full px-7 py-32">
+      <div className="relative z-7 flex flex-col gap-y-12 max-w-[1200px] w-full px-6 py-32">
         <DefHeading
           theme="dark"
           badgeText=""
