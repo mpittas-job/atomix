@@ -14,6 +14,7 @@ import InkSpill from "@/components/backgrounds/InkSpill";
 import type { InkSpillHandle } from "@/components/backgrounds/InkSpill";
 import { FaArrowRight } from "react-icons/fa";
 import { useCallback, useState } from "react";
+import DefHeading from "@/components/typo/DefHeading";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -407,19 +408,17 @@ export default function MainHero() {
         >
           <div className="flex flex-col  justify-center h-full max-w-[1200px] mx-auto">
             {/* Top heading row */}
-            <div className="mb-10">
-              <h2 className="text-3xl md:text-[40px] font-semibold text-[#011F27] mb-3">
-                Atomix it is.
-              </h2>
-              <p className="text-[#485E64] text-xl max-w-[600px]">
-                Property lending is overdue for a rebuild. Atomix automates the
-                full lifecycle of property loans for lenders, capital providers,
-                brokers, and borrowers.
-              </p>
-            </div>
+            <DefHeading
+              theme="dark"
+              badgeText=""
+              title="Atomix it is."
+              description="Property lending is overdue for a rebuild. Atomix automates the full lifecycle of property loans for lenders, capital providers, brokers, and borrowers."
+              showBadge={false}
+              className="mx-0 mb-20 max-w-[800px]"
+            />
 
             {/* Bottom two-column row */}
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-16 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-28 items-center">
               {/* Left side - Section navigation */}
               <div className="lg:col-span-2 flex flex-col justify-center">
                 <div className="space-y-1">
@@ -438,7 +437,7 @@ export default function MainHero() {
               </div>
 
               {/* Right side - Image cards */}
-              <div className="lg:col-span-3 relative h-[340px] md:h-[400px]">
+              <div className="lg:col-span-3 relative h-[340px] md:h-[460px]">
                 {aboutAtomixSections.map((section, index) => (
                   <AboutSectionCard
                     key={section.id}
