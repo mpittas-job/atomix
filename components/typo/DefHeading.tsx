@@ -100,10 +100,12 @@ const DefHeading: React.FC<DefHeadingProps> = ({
   const alignmentClasses =
     align === "left" ? "items-start text-left" : "items-center text-center";
 
+  const marginClass = align === "left" ? "mr-auto" : "mx-auto";
+
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col gap-y-6 max-w-6xl mx-auto ${alignmentClasses} ${className}`}
+      className={`flex flex-col gap-y-6 max-w-6xl ${marginClass} ${alignmentClasses} ${className}`}
     >
       {showBadge && (
         <div ref={badgeRef} data-badge>

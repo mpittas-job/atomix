@@ -89,10 +89,10 @@ function AboutSectionCard({
       className={`absolute inset-0 rounded-2xl overflow-hidden transition-opacity duration-500 ${isActive ? "opacity-100 z-10" : "opacity-0 z-0"}`}
     >
       <Image src={image} alt="" fill className="object-cover" priority />
-      <div className="absolute inset-0 bg-[#1BA8CE] mix-blend-overlay opacity-80 pointer-events-none" />
+      <div className="absolute inset-0 bg-[#1BA8CE] mix-blend-overlay opacity-70 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-b from-[#041B21]/0 to-[#041B21]/100 opacity-70" />
       <div className="absolute inset-0 p-8 md:p-12 flex flex-col justify-center items-start">
-        <p className="text-white text-lg md:text-xl leading-relaxed max-w-sm">
+        <p className="text-white text-xl md:text-2xl lg:text-2xl leading-relaxed max-w-lg">
           {description}
         </p>
       </div>
@@ -406,7 +406,7 @@ export default function MainHero() {
           className="w-full h-full"
           style={{ visibility: "hidden" }}
         >
-          <div className="flex flex-col  justify-center h-full max-w-[1200px] mx-auto">
+          <div className="flex flex-col  justify-center h-full max-w-[1900px] mx-auto">
             {/* Top heading row */}
             <DefHeading
               theme="dark"
@@ -415,6 +415,7 @@ export default function MainHero() {
               description="Property lending is overdue for a rebuild. Atomix automates the full lifecycle of property loans for lenders, capital providers, brokers, and borrowers."
               showBadge={false}
               className="mx-0 mb-20 max-w-[800px]"
+              align="left"
             />
 
             {/* Bottom two-column row */}
