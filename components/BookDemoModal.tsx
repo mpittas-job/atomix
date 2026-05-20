@@ -10,12 +10,8 @@ import { useGSAP } from "@gsap/react";
 gsap.registerPlugin(useGSAP);
 
 const ROLE_OPTIONS = [
-  "Lender",
-  "Borrower",
-  "Capital provider",
-  "Solicitor",
-  "Broker / Referrer",
-  "Other",
+  "Broker",
+  "Intermediary",
 ] as const;
 
 const COUNTRIES = [

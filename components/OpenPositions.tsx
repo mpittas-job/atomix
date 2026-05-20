@@ -102,12 +102,12 @@ function JobPositionCard({
 }) {
   return (
     <IconBoxLight className="h-full">
-      <h3 className="text-lg font-semibold leading-snug text-[#011F27]">
+      <h3 className="text-xl sm:text-2xl font-semibold leading-snug text-[#011F27]">
         {title}
       </h3>
-      <p className="mt-3 flex items-center gap-2 text-md text-[#4B6066]">
+      <p className="mt-3 flex items-center gap-2.5 text-md sm:text-lg text-[#4B6066]">
         <HiOutlineLocationMarker
-          className="h-4 w-4 shrink-0 text-[#617379]"
+          className="h-5 w-5 shrink-0 text-[#617379]"
           aria-hidden
         />
         <span>{location}</span>
@@ -118,9 +118,7 @@ function JobPositionCard({
 
 export default function OpenPositions() {
   const [activeTabId, setActiveTabId] = useState<string>(POSITION_TABS[0].id);
-  const [activeLocationId, setActiveLocationId] = useState<string>(
-    LOCATIONS[0].id,
-  );
+  const [activeLocationId, setActiveLocationId] = useState<string>("remote");
   const [locationMenuOpen, setLocationMenuOpen] = useState(false);
   const locationMenuRef = useRef<HTMLDivElement>(null);
 
@@ -221,7 +219,7 @@ export default function OpenPositions() {
 
         <div
           role="tabpanel"
-          className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+          className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2"
         >
           {filteredJobs.map((job) => (
             <JobPositionCard

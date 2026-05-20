@@ -61,17 +61,17 @@ function WhyCard({
   buttonClassName = "",
 }: WhyCardProps) {
   return (
-    <div className={`${className} flex flex-col items-start gap-y-7 max-w-md`}>
-      <div className={`text-[52px] font-semibold uppercase ${titleClassName}`}>
+    <div className={`${className} flex flex-col items-start gap-y-7 max-w-lg`}>
+      <div className={`text-6xl font-semibold uppercase ${titleClassName}`}>
         {title}
       </div>
-      <div className={`text-xl leading-[1.5em] ${descriptionClassName}`}>
+      <div className={`text-2xl leading-[1.5em] ${descriptionClassName}`}>
         {description}
       </div>
       <DefButton
         href={linkText || "#"}
         variant={buttonVariant}
-        size="medium"
+        size="large"
         className={buttonClassName}
       >
         {buttonText || "See Opportunities"}

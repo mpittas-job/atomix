@@ -22,6 +22,7 @@ export default function HeaderRounded() {
     { name: "Platform", href: "/platform" },
     { name: "About us", href: "/about-us" },
     { name: "Careers", href: "/careers" },
+    { name: "Resources", href: "#" },
   ];
 
   useEffect(() => {

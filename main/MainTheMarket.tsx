@@ -256,9 +256,9 @@ function SimpleStatBox({
         </div>
       </div>
       {title && (
-        <h3 className="text-xl font-semibold text-white mb-2">{title}</h3>
+        <h3 className="text-2xl font-semibold text-white mb-2">{title}</h3>
       )}
-      <p className="text-base leading-relaxed text-white/80 max-w-md">
+      <p className="text-lg leading-relaxed text-white/80 max-w-md">
         {description}
       </p>
     </div>
