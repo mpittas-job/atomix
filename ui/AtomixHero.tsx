@@ -12,7 +12,7 @@ import IconBox from "@/components/IconBox";
 const aboutAtomixItems = [
   {
     icon: "/icons/white/users-group.svg",
-    title: "What we are",
+    title: "What we are.",
     subtitle:
       "A white-label, fully configurable Platform-as-a-Service automating the full lifecycle of property loans, end-to-end",
   },
