@@ -517,8 +517,7 @@ export default function TestPyramidWrapper() {
         ),
       );
 
-  const handlePrevSide = () =>
-    goToSide(Math.max(0, activeSideIndex - 1));
+  const handlePrevSide = () => goToSide(Math.max(0, activeSideIndex - 1));
   const handleNextSide = () =>
     goToSide(Math.min(PYRAMID_SIDES.length - 1, activeSideIndex + 1));
 
@@ -632,7 +631,7 @@ export default function TestPyramidWrapper() {
           {/* Left highlight info box - absolutely positioned on left during pyramid highlight sequence */}
           <div
             ref={highlightBoxRef}
-            className="absolute left-34 top-1/2 -translate-y-1/2 w-[440px] opacity-0"
+            className="absolute left-34 top-1/2 -translate-y-1/2 w-[500px] opacity-0"
           >
             <div
               ref={highlightContentRef}
@@ -640,13 +639,13 @@ export default function TestPyramidWrapper() {
             >
               <h3
                 ref={highlightTitleRef}
-                className="text-white font-semibold text-3xl mb-3"
+                className="text-white font-semibold text-[2rem] leading-tight mb-4"
               >
                 {highlightInfo.title}
               </h3>
               <p
                 ref={highlightDescRef}
-                className="text-white/70 text-md leading-relaxed mb-9"
+                className="text-white/80 text-xl leading-relaxed mb-9"
               >
                 {highlightInfo.description}
               </p>
@@ -660,7 +659,7 @@ export default function TestPyramidWrapper() {
                     className="flex items-start gap-4"
                   >
                     <div
-                      className={`w-13 h-13 rounded-xl flex items-center justify-center shrink-0 border-2 ${
+                      className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 border-2 ${
                         item.positive
                           ? "border-white/0 bg-[#015167]"
                           : "border-white/30 bg-transparent"
@@ -673,10 +672,10 @@ export default function TestPyramidWrapper() {
                       )}
                     </div>
                     <div className="flex flex-col pt-0.5">
-                      <span className="text-white font-semibold text-base leading-tight">
+                      <span className="text-white font-semibold text-xl leading-tight">
                         {item.title}
                       </span>
-                      <span className="text-white/70 text-md leading-relaxed mt-0.5">
+                      <span className="text-white/70 text-base leading-relaxed mt-1">
                         {item.description}
                       </span>
                     </div>
@@ -696,7 +695,7 @@ export default function TestPyramidWrapper() {
             />
           </div>
 
-          <div className="flex-1 flex flex-col justify-center gap-8 pl-20 max-w-lg">
+          <div className="flex-1 flex flex-col justify-center gap-8 pl-20 max-w-xl">
             {iconBoxesData.map((box, index) => {
               const sectionId =
                 PYRAMID_SIDES.find((side) => side.sectionIndex === index)?.id ??
@@ -710,15 +709,15 @@ export default function TestPyramidWrapper() {
                   }}
                   className="flex scroll-mt-28 items-start gap-6 md:scroll-mt-32"
                 >
-                  <div className="w-13 h-13 shrink-0 flex justify-center items-center rounded-xl bg-[#015167]">
-                    <img src={box.icon} alt={box.title} className="w-8 h-8" />
+                  <div className="w-14 h-14 shrink-0 flex justify-center items-center rounded-xl bg-[#015167]">
+                    <img src={box.icon} alt={box.title} className="w-9 h-9" />
                   </div>
                   <div>
-                    <h3 className="text-white font-semibold text-lg mb-1">
+                    <h3 className="text-white font-semibold text-2xl mb-2">
                       {box.title}
                     </h3>
                     <p
-                      className={`text-white/70 text-base leading-relaxed ${
+                      className={`text-white/75 text-lg leading-relaxed ${
                         box.items ? "mb-4" : ""
                       }`}
                     >
@@ -729,7 +728,7 @@ export default function TestPyramidWrapper() {
                         {box.items.map((item, itemIndex) => (
                           <li
                             key={itemIndex}
-                            className="flex items-center gap-3 text-white/70"
+                            className="flex items-center gap-3 text-white/75 text-base sm:text-lg"
                           >
                             {item.icon} {item.text}
                           </li>

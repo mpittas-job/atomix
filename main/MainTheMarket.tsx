@@ -121,18 +121,16 @@ function MainStatCard({
       </div>
 
       <div className="relative z-10">
-        <BadgeHeadingPill color="dark" size="small">
-          {badge}
-        </BadgeHeadingPill>
+        <BadgeHeadingPill color="dark">{badge}</BadgeHeadingPill>
         <div className="mt-4 flex items-baseline gap-1 market-count-glow-group">
           <span className="market-count-glow-target inline-flex items-baseline gap-1">
             {countParts.prefix && (
-              <span className="text-5xl font-bold text-white">
+              <span className="text-7xl font-semibold text-white">
                 {countParts.prefix}
               </span>
             )}
             <span
-              className="text-5xl font-bold text-white market-count-value"
+              className="text-7xl font-semibold text-white market-count-value"
               data-count-target={countParts.target}
               data-count-decimals={countParts.decimals}
             >
@@ -141,9 +139,7 @@ function MainStatCard({
             <span className="text-2xl font-medium text-white">{unit}</span>
           </span>
         </div>
-        <p className="mt-3 text-md leading-relaxed text-white/80">
-          {description}
-        </p>
+        <p className="mt-4 text-lg leading-7 text-white/80">{description}</p>
       </div>
     </div>
   );
