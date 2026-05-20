@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/header";
+import { BookDemoModalProvider } from "@/components/BookDemoModalProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -20,8 +20,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.3.2/css/flag-icons.min.css"
+        />
+      </head>
       <body className={`${inter.className} min-h-full flex flex-col`}>
-        <main className="flex-1">{children}</main>
+        <BookDemoModalProvider>
+          <main className="flex-1">{children}</main>
+        </BookDemoModalProvider>
       </body>
     </html>
   );

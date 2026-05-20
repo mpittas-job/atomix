@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SplitText from "@/components/typo/SplitText";
 import { Button as DefButton } from "@/components/ui";
+import { useBookDemoModal } from "@/components/BookDemoModalProvider";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,6 +14,7 @@ interface DefCtaProps {
 }
 
 const DefCta: React.FC<DefCtaProps> = ({ title }) => {
+  const { openBookDemoModal } = useBookDemoModal();
   const sectionRef = useRef<HTMLDivElement>(null);
   const imagesRef = useRef<HTMLDivElement>(null);
 
@@ -56,7 +58,7 @@ const DefCta: React.FC<DefCtaProps> = ({ title }) => {
               textAlign="left"
             />
 
-            <DefButton>Book a Demo</DefButton>
+            <DefButton onClick={openBookDemoModal}>Book a Demo</DefButton>
           </div>
         </div>
 

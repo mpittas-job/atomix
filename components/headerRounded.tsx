@@ -7,11 +7,13 @@ import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { Button as DefButton } from "@/components/ui";
+import { useBookDemoModal } from "@/components/BookDemoModalProvider";
 
 gsap.registerPlugin(ScrollToPlugin);
 
 export default function HeaderRounded() {
   const router = useRouter();
+  const { openBookDemoModal } = useBookDemoModal();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -104,14 +106,14 @@ export default function HeaderRounded() {
                   </a>
                 ))}
               </div>
-              <DefButton onClick={(e) => handleSmoothScroll(e, "#def-cta")}>
+              <DefButton onClick={openBookDemoModal}>
                 Book a demo
               </DefButton>
             </div>
 
             {/* Mobile Menu Button + CTA */}
             <div className="flex md:hidden items-center gap-3">
-              <DefButton onClick={(e) => handleSmoothScroll(e, "#def-cta")}>
+              <DefButton onClick={openBookDemoModal}>
                 Book a demo
               </DefButton>
 
