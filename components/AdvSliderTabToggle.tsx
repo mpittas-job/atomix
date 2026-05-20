@@ -88,7 +88,7 @@ export default function AdvSliderTabToggle({
       role="tablist"
       aria-label={ariaLabel}
       className={[
-        "relative mb-5 flex flex-nowrap items-center rounded-full border border-white bg-[#ECF0F2] p-1 text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]",
+        "relative mx-auto w-fit mb-5 flex flex-nowrap items-center rounded-full border border-white bg-[#ECF0F2] p-1 text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]",
         className,
       ]
         .filter(Boolean)
@@ -116,7 +116,7 @@ export default function AdvSliderTabToggle({
             aria-selected={isActive}
             onClick={() => onTabChange(tab.id)}
             className={[
-              "relative z-[1] min-w-0 flex-1 cursor-pointer overflow-hidden rounded-none bg-transparent px-2 py-2 text-[14px] leading-tight font-semibold sm:px-3",
+              "relative z-[1] min-w-0 flex-none cursor-pointer overflow-hidden rounded-none bg-transparent px-4 py-2 text-[14px] leading-tight font-semibold sm:px-6",
               showLeftSeparator
                 ? "before:pointer-events-none before:absolute before:left-0 before:top-1/2 before:z-10 before:h-[15px] before:w-px before:-translate-y-1/2 before:bg-slate-300/80 before:content-['']"
                 : "",

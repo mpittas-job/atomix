@@ -664,7 +664,11 @@ function AdvancedSliderPageContent() {
                 ref={tabListRef}
                 role="tablist"
                 aria-label="Tabs"
-                className="relative flex flex-nowrap items-center rounded-full bg-[#ECF0F2] p-1 mb-5 border border-white text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]"
+                className={
+                  activeSectionId === "capital-providers"
+                    ? "relative w-full flex flex-nowrap items-center rounded-full bg-[#ECF0F2] p-1 mb-5 border border-white text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]"
+                    : "relative mx-auto w-fit flex flex-nowrap items-center rounded-full bg-[#ECF0F2] p-1 mb-5 border border-white text-[14px] shadow-[inset_0px_0px_10px_rgba(15,23,42,0.04)]"
+                }
               >
                 <div
                   ref={tabThumbRef}
@@ -678,6 +682,7 @@ function AdvancedSliderPageContent() {
                     !!prevTab && prevTab.id === derivedActiveTabId;
                   const showLeftSeparator =
                     tabIndex > 0 && !isActive && !prevIsActive;
+                  const isCapitalProviders = activeSectionId === "capital-providers";
                   return (
                     <button
                       key={tab.id}
@@ -694,7 +699,8 @@ function AdvancedSliderPageContent() {
                         setPendingEnterTooltipIndex(null);
                       }}
                       className={[
-                        "relative z-[1] min-w-0 flex-1 cursor-pointer overflow-hidden py-2 px-2 leading-tight font-semibold text-[14px] bg-transparent sm:px-3",
+                        "relative z-[1] min-w-0 cursor-pointer overflow-hidden py-2 leading-tight font-semibold text-[14px] bg-transparent",
+                        isCapitalProviders ? "flex-1 px-2" : "flex-none px-4 sm:px-6",
                         showLeftSeparator
                           ? "before:pointer-events-none before:absolute before:left-0 before:top-1/2 before:z-10 before:h-[15px] before:w-px before:-translate-y-1/2 before:bg-slate-300/80 before:content-['']"
                           : "",
