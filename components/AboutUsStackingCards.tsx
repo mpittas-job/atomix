@@ -67,8 +67,8 @@ const missionCards: AboutCardData[] = [
     title: "Borrowers",
     items: [
       "Eliminate re-keying — data entered once, shared across all lenders and parties for the full loan journey",
-      "Connect all parties in a unified workspace — instant, consistent process, no handoff delays",
       "Keep borrowers informed at every step — live loan status, transparent next steps, no chasing required",
+      "Connect all parties in a unified workspace — instant, consistent process, no handoff delays",
       "Deliver transparent process and consistent outcomes at every stage",
     ],
   },
