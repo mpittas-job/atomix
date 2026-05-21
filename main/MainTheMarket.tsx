@@ -258,7 +258,7 @@ function SimpleStatBox({
       {title && (
         <h3 className="text-2xl font-semibold text-white mb-2">{title}</h3>
       )}
-      <p className="text-lg leading-relaxed text-white/80 max-w-md">
+      <p className="text-lg leading-relaxed text-white/80 max-w-xl">
         {description}
       </p>
     </div>
@@ -349,7 +349,7 @@ export default function MainTheMarket() {
         />
       </div>
 
-      <div className="relative z-10 flex flex-col gap-y-12 w-full max-w-[1200px] px-8 py-32">
+      <div className="relative z-10 flex flex-col gap-y-12 w-full max-w-[1900px] px-32 py-32">
         <DefHeading
           theme="light"
           badgeText=""

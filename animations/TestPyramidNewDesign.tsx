@@ -38,6 +38,7 @@ const DEFAULTS = {
   heightRatio: 1.6,
   baseRatio: 1,
   baseCentreY: 0.3,
+  verticalOffset: 0,
   barCylRadius: 0.04,
   barSphereRadius: 0.08,
   lighting: {
@@ -244,6 +245,17 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
   const apexRef = useRef<HTMLDivElement>(null);
   const cfg = useMemo(() => deepMerge(DEFAULTS, config), [config]);
 
+  const onReadyRef = useRef(onReady);
+  const onInfiniteSpinStartRef = useRef(onInfiniteSpinStart);
+
+  useEffect(() => {
+    onReadyRef.current = onReady;
+  }, [onReady]);
+
+  useEffect(() => {
+    onInfiniteSpinStartRef.current = onInfiniteSpinStart;
+  }, [onInfiniteSpinStart]);
+
   useEffect(() => {
     const wrapper = wrapperRef.current;
     if (!wrapper || initialDisableScrollTriggerRef.current) {
@@ -306,6 +318,7 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
     });
 
     const grp = new THREE.Group();
+    grp.position.y = cfg.verticalOffset;
     scene.add(grp);
 
     const S = cfg.pyramidScale,
@@ -563,6 +576,7 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
     spr.position.copy(apex).add(v3(0, cfg.logo.verticalOffset, 0));
     grp.add(spr);
 
+    let forceRender = true;
     const resize = () => {
       const w = wrapper.clientWidth,
         h = wrapper.clientHeight;
@@ -572,6 +586,7 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
       bottomEdgeMat.resolution.set(w, h);
       rightEdgeMat.resolution.set(w, h);
       leftEdgeMat.resolution.set(w, h);
+      forceRender = true;
     };
     resize();
     window.addEventListener("resize", resize);
@@ -581,12 +596,35 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
     let last = performance.now(),
       afId = 0;
 
+    const tempYA = new THREE.Vector3();
+    const tempZA = new THREE.Vector3();
+    const tempXP = new THREE.Vector3();
+    const tempM4 = new THREE.Matrix4();
+    const tempProjV = new THREE.Vector3();
+
+    let isIntersecting = true;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isIntersecting = entry.isIntersecting;
+        });
+      },
+      { threshold: 0.01 }
+    );
+    observer.observe(wrapper);
+
     const animate = (now: number) => {
       afId = requestAnimationFrame(animate);
+
+      if (!isIntersecting) {
+        last = now;
+        return;
+      }
+
       const dt = (now - last) / 1000;
       last = now;
+
       const tgt = scrollProgressRef.current;
-      curTRef.current += (tgt - curTRef.current) * rot.sliderSmoothing;
       const rawT = curTRef.current;
       const introT = Math.min(1, rawT / HIGHLIGHT_SEQUENCE_END);
       const t =
@@ -594,29 +632,52 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
           ? 0
           : (rawT - HIGHLIGHT_SEQUENCE_END) / (1 - HIGHLIGHT_SEQUENCE_END);
 
+      const diff = Math.abs(tgt - rawT);
+      const isSpinning = t > rot.spinThreshold;
+      const isSettling = diff > 0.0001 || Math.abs(spinRef.current) > 0.001;
+
+      if (!forceRender && !isSettling && !isSpinning) {
+        return;
+      }
+      forceRender = false;
+
+      curTRef.current += (tgt - curTRef.current) * rot.sliderSmoothing;
+      const updatedRawT = curTRef.current;
+      const updatedIntroT = Math.min(1, updatedRawT / HIGHLIGHT_SEQUENCE_END);
+      const updatedT =
+        updatedRawT <= HIGHLIGHT_SEQUENCE_END
+          ? 0
+          : (updatedRawT - HIGHLIGHT_SEQUENCE_END) / (1 - HIGHLIGHT_SEQUENCE_END);
+
+      // Snap to exact target if extremely close to prevent micro-render overhead
+      if (diff <= 0.0001 && Math.abs(spinRef.current) <= 0.001 && !isSpinning) {
+        curTRef.current = tgt;
+        spinRef.current = 0;
+      }
+
       let leftWeight = 0;
       let rightWeight = 0;
       let bottomWeight = 0;
 
-      if (introT <= HIGHLIGHT_PHASE_1_END) {
+      if (updatedIntroT <= HIGHLIGHT_PHASE_1_END) {
         leftWeight = 1;
         rightWeight = 1;
-      } else if (introT <= HIGHLIGHT_PHASE_2_END) {
+      } else if (updatedIntroT <= HIGHLIGHT_PHASE_2_END) {
         const blend =
-          (introT - HIGHLIGHT_PHASE_1_END) /
+          (updatedIntroT - HIGHLIGHT_PHASE_1_END) /
           (HIGHLIGHT_PHASE_2_END - HIGHLIGHT_PHASE_1_END);
         leftWeight = 1 - blend;
         rightWeight = 1;
         bottomWeight = blend;
       } else {
         const blend =
-          (introT - HIGHLIGHT_PHASE_2_END) / (1 - HIGHLIGHT_PHASE_2_END);
+          (updatedIntroT - HIGHLIGHT_PHASE_2_END) / (1 - HIGHLIGHT_PHASE_2_END);
         leftWeight = blend;
         rightWeight = 1 - blend;
         bottomWeight = 1;
       }
 
-      const highlightFade = 1 - Math.min(1, t / HIGHLIGHT_SEQUENCE_FADE);
+      const highlightFade = 1 - Math.min(1, updatedT / HIGHLIGHT_SEQUENCE_FADE);
       leftWeight *= highlightFade;
       rightWeight *= highlightFade;
       bottomWeight *= highlightFade;
@@ -634,15 +695,15 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
       applyEdgeHighlight(rightEdgeMat, rightWeight);
       applyEdgeHighlight(bottomEdgeMat, bottomWeight);
 
-      const edgeLabelWeights = [bottomWeight, rightWeight, leftWeight];
       const shouldForceAllEdgeLabelsVisible =
-        !finalHighlightOnlyRef.current && rawT >= HIGHLIGHT_SEQUENCE_END;
+        !finalHighlightOnlyRef.current && updatedRawT >= HIGHLIGHT_SEQUENCE_END;
       eMeshes.forEach((mesh, index) => {
         const material = mesh.material;
+        const weightVal = index === 0 ? bottomWeight : (index === 1 ? rightWeight : leftWeight);
         const opacity = shouldForceAllEdgeLabelsVisible
           ? 1
           : EDGE_LABEL_BASE_OPACITY +
-            EDGE_LABEL_ACTIVE_BOOST * edgeLabelWeights[index];
+            EDGE_LABEL_ACTIVE_BOOST * weightVal;
         if (Array.isArray(material)) {
           material.forEach((mat) => {
             if (mat instanceof THREE.MeshBasicMaterial) {
@@ -654,15 +715,15 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
         }
       });
 
-      if (t > rot.spinThreshold) {
+      if (updatedT > rot.spinThreshold) {
         if (!hasTriggeredInfiniteSpinRef.current) {
           hasTriggeredInfiniteSpinRef.current = true;
-          onInfiniteSpinStart?.();
+          onInfiniteSpinStartRef.current?.();
         }
         spinRef.current +=
           rot.spinSpeed *
           dt *
-          ((t - rot.spinThreshold) / (1 - rot.spinThreshold));
+          ((updatedT - rot.spinThreshold) / (1 - rot.spinThreshold));
       } else {
         let w = spinRef.current % (Math.PI * 2);
         if (w > Math.PI) w -= Math.PI * 2;
@@ -672,42 +733,41 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
           Math.pow(
             0.5,
             dt /
-              (rot.decayHalfLife / Math.max(0.001, 1 - t / rot.spinThreshold)),
+              (rot.decayHalfLife / Math.max(0.001, 1 - updatedT / rot.spinThreshold)),
           );
         if (Math.abs(spinRef.current) < 0.001) spinRef.current = 0;
       }
 
-      grp.rotation.x = rot.startX + (rot.endX - rot.startX) * t;
+      grp.rotation.x = rot.startX + (rot.endX - rot.startX) * updatedT;
       grp.rotation.y =
-        rot.startY + (rot.endY - rot.startY) * t + spinRef.current;
+        rot.startY + (rot.endY - rot.startY) * updatedT + spinRef.current;
 
       eld.forEach((d) => {
-        const yA = new Vec3().lerpVectors(d.ys, d.ye, t).normalize();
-        const zA = new Vec3().crossVectors(d.x, yA).normalize();
-        const xP = new Vec3().crossVectors(yA, zA).normalize();
-        const m4 = new THREE.Matrix4();
-        m4.makeBasis(xP, yA, zA);
-        d.m.quaternion.setFromRotationMatrix(m4);
+        tempYA.lerpVectors(d.ys, d.ye, updatedT).normalize();
+        tempZA.crossVectors(d.x, tempYA).normalize();
+        tempXP.crossVectors(tempYA, tempZA).normalize();
+        tempM4.makeBasis(tempXP, tempYA, tempZA);
+        d.m.quaternion.setFromRotationMatrix(tempM4);
       });
 
       renderer.render(scene, camera);
       grp.updateMatrixWorld();
       const ww = wrapper.clientWidth,
         wh = wrapper.clientHeight;
-      const proj = (pt: V3) => {
-        const v = pt.clone();
-        grp.localToWorld(v);
-        v.project(camera);
-        return { x: (v.x * 0.5 + 0.5) * ww, y: (-v.y * 0.5 + 0.5) * wh };
+      const proj = (pt: V3, width: number, height: number) => {
+        tempProjV.copy(pt);
+        grp.localToWorld(tempProjV);
+        tempProjV.project(camera);
+        return { x: (tempProjV.x * 0.5 + 0.5) * width, y: (-tempProjV.y * 0.5 + 0.5) * height };
       };
 
-      const ac = cfg.apexCallout;
-      const aOp = Math.max(
-        0,
-        Math.min(1, (t - ac.fadeStart) / (ac.fadeEnd - ac.fadeStart)),
-      );
-      const pA = proj(apex);
       if (apexRef.current) {
+        const ac = cfg.apexCallout;
+        const aOp = Math.max(
+          0,
+          Math.min(1, (updatedT - ac.fadeStart) / (ac.fadeEnd - ac.fadeStart)),
+        );
+        const pA = proj(apex, ww, wh);
         apexRef.current.style.opacity = String(aOp);
         const ar = apexRef.current.getBoundingClientRect();
         const a = clamp(
@@ -724,7 +784,7 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
     };
 
     afId = requestAnimationFrame(animate);
-    onReady?.({
+    onReadyRef.current?.({
       setSlider: (v: number, instant?: boolean) => {
         const clamped = clamp01(v);
         scrollProgressRef.current = clamped;
@@ -746,6 +806,7 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
     return () => {
       cancelAnimationFrame(afId);
       window.removeEventListener("resize", resize);
+      observer.disconnect();
       grp.traverse((o) => {
         const m = o as THREE.Mesh;
         if (m.geometry) m.geometry.dispose();
@@ -754,7 +815,7 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
       });
       renderer.dispose();
     };
-  }, [cfg, initialSliderValue, onInfiniteSpinStart, onReady]);
+  }, [cfg]);
 
   const grad = `linear-gradient(135deg,${cfg.colors.sliderThumbA},${cfg.colors.sliderThumbB})`;
 
@@ -770,7 +831,6 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
           "-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif",
       }}
     >
-      <style>{`.as::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:${grad};cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.2)}.as::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:${grad};cursor:pointer;border:none;box-shadow:0 2px 6px rgba(0,0,0,.2)}`}</style>
       <div
         ref={wrapperRef}
         style={{
@@ -788,6 +848,7 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
             height: "100%",
             position: "relative",
             zIndex: 1,
+            willChange: "transform",
           }}
         />
       </div>
@@ -795,5 +856,5 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
   );
 };
 
-export default TestPyramidNewDesign;
+export default React.memo(TestPyramidNewDesign);
 export { DEFAULTS as TEST_PYRAMID_DEFAULTS };

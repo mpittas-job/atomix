@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState, useEffect, useMemo } from "react";
+import React, { useRef, useState, useEffect, useMemo, useCallback } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
@@ -13,6 +13,18 @@ import DefHeading from "@/components/typo/DefHeading";
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 const PYRAMID_SECTION_SCROLL_DISTANCE_MULTIPLIER = 6;
+
+// --- CONFIGURABLE PYRAMID SCALE ---
+// Change this single number to scale the entire pyramid (and its labels, logo, and spacing) proportionally!
+const PYRAMID_SCALE = 2.6;
+
+// --- CONFIGURABLE PYRAMID VERTICAL OFFSET ---
+// Change this number to shift the 3D pyramid up or down inside its canvas (positive values shift UP, negative values shift DOWN)
+const PYRAMID_VERTICAL_OFFSET = 0.1;
+
+// --- CONFIGURABLE PYRAMID LEFT-SIDE VERTICAL SHIFT ---
+// Shift the pyramid container down when it transitions to the left side (only in the final icon-boxes phase, not during the triangle highlight phase)
+const PYRAMID_LEFT_SIDE_Y_SHIFT = 60; // in pixels (higher = more down)
 
 type IconBoxData = {
   icon: string;
@@ -208,13 +220,36 @@ type PyramidApi = {
 };
 
 export default function TestPyramidWrapper() {
-  const pyramidConfig = useMemo(() => ({ maxWidth: 800 }), []);
+  const pyramidConfig = useMemo(() => {
+    // Proportional scaling factor relative to the base scale (2.2)
+    const scaleRatio = PYRAMID_SCALE / 2.2;
+
+    return {
+      maxWidth: Math.round(700 * scaleRatio),
+      canvasHeight: Math.round(570 * scaleRatio),
+      pyramidScale: PYRAMID_SCALE,
+      verticalOffset: PYRAMID_VERTICAL_OFFSET,
+      edgeLabels: {
+        fontSize: Math.round(14 * scaleRatio),
+        worldHeight: 0.44 * scaleRatio,
+        edgeOffset: 0.14 * scaleRatio,
+      },
+      logo: {
+        worldHeight: 0.52 * scaleRatio,
+        verticalOffset: 0.44 * scaleRatio,
+      },
+    };
+  }, []);
 
   const pyramidSectionRef = useRef<HTMLDivElement>(null);
   const headingWrapRef = useRef<HTMLDivElement>(null);
   const animationWrapRef = useRef<HTMLDivElement>(null);
   const pyramidColRef = useRef<HTMLDivElement>(null);
   const iconBoxRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const handlePyramidReady = useCallback((api: PyramidApi) => {
+    pyramidApiRef.current = api;
+    api.setSlider(0);
+  }, []);
   const pyramidApiRef = useRef<PyramidApi | null>(null);
   const highlightBoxRef = useRef<HTMLDivElement>(null);
   const highlightContentRef = useRef<HTMLDivElement>(null);
@@ -256,7 +291,7 @@ export default function TestPyramidWrapper() {
 
     gsap.set(headingWrap, { autoAlpha: 0, y: 32 });
     gsap.set(animationWrap, { autoAlpha: 0, y: 28 });
-    gsap.set(pyramidCol, { xPercent: 85 });
+    gsap.set(pyramidCol, { xPercent: 85, y: 0 });
     gsap.set(boxes, { autoAlpha: 0, y: 32 });
     gsap.set(highlightBoxRef.current, { autoAlpha: 1 });
 
@@ -433,7 +468,12 @@ export default function TestPyramidWrapper() {
       )
       .to(
         pyramidCol,
-        { xPercent: 0, ease: "none", duration: 0.22 },
+        {
+          xPercent: 0,
+          y: PYRAMID_LEFT_SIDE_Y_SHIFT,
+          ease: "none",
+          duration: 0.22,
+        },
         PYRAMID_PROGRESS_TWEEN_START + HIGHLIGHT_SEQUENCE_END,
       )
       .to(
@@ -629,7 +669,10 @@ export default function TestPyramidWrapper() {
           />
         </div>
 
-        <div ref={animationWrapRef} className="w-full flex justify-center relative -mt-16">
+        <div
+          ref={animationWrapRef}
+          className="w-full flex justify-center relative -mt-16"
+        >
           {/* Left highlight info box - absolutely positioned on left during pyramid highlight sequence */}
           <div
             ref={highlightBoxRef}
@@ -637,7 +680,7 @@ export default function TestPyramidWrapper() {
           >
             <div
               ref={highlightContentRef}
-              className="highlight-content rounded-2xl"
+              className="highlight-content rounded-2xl relative left-30"
             >
               <h3
                 ref={highlightTitleRef}
@@ -647,7 +690,7 @@ export default function TestPyramidWrapper() {
               </h3>
               <p
                 ref={highlightDescRef}
-                className="text-white/80 text-2xl leading-relaxed mb-9"
+                className="text-white/80 text-xl leading-relaxed mb-9 max-w-[400px]"
               >
                 {highlightInfo.description}
               </p>
@@ -661,7 +704,7 @@ export default function TestPyramidWrapper() {
                     className="flex items-start gap-4"
                   >
                     <div
-                      className={`w-18 h-18 rounded-2xl flex items-center justify-center shrink-0 border-2 ${
+                      className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border-2 ${
                         item.positive
                           ? "border-white/0 bg-[#015167]"
                           : "border-white/30 bg-transparent"
@@ -687,18 +730,22 @@ export default function TestPyramidWrapper() {
             </div>
           </div>
 
-          <div ref={pyramidColRef} className="w-1/2 max-w-[800px]">
+          <div
+            ref={pyramidColRef}
+            className="w-1/2"
+            style={{
+              maxWidth: `${pyramidConfig.maxWidth}px`,
+              willChange: "transform",
+            }}
+          >
             <TestPyramidNewDesign
               disableScrollTrigger
               config={pyramidConfig}
-              onReady={(api) => {
-                pyramidApiRef.current = api;
-                api.setSlider(0);
-              }}
+              onReady={handlePyramidReady}
             />
           </div>
 
-          <div className="w-1/2 flex flex-col justify-center gap-8 pl-20 max-w-[800px]">
+          <div className="w-1/2 flex flex-col justify-center gap-8 pl-0 max-w-[550px]">
             {iconBoxesData.map((box, index) => {
               const sectionId =
                 PYRAMID_SIDES.find((side) => side.sectionIndex === index)?.id ??
@@ -711,6 +758,7 @@ export default function TestPyramidWrapper() {
                     iconBoxRefs.current[index] = el;
                   }}
                   className="flex scroll-mt-28 items-start gap-6 md:scroll-mt-32"
+                  style={{ willChange: "transform, opacity" }}
                 >
                   <div className="w-14 h-14 shrink-0 flex justify-center items-center rounded-xl bg-[#015167]">
                     <img src={box.icon} alt={box.title} className="w-9 h-9" />
