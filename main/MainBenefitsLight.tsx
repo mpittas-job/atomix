@@ -43,7 +43,7 @@ const tabsData: TabData[] = [
   {
     title: "Capital Providers",
     description:
-      "Invest with full transparency, automated compliance, and access to diversified lending opportunities.",
+      "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor",
     mainImage: "/images/dashboard-cp-main.svg",
     smallImages: [
       "/images/dashboard-cp-1.svg",
@@ -54,85 +54,105 @@ const tabsData: TabData[] = [
     items: [
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "Blind trust replaced — with real-time transparency and verifiable audit trails",
+        text: "Every rule enforced automatically at every stage, including regulatory and third-party policy requirements — capital deployed exactly as intended, blind trust replaced by architecture",
       },
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "Fraud eliminated at source — by design, not as an afterthought",
+        text: "Every decision immutably on-chain — fraud impossible to hide, compliance instant and continuous",
       },
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "Due diligence costs slashed — through automated compliance checks",
-      },
-      {
-        icon: "/icons/white/rocket-simple.svg",
-        text: "Liquidity unlocked — via on-chain asset tokenization",
-      },
-      {
-        icon: "/icons/white/path-arrows.svg",
-        text: "Granularity penalty eliminated — enabling fractional investment",
+        text: "One integration, multiple lenders — per-lender due diligence costs collapse, institutional capital accessible at scale",
       },
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "Bolt-on compliance controls replaced by architecture — every decision is auditable",
+        text: "Automated portfolio reporting — diversified small-loan positions no more demanding to monitor than concentrated ones",
+      },
+      {
+        icon: "/icons/white/shield-check-white.svg",
+        text: "Tokenised loan participations — static positions become tradeable digital assets, liquidity unlocked",
+      },
+      {
+        icon: "/icons/white/shield-check-white.svg",
+        text: "Unified workspace provides live visibility across every funded loan — all activity accessible in real time, no dependence on lender reporting",
       },
     ],
   },
   {
     title: "Lenders",
     description:
-      "Automate lending workflows, access capital faster, and scale operations without increasing headcount.",
+      "Incididunt ut labore et dolore magna aliqua ut enim ad minim veniam",
     mainImage: "/images/dashboard-lenders-main.svg",
     smallImage: "/images/dashboard-lenders-small.svg",
     items: [
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "Underwriter bottleneck broken — goal-driven workflow automation processes loans at scale; human touchpoints only where chosen",
+        text: "Full workflow automation, credit policy enforced throughout — underwriter bottleneck broken, volume scales without headcount",
       },
       {
-        icon: "/icons/white/user-minus.svg",
-        text: "Smaller loans profitable — usage-based fees scale with loan size, no fixed processing floor",
+        icon: "/icons/white/shield-check-white.svg",
+        text: "Pay-as-you-go, fees scale with loan size — smaller loans profitable for the first time, fixed processing floor eliminated",
       },
       {
-        icon: "/icons/white/scales.svg",
-        text: "Capital access opened — platform compliance and audit infrastructure attracts institutional and private investors directly",
+        icon: "/icons/white/shield-check-white.svg",
+        text: "White-label ready, no rebuild required — any product, any market, without developer dependency",
       },
       {
-        icon: "/icons/white/module-simple.svg",
-        text: "Rule changes in minutes — no-code configuration means no developer dependency, no delays, no operational risk",
+        icon: "/icons/white/shield-check-white.svg",
+        text: "No-code configuration — rules and products changed in minutes, not months; zero operational risk",
       },
       {
-        icon: "/icons/white/rocket-simple.svg",
-        text: "Faster completion cuts funding costs directly — every day removed from the cycle reduces the cost of capital per loan",
+        icon: "/icons/white/shield-check-white.svg",
+        text: "Open API, modular architecture — connects to any data provider, valuation method or third-party system",
       },
       {
-        icon: "/icons/white/electricity-simple.svg",
-        text: "Earlier automated decisioning reduces abort rates — costs no longer absorbed across completed loans, improving per-loan economics across the book",
+        icon: "/icons/white/shield-check-white.svg",
+        text: "Platform compliance infrastructure levels the playing field — institutional capital accessible regardless of lender size",
+      },
+      {
+        icon: "/icons/white/shield-check-white.svg",
+        text: "Live risk-adjusted pricing — driven by real market data, not manual assessment",
+      },
+      {
+        icon: "/icons/white/shield-check-white.svg",
+        text: "Immutable on-chain decision trail — every lending decision traceable, auditable and defensible; no black box, full regulatory accountability",
+      },
+      {
+        icon: "/icons/white/shield-check-white.svg",
+        text: "Earlier automated decisioning — abort rate economics improve; incomplete applications no longer subsidise completed ones",
       },
     ],
   },
   {
     title: "Borrowers",
     description:
-      "Borrowers move from enquiry to drawdown in a structured, transparent journey.",
+      "Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo",
     mainImage: "/images/dashboard-partner-main.svg",
     smallImage: "/images/dashboard-partner-small.svg",
     items: [
       {
-        icon: "/icons/white/electricity-simple.svg",
-        text: "One application, every lender — data entered once, used across the entire journey via unified workspace",
+        icon: "/icons/white/shield-check-white.svg",
+        text: "Data entered once, shared across all parties — re-keying eliminated, errors reduced",
       },
       {
-        icon: "/icons/white/rocket-simple.svg",
-        text: "Certainty from the start — instant indicative offer refined automatically as more information is provided",
+        icon: "/icons/white/shield-check-white.svg",
+        text: "Automated policy enforcement, every outcome on-chain — consistent, verifiable decisions from first interaction to completion, no black box",
       },
       {
-        icon: "/icons/white/path-arrows.svg",
-        text: "Live loan status throughout — consistent outcomes, no chasing, no dependence on underwriter discretion",
+        icon: "/icons/white/shield-check-white.svg",
+        text: "Unified workspace — all parties connected in real time, every document and decision in one place",
       },
       {
-        icon: "/icons/white/module-simple.svg",
-        text: "Faster process — underwriting instant; legal and valuation steps coordinated within the platform, not left to fragment",
+        icon: "/icons/white/shield-check-white.svg",
+        text: "End-to-end coordination eliminates fragmentation — legal, valuation and compliance steps managed within the platform, cutting completion times and funding costs",
+      },
+      {
+        icon: "/icons/white/shield-check-white.svg",
+        text: "Real-time loan tracking replaces manual updates — borrowers always know their status and next steps, no chasing required",
+      },
+      {
+        icon: "/icons/white/shield-check-white.svg",
+        text: "Portfolio analytics — full visibility across an entire property portfolio, track and optimise financing in real time",
       },
     ],
   },
@@ -572,7 +592,7 @@ export default function MainBenefitsLight() {
 
               <div className="grid grid-cols-1 lg:grid-cols-2 relative">
                 {/* Left side - Content */}
-                <div className="p-14">
+                <div className="p-8">
                   <h2
                     ref={titleRef}
                     className="text-4xl font-semibold mb-4 text-[#011F27]"
@@ -583,95 +603,14 @@ export default function MainBenefitsLight() {
                     {tabsData[activeIndex].description}
                   </p>
                   <ul ref={listRef} className="space-y-5">
-                    {activeIndex === 0 ? (
-                      tabsData[activeIndex].items.map((item, idx) => (
-                        <li key={idx} className="flex items-start gap-3">
-                          <div className="">
-                            <IoShieldCheckmark className="w-6 h-6 text-[#39C6ED]" />
-                          </div>
-                          <span className="text-[#495F64]">{item.text}</span>
-                        </li>
-                      ))
-                    ) : activeIndex === 1 ? (
-                      <>
-                        <li className="flex items-start gap-3">
-                          <div className="">
-                            <IoShieldCheckmark className="w-6 h-6 text-[#39C6ED]" />
-                          </div>
-                          <span className="text-[#495F64]">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Sed do eiusmod tempor incididunt ut labore.
-                          </span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="">
-                            <IoShieldCheckmark className="w-6 h-6 text-[#39C6ED]" />
-                          </div>
-                          <span className="text-[#495F64]">
-                            Ut enim ad minim veniam, quis nostrud exercitation
-                            ullamco laboris nisi ut aliquip ex ea commodo.
-                          </span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="">
-                            <IoShieldCheckmark className="w-6 h-6 text-[#39C6ED]" />
-                          </div>
-                          <span className="text-[#495F64]">
-                            Duis aute irure dolor in reprehenderit in voluptate
-                            velit esse cillum dolore eu fugiat nulla.
-                          </span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="">
-                            <IoShieldCheckmark className="w-6 h-6 text-[#39C6ED]" />
-                          </div>
-                          <span className="text-[#495F64]">
-                            Excepteur sint occaecat cupidatat non proident, sunt
-                            in culpa qui officia deserunt mollit anim.
-                          </span>
-                        </li>
-                      </>
-                    ) : (
-                      <>
-                        <li className="flex items-start gap-3">
-                          <div className="">
-                            <IoShieldCheckmark className="w-6 h-6 text-[#39C6ED]" />
-                          </div>
-                          <span className="text-[#495F64]">
-                            Sed ut perspiciatis unde omnis iste natus error sit
-                            voluptatem accusantium doloremque laudantium.
-                          </span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="">
-                            <IoShieldCheckmark className="w-6 h-6 text-[#39C6ED]" />
-                          </div>
-                          <span className="text-[#495F64]">
-                            Nemo enim ipsam voluptatem quia voluptas sit
-                            aspernatur aut odit aut fugit, sed quia
-                            consequuntur.
-                          </span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="">
-                            <IoShieldCheckmark className="w-6 h-6 text-[#39C6ED]" />
-                          </div>
-                          <span className="text-[#495F64]">
-                            Neque porro quisquam est, qui dolorem ipsum quia
-                            dolor sit amet, consectetur, adipisci velit.
-                          </span>
-                        </li>
-                        <li className="flex items-start gap-3">
-                          <div className="">
-                            <IoShieldCheckmark className="w-6 h-6 text-[#39C6ED]" />
-                          </div>
-                          <span className="text-[#495F64]">
-                            Quis autem vel eum iure reprehenderit qui in ea
-                            voluptate velit esse quam nihil molestiae.
-                          </span>
-                        </li>
-                      </>
-                    )}
+                    {tabsData[activeIndex].items.map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-3">
+                        <div className="">
+                          <IoShieldCheckmark className="w-6 h-6 text-[#39C6ED]" />
+                        </div>
+                        <span className="text-[#495F64]">{item.text}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
 
