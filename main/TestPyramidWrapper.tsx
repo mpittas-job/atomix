@@ -22,11 +22,11 @@ const PYRAMID_SECTION_SCROLL_DISTANCE_MULTIPLIER = 6;
 
 // --- CONFIGURABLE PYRAMID SCALE ---
 // Change this single number to scale the entire pyramid (and its labels, logo, and spacing) proportionally!
-const PYRAMID_SCALE = 2.6;
+const PYRAMID_SCALE = 2.5;
 
 // --- CONFIGURABLE PYRAMID VERTICAL OFFSET ---
 // Change this number to shift the 3D pyramid up or down inside its canvas (positive values shift UP, negative values shift DOWN)
-const PYRAMID_VERTICAL_OFFSET = 0.1;
+const PYRAMID_VERTICAL_OFFSET = 0.5;
 
 // --- CONFIGURABLE PYRAMID LEFT-SIDE VERTICAL SHIFT ---
 // Shift the pyramid container down when it transitions to the left side (only in the final icon-boxes phase, not during the triangle highlight phase)
@@ -48,34 +48,34 @@ type HighlightInfo = {
 const iconBoxesData: IconBoxData[] = [
   {
     icon: "/icons/gradient/shield-blue-gradient.png",
-    title: "Simple SaaS",
-    description: "automated and easy to change, but simple products only",
+    title: "Lorem ipsum",
+    description: "dolor sit amet consectetur adipiscing elit sed do eiusmod",
   },
   {
     icon: "/icons/gradient/target-blue-gradient.png",
-    title: "Bespoke builds",
+    title: "Ut labore",
     description:
-      "automated and complex, but £500k+ upfront and expensive to change",
+      "ut labore et dolore magna aliqua ut enim ad minim",
     items: [
       {
         icon: <FiCheck className="text-white/70 w-5 h-5 shrink-0" />,
-        text: "Automated",
+        text: "Quis",
       },
       {
         icon: <FiCheck className="text-white/70 w-5 h-5 shrink-0" />,
-        text: "Complex logic",
+        text: "Nostrud exercitation",
       },
       {
         icon: <FiX className="text-white/70 w-5 h-5 shrink-0" />,
-        text: "£600k, slow to change",
+        text: "Ullamco laboris nisi ut",
       },
     ],
   },
   {
     icon: "/icons/gradient/links-blue-gradient.png",
-    title: "Disconnected stacks",
+    title: "Aliquip commodo",
     description:
-      "complex and configurable, but humans are the glue; nothing is truly automated",
+      "consequat duis aute irure dolor in reprehenderit voluptate velit esse",
   },
 ];
 
@@ -83,42 +83,42 @@ const highlightSequenceData: HighlightInfo[] = [
   {
     title: "Bespoke builds",
     description:
-      "automated and complex, but £500k+ upfront and expensive to change",
+      "Automated and complex, but £500k+ upfront and expensive to change",
     items: [
       {
         positive: true,
-        title: "Automated",
-        description: "End-to-end processing without manual intervention",
+        title: "Lorem",
+        description: "Lorem ipsum dolor sit amet",
       },
       {
         positive: true,
-        title: "Complex logic",
-        description: "Handles sophisticated lending scenarios",
+        title: "Lorem ipsum",
+        description: "Lorem ipsum dolor sit",
       },
       {
         positive: false,
-        title: "£600k+, slow to change",
-        description: "Expensive upfront and costly to maintain",
+        title: "Lorem ipsum dolor sit",
+        description: "Lorem ipsum dolor sit amet lorem",
       },
     ],
   },
   {
     title: "Simple SaaS",
-    description: "automated and easy to change, but simple products only",
+    description: "Automated and easy to change, but simple products only",
     items: [
       {
         positive: true,
-        title: "Automated",
+        title: "Lorem",
         description: "Lorem ipsum dolor sit amet lorem ipsum",
       },
       {
         positive: true,
-        title: "Cheap to build",
+        title: "Lorem ipsum dolor",
         description: "Lorem ipsum dolor sit amet",
       },
       {
         positive: false,
-        title: "Simple products only",
+        title: "Lorem ipsum dolor sit",
         description: "Lorem ipsum dolor sit amet lorem ipsum ",
       },
     ],
@@ -126,22 +126,22 @@ const highlightSequenceData: HighlightInfo[] = [
   {
     title: "Disconnected stacks",
     description:
-      "complex and configurable, but humans are the glue; nothing is truly automated",
+      "Complex and configurable, but humans are the glue; nothing is truly automated",
     items: [
       {
         positive: true,
-        title: "Complex logic",
-        description: "Flexible for various product types",
+        title: "Lorem ipsum",
+        description: "Lorem ipsum dolor sit amet",
       },
       {
         positive: true,
-        title: "Cheap to build",
-        description: "Lower initial investment required",
+        title: "Lorem ipsum dolor",
+        description: "Lorem ipsum dolor sit",
       },
       {
         positive: false,
-        title: "Not automated",
-        description: "Humans required to connect the gaps",
+        title: "Lorem ipsum",
+        description: "Lorem ipsum dolor sit amet lorem",
       },
     ],
   },
@@ -670,9 +670,8 @@ export default function TestPyramidWrapper() {
             theme="light"
             badgeText=""
             title="The technology trade-off every lender faces"
-            description="Every lender needs three things: complex loan logic, self-serve product changes, and full automation. No legacy platform delivers all three."
+            description="Every lender needs three things: complex loan logic, self-serve product changes, and full automation. <br/>No legacy platform delivers all three."
             showBadge={false}
-            className="max-w-[9 00px]"
           />
         </div>
 
