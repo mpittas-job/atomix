@@ -164,6 +164,21 @@ const getTabButtons = (ref: React.RefObject<HTMLDivElement | null>) =>
 const getTabContent = (ref: React.RefObject<HTMLDivElement | null>) =>
   ref.current ? Array.from(ref.current.children) : [];
 
+function formatListItemText(text: string) {
+  const dashIndex = text.indexOf(" — ");
+  if (dashIndex === -1) return text;
+
+  const lead = text.slice(0, dashIndex);
+  const rest = text.slice(dashIndex);
+
+  return (
+    <>
+      <span className="font-semibold text-[#011F27]">{lead}</span>
+      {rest}
+    </>
+  );
+}
+
 export default function MainBenefitsLight() {
   const [activeIndex, setActiveIndex] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -608,7 +623,9 @@ export default function MainBenefitsLight() {
                         <div className="">
                           <IoShieldCheckmark className="w-6 h-6 text-[#39C6ED]" />
                         </div>
-                        <span className="text-[#495F64]">{item.text}</span>
+                        <span className="text-[#495F64]">
+                          {formatListItemText(item.text)}
+                        </span>
                       </li>
                     ))}
                   </ul>
