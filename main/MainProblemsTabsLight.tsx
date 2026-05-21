@@ -34,13 +34,23 @@ gsap.registerPlugin(ScrollTrigger);
 interface TabData {
   title: string;
   items: string[];
+  iconBoxColumns?: 2 | 3 | 4;
   iconBoxes: {
     src?: string;
     icon?: ReactNode;
     title: string;
     description: string;
+    titleMaxWidth?: string;
   }[];
 }
+
+const getIconBoxGridClass = (tab: TabData) => {
+  const columns = tab.iconBoxColumns ?? (tab.iconBoxes.length === 4 ? 4 : 3);
+
+  if (columns === 2) return "grid-cols-2";
+  if (columns === 4) return "grid-cols-4";
+  return "grid-cols-3";
+};
 
 const TAB_ANIMATION = {
   buttonDuration: 0.75,
@@ -98,6 +108,7 @@ const tabsData: TabData[] = [
       {
         icon: icons.noCompliance,
         title: "Must trust lenders to follow stated policies",
+        titleMaxWidth: "240px",
         description:
           "With no mechanism to verify compliance until it is too late",
       },
@@ -110,6 +121,7 @@ const tabsData: TabData[] = [
       {
         icon: icons.scattered,
         title: "Capital locked for the full term",
+        titleMaxWidth: "200px",
         description:
           "Incumbents lack the blockchain layer and regulatory architecture needed to unlock secondary liquidity; no exit mechanism exists",
       },
@@ -140,12 +152,14 @@ const tabsData: TabData[] = [
       {
         icon: icons.touchpoints,
         title: "100+ manual touchpoints per loan",
+        titleMaxWidth: "240px",
         description:
           "Task-level automation leaves underwriters reviewing everything; costs stay high, scaling still requires hiring",
       },
       {
         icon: icons.noAccess,
         title: "Smaller lenders shut out of institutional capital",
+        titleMaxWidth: "300px",
         description:
           "No existing platform enforces capital provider criteria end-to-end; lenders cannot demonstrate compliance, due diligence costs are prohibitive, and institutional funding remains out of reach regardless of loan book quality",
       },
@@ -159,18 +173,21 @@ const tabsData: TabData[] = [
       {
         icon: icons.costly,
         title: "Existing systems rigid and expensive to adapt",
+        titleMaxWidth: "280px",
         description:
           "New products, rule changes and workflow modifications require developers, long lead times and significant cost; no legacy platform simultaneously delivers complex logic, self-serve changes and full automation",
       },
       {
         icon: icons.slow,
         title: "40-60% of applications never complete",
+        titleMaxWidth: "240px",
         description:
           "Full processing costs absorbed by completed loans, further eroding margins; AI cannot guarantee compliance, meaning a 1% error rate produces thousands of non-compliant loans with no audit trail",
       },
       {
         icon: icons.opaque,
         title: "Black-box reasoning fails audit requirements",
+        titleMaxWidth: "240px",
         description:
           "No traceable logic, no decision trail, no accountability; existing systems cannot demonstrate how or why a lending decision was made",
       },
@@ -178,6 +195,7 @@ const tabsData: TabData[] = [
   },
   {
     title: "Borrowers",
+    iconBoxColumns: 2,
     items: [
       "Faster loan approvals",
       "Transparent process tracking",
@@ -414,11 +432,7 @@ export default function MainProblemsTabsLight() {
           <div
             ref={iconBoxContainerRef}
             key={activeIndex}
-            className={`grid ${
-              tabsData[activeIndex].iconBoxes.length === 4
-                ? "grid-cols-4"
-                : "grid-cols-3"
-            } gap-5 w-full`}
+            className={`grid ${getIconBoxGridClass(tabsData[activeIndex])} gap-5 w-full`}
           >
             {tabsData[activeIndex].iconBoxes.map((iconBox, index) => (
               <div
@@ -445,6 +459,7 @@ export default function MainProblemsTabsLight() {
                   icon={iconBox.icon}
                   title={iconBox.title}
                   description={iconBox.description}
+                  titleMaxWidth={iconBox.titleMaxWidth}
                   className="h-full"
                 />
               </div>

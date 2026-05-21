@@ -9,6 +9,7 @@ interface IconBoxLightProps {
   icon?: ReactNode;
   title?: string;
   description?: string;
+  titleMaxWidth?: string;
   className?: string;
   children?: ReactNode;
 }
@@ -17,6 +18,7 @@ const IconBoxLight = memo(function IconBoxLight({
   icon,
   title,
   description,
+  titleMaxWidth,
   className = "",
   children,
 }: IconBoxLightProps) {
@@ -218,7 +220,10 @@ const IconBoxLight = memo(function IconBoxLight({
             </div>
 
             {/* Title */}
-            <h3 className="text-lg font-semibold leading-6 text-[#011F27]">
+            <h3
+              className="text-lg font-semibold leading-6 text-[#011F27]"
+              style={titleMaxWidth ? { maxWidth: titleMaxWidth } : undefined}
+            >
               {title}
             </h3>
 
