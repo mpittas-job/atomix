@@ -669,8 +669,8 @@ export default function TestPyramidWrapper() {
           <DefHeading
             theme="light"
             badgeText=""
-            title="Title explaining the image"
-            description="Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet"
+            title="The technology trade-off every lender faces"
+            description="Every lender needs three things: complex loan logic, self-serve product changes, and full automation. No legacy platform delivers all three."
             showBadge={false}
           />
         </div>
