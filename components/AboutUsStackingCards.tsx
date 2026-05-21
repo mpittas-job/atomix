@@ -78,14 +78,23 @@ function getItemIcon(item: string): LucideIcon {
   if (/ai|agent|natural language/.test(text)) return Bot;
   if (/on-chain|token|tokeni|blockchain/.test(text)) return Blocks;
   if (/compliance|audit|traceable|rule/.test(text)) return ShieldCheck;
-  if (/report|analytics|real-time visibility|portfolio visibility|monitoring/.test(text))
+  if (
+    /report|analytics|real-time visibility|portfolio visibility|monitoring/.test(
+      text,
+    )
+  )
     return LineChart;
-  if (/capital|fund|funding|investor|investors|liquidity/.test(text)) return CircleDollarSign;
-  if (/marketplace|market structure|secondary market/.test(text)) return Landmark;
-  if (/lender|lenders|borrower|borrowers|parties|stakeholder/.test(text)) return Handshake;
-  if (/integration|connect|api|third-party|ecosystem|platform/.test(text)) return Link2;
+  if (/capital|fund|funding|investor|investors|liquidity/.test(text))
+    return CircleDollarSign;
+  if (/marketplace|market structure|secondary market/.test(text))
+    return Landmark;
+  if (/lender|lenders|borrower|borrowers|parties|stakeholder/.test(text))
+    return Handshake;
+  if (/integration|connect|api|third-party|ecosystem|platform/.test(text))
+    return Link2;
   if (/workflow|automation|automated|process/.test(text)) return Cpu;
-  if (/decision|approval|policy|credit|enforcement/.test(text)) return FileCheck2;
+  if (/decision|approval|policy|credit|enforcement/.test(text))
+    return FileCheck2;
   if (/journey|origination|drawdown|progress/.test(text)) return Compass;
   if (/mortgage|loan|lending/.test(text)) return Briefcase;
   if (/shared data|market pricing|risk appetite/.test(text)) return Network;
@@ -155,7 +164,10 @@ function AboutCard({
         zIndex: index + 1,
         opacity: 0,
         visibility: "hidden",
-        transform: index === 0 ? "translateY(42px)" : `translateY(${260 + index * 80}px)`,
+        transform:
+          index === 0
+            ? "translateY(42px)"
+            : `translateY(${260 + index * 80}px)`,
       }}
     >
       <div className="pointer-events-none absolute inset-0 rounded-3xl overflow-hidden">
@@ -165,7 +177,10 @@ function AboutCard({
 
       <div className="mb-7 flex items-center gap-2 text-2xl font-semibold text-[#242b31] relative z-10">
         <span>{card.title}</span>
-        <ChevronDown className="about-stack-card-chevron h-5 w-5 text-[#63757e]" aria-hidden="true" />
+        <ChevronDown
+          className="about-stack-card-chevron h-5 w-5 text-[#63757e]"
+          aria-hidden="true"
+        />
       </div>
 
       <div
@@ -173,7 +188,12 @@ function AboutCard({
         style={
           index === 0
             ? { overflow: "hidden" }
-            : { opacity: 0, visibility: "hidden", height: 0, overflow: "hidden" }
+            : {
+                opacity: 0,
+                visibility: "hidden",
+                height: 0,
+                overflow: "hidden",
+              }
         }
       >
         {card.items.map((item) => (
@@ -187,7 +207,9 @@ function AboutCard({
                 </div>
               );
             })()}
-            <p className="max-w-[520px] text-md leading-6 text-[#16313b]">{item}</p>
+            <p className="max-w-[520px] text-md leading-6 text-[#16313b]">
+              {item}
+            </p>
           </div>
         ))}
       </div>
@@ -216,7 +238,8 @@ function AboutStackingSection({
     if (!scrollTrigger || targetProgress === undefined) return;
 
     const targetScroll =
-      scrollTrigger.start + (scrollTrigger.end - scrollTrigger.start) * targetProgress;
+      scrollTrigger.start +
+      (scrollTrigger.end - scrollTrigger.start) * targetProgress;
 
     gsap.to(window, {
       scrollTo: { y: targetScroll },
@@ -230,7 +253,10 @@ function AboutStackingSection({
     () => {
       if (!sectionRef.current || !cardsRef.current) return;
 
-      const cardElements = gsap.utils.toArray<HTMLElement>(".about-stack-card", cardsRef.current);
+      const cardElements = gsap.utils.toArray<HTMLElement>(
+        ".about-stack-card",
+        cardsRef.current,
+      );
       const cardContentElements = gsap.utils.toArray<HTMLElement>(
         ".about-stack-card-content",
         cardsRef.current,
@@ -250,7 +276,10 @@ function AboutStackingSection({
       gsap.set(cardContentElements, { overflow: "hidden" });
       gsap.set(cardContentElements[0], { autoAlpha: 1, height: "auto" });
       gsap.set(cardContentElements.slice(1), { autoAlpha: 0, height: 0 });
-      gsap.set(cardChevronElements, { rotate: 0, transformOrigin: "center center" });
+      gsap.set(cardChevronElements, {
+        rotate: 0,
+        transformOrigin: "center center",
+      });
 
       const introElements = gsap.utils.toArray<HTMLElement>(
         ".about-intro-animate",
@@ -314,18 +343,20 @@ function AboutStackingSection({
           index - 0.25,
         );
 
-        cardElements.slice(0, index + 1).forEach((visibleCard, visibleIndex) => {
-          tl.to(
-            visibleCard,
-            {
-              y: visibleIndex * 80,
-              scale: 1,
-              duration: 0.9,
-              ease: "power2.out",
-            },
-            index - 0.25,
-          );
-        });
+        cardElements
+          .slice(0, index + 1)
+          .forEach((visibleCard, visibleIndex) => {
+            tl.to(
+              visibleCard,
+              {
+                y: visibleIndex * 80,
+                scale: 1,
+                duration: 0.9,
+                ease: "power2.out",
+              },
+              index - 0.25,
+            );
+          });
 
         tl.to(
           cardElements.slice(0, index),
@@ -427,7 +458,9 @@ function AboutStackingSection({
       scrollTriggerRef.current = tl.scrollTrigger ?? null;
       const timelineDuration = tl.duration();
       cardProgressRefs.current = cards.map((_, index) =>
-        index === 0 ? 0 : gsap.utils.clamp(0, 1, (index + 0.67) / timelineDuration),
+        index === 0
+          ? 0
+          : gsap.utils.clamp(0, 1, (index + 0.67) / timelineDuration),
       );
       ScrollTrigger.refresh();
 
@@ -443,19 +476,27 @@ function AboutStackingSection({
   return (
     <section
       ref={sectionRef}
-      className="min-h-screen overflow-hidden bg-linear-to-b from-[#fff] via-[#eef3f6] to-[#fff] px-6 py-6 text-[#222b31] sm:px-10 lg:px-16  -mb-30"
+      className=" overflow-hidden bg-linear-to-b from-[#fff] via-[#eef3f6] to-[#fff] px-6 py-6 text-[#222b31] sm:px-10 lg:px-16"
     >
-      <div className="mx-auto flex min-h-[calc(100vh-6rem)] w-full max-w-[1280px] flex-col justify-start pt-2">
+      <div className="mx-auto flex min-h-[calc(61vh)] w-full max-w-[1280px] flex-col justify-start pt-2">
         <div className="mb-16 max-w-[980px]">
           <h1
             className="about-intro-animate mb-4 text-3xl font-semibold tracking-[-0.04em] text-[#212329] sm:text-[40px]"
-            style={{ opacity: 0, visibility: "hidden", transform: "translateY(42px)" }}
+            style={{
+              opacity: 0,
+              visibility: "hidden",
+              transform: "translateY(42px)",
+            }}
           >
             {title}
           </h1>
           <div
             className="about-intro-animate text-xl leading-10 text-[#485E64] sm:text-2xl"
-            style={{ opacity: 0, visibility: "hidden", transform: "translateY(42px)" }}
+            style={{
+              opacity: 0,
+              visibility: "hidden",
+              transform: "translateY(42px)",
+            }}
           >
             {description}
           </div>
@@ -464,7 +505,11 @@ function AboutStackingSection({
         <div
           ref={cardsRef}
           className="relative h-[430px] w-full"
-          style={{ opacity: 0, visibility: "hidden", transform: "translateY(42px)" }}
+          style={{
+            opacity: 0,
+            visibility: "hidden",
+            transform: "translateY(42px)",
+          }}
         >
           {cards.map((card, index) => (
             <AboutCard
@@ -499,7 +544,8 @@ export default function AboutUsStackingCards() {
         cards={visionCards}
         description={
           <>
-            One ecosystem. Every stakeholder connected. Property lending transformed — starting in the UK, built for global scale.
+            One ecosystem. Every stakeholder connected. Property lending
+            transformed — starting in the UK, built for global scale.
           </>
         }
       />
