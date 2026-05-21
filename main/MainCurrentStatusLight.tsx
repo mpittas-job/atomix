@@ -764,10 +764,11 @@ export default function MainCurrentStatusLight() {
 
         <div
           data-cs-statement-1
-          className="text-3xl text-[#011F27] text-center font-semibold py-4"
+          className="text-3xl text-[#011F27] text-center leading-10 font-semibold py-4"
         >
-          Atomix is live and building — two product launches confirmed for 2026:
-          quick home sale MVP (Q2) and auction finance MVP (Q3).
+          Atomix is live and building — two product launches confirmed for 2026{" "}
+          <br />
+          Quick Home Sale MVP (Q2) and Auction Finance MVP (Q3).
         </div>
 
         <div className="flex justify-center ">

@@ -11,7 +11,9 @@ gsap.registerPlugin(useGSAP);
 
 const ROLE_OPTIONS = [
   "Broker",
+  "Referrer Broker",
   "Intermediary",
+  "Investor",
 ] as const;
 
 const COUNTRIES = [
