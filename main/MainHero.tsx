@@ -23,7 +23,7 @@ const aboutAtomixSections = [
     id: "what-we-are",
     title: "What we are",
     description:
-      "A Platform-as-a-Service automating the full lifecycle of property loans, end-to-end; fully configurable and white-label ready",
+      "A Platform-as-a-Service automating the full lifecycle of property loans, end-to-end; <br/>fully configurable and white-label ready",
     image: "/images/hero-tabs-1.jpg",
   },
   {
@@ -92,9 +92,10 @@ function AboutSectionCard({
       <div className="absolute inset-0 bg-[#1BA8CE] mix-blend-overlay opacity-70 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-b from-[#041B21]/0 to-[#041B21]/100 opacity-70" />
       <div className="absolute inset-0 p-8 md:p-12 flex flex-col justify-center items-start">
-        <p className="text-white text-xl md:text-2xl lg:text-2xl leading-relaxed max-w-lg">
-          {description}
-        </p>
+        <p
+          className="text-white text-xl md:text-2xl lg:text-2xl leading-relaxed max-w-lg"
+          dangerouslySetInnerHTML={{ __html: description }}
+        />
       </div>
     </div>
   );
@@ -411,8 +412,8 @@ export default function MainHero() {
             <DefHeading
               theme="dark"
               badgeText=""
-              title="Atomix it is."
-              description="Property lending is overdue for a rebuild. Atomix automates the full lifecycle of property loans for lenders, capital providers, brokers, and borrowers."
+              title="About Atomix"
+              description="Property lending is overdue for a rebuild. Atomix is the rebuild."
               showBadge={false}
               className="mx-0 mb-20 max-w-[1800px]"
               align="left"
