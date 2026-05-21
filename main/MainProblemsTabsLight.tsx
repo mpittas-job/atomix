@@ -121,7 +121,6 @@ const tabsData: TabData[] = [
       {
         icon: icons.scattered,
         title: "Capital locked for the full term",
-        titleMaxWidth: "200px",
         description:
           "Incumbents lack the blockchain layer and regulatory architecture needed to unlock secondary liquidity; no exit mechanism exists",
       },
