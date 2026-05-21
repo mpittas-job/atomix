@@ -131,7 +131,11 @@ const DefHeading: React.FC<DefHeadingProps> = ({
         data-description
         className={`${descriptionColor} text-xl leading-8`}
       >
-        {description}
+        {typeof description === "string" ? (
+          <span dangerouslySetInnerHTML={{ __html: description }} />
+        ) : (
+          description
+        )}
       </div>
     </div>
   );

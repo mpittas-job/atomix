@@ -372,10 +372,9 @@ export default function MainProblemsTabsLight() {
           theme="dark"
           badgeText=""
           title="The Existing Problems"
-          description="Property lending is manual, opaque and structurally exposed to fraud — not by intent, but by design. Legacy infrastructure was never built to handle the volume, complexity or transparency this market demands."
+          description="Property lending is manual, opaque and structurally exposed to fraud — not by intent, but by design. <br/>Legacy infrastructure was never built to handle the volume, complexity or transparency this market demands."
           showBadge={false}
           align="left"
-          className="max-w-[1000px]"
           onAnimationComplete={startTabsEntrance}
         />
 
