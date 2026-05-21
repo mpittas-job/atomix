@@ -466,7 +466,7 @@ export default function SliderWhyWorkWithUs() {
               title="Team"
               description="Our culture prioritizes high ownership, high velocity, and zero bureaucracy. We are building property lending technology that scales, from the ground up."
               buttonText="See Team"
-              linkText="#"
+              linkText="/about-us"
               buttonVariant="outline-white"
               checklistIconClassName="text-white"
               checklist={[
@@ -488,7 +488,7 @@ export default function SliderWhyWorkWithUs() {
                 title="OPPORTUNITIES"
                 description="We are actively growing our team with builders, systems thinkers, and engineers who care deeply about craft and real-world impact."
                 buttonText="See Opportunities"
-                linkText="#"
+                linkText="/careers"
                 className="text-[#011F27]"
                 descriptionClassName="text-[#4B6166]"
                 checklistClassName="text-[#4B6166]"

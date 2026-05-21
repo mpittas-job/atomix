@@ -207,7 +207,7 @@ export default function MainMissionVisionCards() {
       ref={sectionRef}
       className="h-[calc(100vh-110px)] min-h-[calc(100vh-110px)] bg-white flex flex-col justify-center py-14 px-12"
     >
-      <div className="relative mx-auto flex w-full max-w-[1900px] min-h-0 flex-1 flex-col justify-center overflow-hidden rounded-3xl bg-linear-to-b from-[#004152] via-[#01485C] to-[#004152] text-white shadow-[0_24px_80px_-12px_rgba(0,30,40,0.35)]">
+      <div className="relative mx-auto flex w-full min-h-0 flex-1 flex-col justify-center overflow-hidden rounded-3xl bg-linear-to-b from-[#004152] via-[#01485C] to-[#004152] text-white shadow-[0_24px_80px_-12px_rgba(0,30,40,0.35)]">
         <div className="absolute top-0 left-0 h-[500px] w-full">
           <SoftAurora
             speed={1.3}
