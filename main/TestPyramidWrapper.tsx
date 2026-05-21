@@ -672,6 +672,7 @@ export default function TestPyramidWrapper() {
             title="The technology trade-off every lender faces"
             description="Every lender needs three things: complex loan logic, self-serve product changes, and full automation. No legacy platform delivers all three."
             showBadge={false}
+            className="max-w-[9 00px]"
           />
         </div>
 
