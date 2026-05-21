@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useRef, useState, useEffect, useMemo, useCallback } from "react";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
@@ -745,7 +751,7 @@ export default function TestPyramidWrapper() {
             />
           </div>
 
-          <div className="w-1/2 flex flex-col justify-center gap-8 pl-0 max-w-[550px]">
+          <div className="w-1/2 flex flex-col justify-center gap-8 pl-0 max-w-[550px] relative -left-10 pt-10">
             {iconBoxesData.map((box, index) => {
               const sectionId =
                 PYRAMID_SIDES.find((side) => side.sectionIndex === index)?.id ??

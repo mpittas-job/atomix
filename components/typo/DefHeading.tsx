@@ -129,7 +129,7 @@ const DefHeading: React.FC<DefHeadingProps> = ({
       <div
         ref={descRef}
         data-description
-        className={`${descriptionColor} text-xl`}
+        className={`${descriptionColor} text-xl leading-8`}
       >
         {description}
       </div>

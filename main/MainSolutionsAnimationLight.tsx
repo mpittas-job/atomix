@@ -447,6 +447,7 @@ export default function MainSolutionsAnimationLight() {
             </>
           }
           showBadge={false}
+          align="left"
           // onAnimationComplete={handleHeadingComplete}
         />
 

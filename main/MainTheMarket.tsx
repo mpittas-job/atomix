@@ -258,9 +258,10 @@ function SimpleStatBox({
       {title && (
         <h3 className="text-2xl font-semibold text-white mb-2">{title}</h3>
       )}
-      <p className="text-lg leading-relaxed text-white/80 max-w-xl">
-        {description}
-      </p>
+      <p
+        className="text-lg leading-relaxed text-white/80 max-w-xl"
+        dangerouslySetInnerHTML={{ __html: description }}
+      />
     </div>
   );
 }
@@ -428,7 +429,7 @@ export default function MainTheMarket() {
                 value="30"
                 unit="%"
                 title="Direct-to-Customer Growth"
-                description="30% of commercial lending is already direct-to-customer — a growing channel Atomix supports natively."
+                description="30% of commercial lending is already direct-to-customer <br/> a growing channel Atomix supports natively."
               />
             </div>
             <div className="market-reveal-item">
@@ -436,7 +437,7 @@ export default function MainTheMarket() {
                 value="70"
                 unit="%"
                 title="Rising Tech Adoption"
-                description="70% of lenders are considering tech investment — Atomix’s pay-as-you-go model lowers the barrier to entry."
+                description="70% of lenders are considering tech investment<br/> Atomix’s pay-as-you-go model lowers the barrier to entry."
               />
             </div>
             <div className="market-reveal-item">
