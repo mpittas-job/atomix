@@ -88,7 +88,7 @@ const tabsData: TabData[] = [
         title:
           "No real-time visibility into loan performance, policy adherence or portfolio analytics",
         description:
-          "lenders cannot be held to account in real time; oversight only after the fact",
+          "Lenders cannot be held to account in real time; oversight only after the fact",
       },
       {
         icon: icons.noCompliance,

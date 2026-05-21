@@ -35,8 +35,7 @@ const MISSION_DESCRIPTION_LINES = [
 ] as const;
 
 const VISION_DESCRIPTION_LINES = [
-  "One ecosystem. Every stakeholder connected. Property lending transformed — starting in",
-  "the UK, built for global scale.",
+  "One ecosystem. Every stakeholder connected. <br/>Property lending transformed — starting in the UK, built for global scale.",
 ] as const;
 
 interface MissionVisionCardProps {
@@ -64,9 +63,11 @@ function MissionVisionCard({
         className="text-base md:text-4xl leading-13 mb-6"
       >
         {descriptionLines.map((line, index) => (
-          <span key={index} className="block">
-            {line}
-          </span>
+          <span
+            key={index}
+            className="block"
+            dangerouslySetInnerHTML={{ __html: line }}
+          />
         ))}
       </div>
       <div data-mission-vision-item>

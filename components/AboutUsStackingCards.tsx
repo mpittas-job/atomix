@@ -32,6 +32,7 @@ gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 type AboutCardData = {
   title: string;
   items: string[];
+  columns?: 2 | 3;
 };
 
 const missionCards: AboutCardData[] = [
@@ -39,25 +40,26 @@ const missionCards: AboutCardData[] = [
     title: "Capital providers",
     items: [
       "Replace blind trust with real-time visibility — live loan status, policy adherence and portfolio analytics on demand",
-      "Connect institutional and private capital to multiple lenders via a single integration — lower barriers, lower due diligence costs",
       "Enforce every rule automatically — capital deployed exactly as intended, no self-certification required",
-      "Automate portfolio reporting — granular loan positions monitored at no additional overhead, removing the penalty on diversified small-loan portfolios",
       "Record every decision immutably on-chain — compliance instant and continuous",
+      "Connect institutional and private capital to multiple lenders via a single integration — lower barriers, lower due diligence costs",
+      "Automate portfolio reporting — granular loan positions monitored at no additional overhead, removing the penalty on diversified small-loan portfolios",
       "Connect all parties in a unified workspace — capital providers maintain live visibility across every funded loan and decision in real time",
     ],
   },
   {
     title: "Lenders",
+    columns: 3,
     items: [
       "Significantly reduce manual touchpoints — end-to-end workflow automation; manual intervention governed by credit policy, not discretion",
-      "Make every lending decision auditable — on-chain records provide a complete, traceable trail from application to drawdown, removing black-box risk",
       "Connect smaller lenders to institutional capital — removing the scale barrier that previously shut them out",
-      "Apply goal-driven reasoning to find the most efficient compliant route — every loan processed at pace without manual routing",
       "Make smaller loans economical and scale without hiring — near-zero marginal processing cost and pay-as-you-go pricing remove both the fixed cost floor and the headcount barrier",
-      "Connect all parties in a unified workspace — lenders maintain live visibility across every document, decision and stakeholder throughout",
       "Eliminate developer dependency — no-code configuration puts product changes, rule updates and workflow modifications in the hands of the business",
-      "A self-reinforcing network takes hold — as lenders onboard, brokers and capital providers follow, driving volume and deepening the marketplace",
       "Cut the cost of incomplete applications — automated decisioning identifies ineligible applications earlier, protecting margins across the book",
+      "Make every lending decision auditable — on-chain records provide a complete, traceable trail from application to drawdown, removing black-box risk",
+      "Apply goal-driven reasoning to find the most efficient compliant route — every loan processed at pace without manual routing",
+      "Connect all parties in a unified workspace — lenders maintain live visibility across every document, decision and stakeholder throughout",
+      "A self-reinforcing network takes hold — as lenders onboard, brokers and capital providers follow, driving volume and deepening the marketplace",
       "Connect to any data provider, valuation method or third-party system — open API architecture integrates where needed without rebuilding the platform",
     ],
   },
@@ -139,6 +141,16 @@ const visionCards: AboutCardData[] = [
   },
 ];
 
+function getCardsContainerHeight(cards: AboutCardData[]) {
+  const heights = cards.map((card) => {
+    const cols = card.columns ?? 2;
+    const rows = Math.ceil(card.items.length / cols);
+    return 120 + rows * 104 + Math.max(0, rows - 1) * 32;
+  });
+
+  return Math.max(430, ...heights);
+}
+
 function AboutCard({
   card,
   index,
@@ -148,6 +160,10 @@ function AboutCard({
   index: number;
   onClick: () => void;
 }) {
+  const columns = card.columns ?? 2;
+  const gridColsClass =
+    columns === 3 ? "md:grid-cols-2 xl:grid-cols-3" : "lg:grid-cols-2";
+
   return (
     <article
       role="button"
@@ -184,7 +200,7 @@ function AboutCard({
       </div>
 
       <div
-        className="about-stack-card-content grid gap-x-14 gap-y-8 lg:grid-cols-2 relative z-10"
+        className={`about-stack-card-content grid gap-x-8 gap-y-8 ${gridColsClass} relative z-10`}
         style={
           index === 0
             ? { overflow: "hidden" }
@@ -207,7 +223,9 @@ function AboutCard({
                 </div>
               );
             })()}
-            <p className="max-w-[520px] text-md leading-6 text-[#16313b]">
+            <p
+              className={`text-md leading-6 text-[#16313b] ${columns === 3 ? "max-w-none" : "max-w-[520px]"}`}
+            >
               {item}
             </p>
           </div>
@@ -473,13 +491,18 @@ function AboutStackingSection({
     { scope: sectionRef },
   );
 
+  const cardsContainerHeight = getCardsContainerHeight(cards);
+  const hasThreeColumnCard = cards.some((card) => card.columns === 3);
+
   return (
     <section
       ref={sectionRef}
       className=" overflow-hidden bg-linear-to-b from-[#fff] via-[#eef3f6] to-[#fff] px-6 py-6 text-[#222b31] sm:px-10 lg:px-16"
     >
-      <div className="mx-auto flex min-h-[calc(61vh)] w-full max-w-[1280px] flex-col justify-start pt-2">
-        <div className="mb-16 max-w-[980px]">
+      <div
+        className={`mx-auto flex min-h-[calc(61vh)] w-full flex-col justify-start pt-2 ${hasThreeColumnCard ? "max-w-[1480px]" : "max-w-[1280px]"}`}
+      >
+        <div className="mb-10 max-w-[980px]">
           <h1
             className="about-intro-animate mb-4 text-3xl font-semibold tracking-[-0.04em] text-[#212329] sm:text-[40px]"
             style={{
@@ -504,8 +527,9 @@ function AboutStackingSection({
 
         <div
           ref={cardsRef}
-          className="relative h-[430px] w-full"
+          className="relative w-full"
           style={{
+            height: cardsContainerHeight,
             opacity: 0,
             visibility: "hidden",
             transform: "translateY(42px)",

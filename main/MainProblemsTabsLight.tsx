@@ -93,7 +93,7 @@ const tabsData: TabData[] = [
         title:
           "No real-time visibility into loan performance, policy adherence or portfolio analytics",
         description:
-          "lenders cannot be held to account in real time; oversight only after the fact",
+          "Lenders cannot be held to account in real time; oversight only after the fact",
       },
       {
         icon: icons.noCompliance,
@@ -141,37 +141,38 @@ const tabsData: TabData[] = [
         icon: icons.touchpoints,
         title: "100+ manual touchpoints per loan",
         description:
-          "Growth requires hiring, scaling requires heavy investment",
+          "Task-level automation leaves underwriters reviewing everything; costs stay high, scaling still requires hiring",
       },
       {
         icon: icons.noAccess,
-        title: "Smaller originators shut out of institutional capital",
+        title: "Smaller lenders shut out of institutional capital",
         description:
-          "Too small for dedicated facilities, unable to achieve securitisation scale individually",
+          "No existing platform enforces capital provider criteria end-to-end; lenders cannot demonstrate compliance, due diligence costs are prohibitive, and institutional funding remains out of reach regardless of loan book quality",
       },
       {
         icon: icons.uneconomic,
         title:
-          "High fixed processing costs make smaller, most in-demand loans uneconomic to originate",
-        description: "",
+          "High fixed processing costs make smaller, most in-demand loans uneconomic",
+        description:
+          "Legacy systems were never designed to handle volume at near-zero marginal cost",
       },
       {
-        icon: icons.noAudit,
-        title: "Existing systems are rigid and expensive to adapt",
+        icon: icons.costly,
+        title: "Existing systems rigid and expensive to adapt",
         description:
-          "New products, rule changes and workflow modifications require developers, long lead times and significant cost",
+          "New products, rule changes and workflow modifications require developers, long lead times and significant cost; no legacy platform simultaneously delivers complex logic, self-serve changes and full automation",
       },
       {
         icon: icons.slow,
         title: "40-60% of applications never complete",
         description:
-          "But their full processing costs are absorbed by completed loans, further eroding margins",
+          "Full processing costs absorbed by completed loans, further eroding margins; AI cannot guarantee compliance, meaning a 1% error rate produces thousands of non-compliant loans with no audit trail",
       },
       {
-        icon: icons.costly,
-        title: "Due diligence costs are prohibitive for smaller lenders",
+        icon: icons.opaque,
+        title: "Black-box reasoning fails audit requirements",
         description:
-          "Institutional capital remains out of reach regardless of loan book quality",
+          "No traceable logic, no decision trail, no accountability; existing systems cannot demonstrate how or why a lending decision was made",
       },
     ],
   },
@@ -188,24 +189,26 @@ const tabsData: TabData[] = [
         icon: icons.chasing,
         title:
           "Re-enter the same data for every lender and every service provider",
-        description: "",
+        description:
+          "No shared infrastructure; data cannot follow the borrower across the market",
       },
       {
         icon: icons.opaque,
         title: "No certainty of outcome until the final moment",
-        description: "Process lacks transparency, consistency and certainty",
+        description:
+          "No process orchestration means the right parties cannot be guaranteed to verify the right documents at the right time; process lacks transparency, consistency and certainty",
       },
       {
         icon: icons.delays,
         title: "Opaque, slow process",
         description:
-          "Completions exceed 35 days, initial underwriting alone takes up to a week",
+          "Completions exceed 35 days, initial underwriting alone takes up to a week; fragmented systems leave legal, valuation and compliance steps entirely disconnected",
       },
       {
         icon: icons.noVisibility,
         title: "No visibility into status or next steps",
         description:
-          "Entirely dependent on manual updates and underwriter discretion",
+          "Entirely dependent on manual updates; no existing system provides live, automated tracking throughout the process",
       },
     ],
   },
@@ -364,7 +367,7 @@ export default function MainProblemsTabsLight() {
 
   return (
     <div className="min-h-[calc(100vh-126px)] rounded-3xl bg-[#EBEFF2] relative overflow-hidden flex flex-col justify-center items-center">
-      <div className="relative z-7 flex flex-col gap-y-12 max-w-[1200px] w-full px-6 py-32">
+      <div className="relative z-7 flex flex-col gap-y-12 max-w-[1400px] w-full px-6 py-32">
         <DefHeading
           theme="dark"
           badgeText=""
@@ -372,6 +375,7 @@ export default function MainProblemsTabsLight() {
           description="Property lending is manual, opaque and structurally exposed to fraud — not by intent, but by design. Legacy infrastructure was never built to handle the volume, complexity or transparency this market demands."
           showBadge={false}
           align="left"
+          className="max-w-[1000px]"
           onAnimationComplete={startTabsEntrance}
         />
 
