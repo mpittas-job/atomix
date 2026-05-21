@@ -397,7 +397,7 @@ export default function MainHero() {
 
       {/* SECOND TITLE CONTENT - scroll-driven animation */}
       <div
-        className="text-[#011F27] flex flex-col justify-center items-start text-left absolute top-0 left-0 w-full h-full min-w-full min-h-full p-8 md:p-12"
+        className="text-[#011F27] flex flex-col justify-center items-start text-left absolute top-0 left-0 w-full h-full min-w-full min-h-full p-8 md:py-12 md:px-24"
         id="def-hero-title-2"
         style={{ visibility: "hidden" }}
       >
@@ -414,12 +414,12 @@ export default function MainHero() {
               title="Atomix it is."
               description="Property lending is overdue for a rebuild. Atomix automates the full lifecycle of property loans for lenders, capital providers, brokers, and borrowers."
               showBadge={false}
-              className="mx-0 mb-20 max-w-[800px]"
+              className="mx-0 mb-20 max-w-[1800px]"
               align="left"
             />
 
             {/* Bottom two-column row */}
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-28 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-36 items-center">
               {/* Left side - Section navigation */}
               <div className="lg:col-span-2 flex flex-col justify-center">
                 <div className="space-y-1">
