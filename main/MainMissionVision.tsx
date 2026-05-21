@@ -272,7 +272,7 @@ export default function MainMissionVision() {
           <MissionVisionBlock
             ref={visionRef}
             title="Vision"
-            description="Rebuild UK property lending. Start with bridging. Extend into SME CRE term loans — same infrastructure, no rebuild."
+            description="One ecosystem. Every stakeholder connected. Property lending transformed — starting in the UK, built for global scale."
             buttonText="Learn More"
             buttonLink="#"
           />

@@ -29,17 +29,27 @@ function renderTypewriterTitle(title: string) {
   ));
 }
 
-const MISSION_VISION_DESCRIPTION_LINES = [
+const MISSION_DESCRIPTION_LINES = [
   "Rebuild UK property lending. Start with bridging.",
   "Extend into SME CRE term loans — same infrastructure, no rebuild.",
+] as const;
+
+const VISION_DESCRIPTION_LINES = [
+  "One ecosystem. Every stakeholder connected. Property lending transformed — starting in",
+  "the UK, built for global scale.",
 ] as const;
 
 interface MissionVisionCardProps {
   cardRef: RefObject<HTMLDivElement | null>;
   title: string;
+  descriptionLines: readonly string[];
 }
 
-function MissionVisionCard({ cardRef, title }: MissionVisionCardProps) {
+function MissionVisionCard({
+  cardRef,
+  title,
+  descriptionLines,
+}: MissionVisionCardProps) {
   return (
     <div
       ref={cardRef}
@@ -53,7 +63,7 @@ function MissionVisionCard({ cardRef, title }: MissionVisionCardProps) {
         data-mission-vision-item
         className="text-base md:text-4xl leading-13 mb-6"
       >
-        {MISSION_VISION_DESCRIPTION_LINES.map((line, index) => (
+        {descriptionLines.map((line, index) => (
           <span key={index} className="block">
             {line}
           </span>
@@ -228,9 +238,17 @@ export default function MainMissionVisionCards() {
         </div>
 
         <div className="relative min-h-[520px] w-full md:min-h-[420px]">
-          <MissionVisionCard cardRef={missionCardRef} title="Mission" />
+          <MissionVisionCard
+            cardRef={missionCardRef}
+            title="Mission"
+            descriptionLines={MISSION_DESCRIPTION_LINES}
+          />
 
-          <MissionVisionCard cardRef={visionCardRef} title="Vision" />
+          <MissionVisionCard
+            cardRef={visionCardRef}
+            title="Vision"
+            descriptionLines={VISION_DESCRIPTION_LINES}
+          />
         </div>
       </div>
     </section>
