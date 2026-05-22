@@ -47,7 +47,7 @@ export default function ResourcesPage() {
     <>
       <Header />
       <main className="mt-20 bg-[#EBEFF2]">
-        <div className="px-12 pt-14">
+        <div className="pt-14">
           <HeroAnimatedBg
             tileDisplayMode="fixedMosaic"
             heroTitleId="resources-hero-title"

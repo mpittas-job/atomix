@@ -174,7 +174,7 @@ export default function LandingGradientV1Page() {
     <div className="overflow-x-hidden bg-white">
       <Header />
       <div
-        className="px-12 pb-[var(--hero-y-gap,1rem)] pt-[calc(var(--header-height,5.5rem)+var(--hero-y-gap,1rem))]"
+        className="pb-[var(--hero-y-gap,1rem)] pt-[calc(var(--header-height,5.5rem)+var(--hero-y-gap,1rem))]"
         id="def-hero-main"
         style={{
           ["--header-height" as string]: "5.5rem",

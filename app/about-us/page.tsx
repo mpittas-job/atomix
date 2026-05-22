@@ -9,7 +9,7 @@ export default function AboutUsPage() {
     <>
       <Header />
 
-      <div className="px-12 pt-34 mb-18">
+      <div className="pt-34 mb-18">
         <HeroAnimatedBg
           tileDisplayMode="fixedMosaic"
           heroTitleId="about-us-hero-title"

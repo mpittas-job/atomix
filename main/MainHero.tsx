@@ -91,7 +91,7 @@ function AboutSectionCard({
       <Image src={image} alt="" fill className="object-cover" priority />
       <div className="absolute inset-0 bg-[#1BA8CE] mix-blend-overlay opacity-70 pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-b from-[#041B21]/0 to-[#041B21]/100 opacity-70" />
-      <div className="absolute inset-0 p-8 md:p-12 flex flex-col justify-center items-start">
+      <div className="absolute inset-0 flex items-center p-8 md:p-12">
         <p
           className="text-white text-xl md:text-2xl lg:text-2xl leading-relaxed max-w-lg"
           dangerouslySetInnerHTML={{ __html: description }}
@@ -278,7 +278,7 @@ export default function MainHero() {
 
   return (
     <section
-      className="flex flex-col h-[calc(100vh-var(--header-height,5.5rem)-(var(--hero-y-gap,1rem)*2))] bg-gradient-to-b from-[#014355] to-[#247691] rounded-3xl overflow-hidden relative"
+      className="mx-auto flex w-full max-w-[1920px] flex-col h-[calc(100vh-var(--header-height,5.5rem)-(var(--hero-y-gap,1rem)*2))] bg-gradient-to-b from-[#014355] to-[#247691] rounded-3xl overflow-hidden relative px-12"
       id="atomix-playground-v1"
     >
       <SoftAurora

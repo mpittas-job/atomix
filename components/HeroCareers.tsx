@@ -469,7 +469,7 @@ export default function HeroCareers() {
   return (
     <section
       aria-label="Careers at Atomix"
-      className="relative isolate h-[660px] w-full overflow-visible bg-gradient-to-b from-[#B1D7E5] to-[#D2DEE5]"
+      className="relative isolate mx-auto h-[660px] w-full max-w-[1920px] overflow-visible bg-gradient-to-b from-[#B1D7E5] to-[#D2DEE5] px-12"
     >
       <div className="pointer-events-none absolute inset-x-0 top-7 bottom-7 z-[1] px-6 md:top-9 md:bottom-9 md:px-10">
         <div

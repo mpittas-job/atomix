@@ -509,7 +509,7 @@ function AdvancedSliderPageContent() {
       <Header />
 
       {/* Fixed header does not consume layout height — reserve its space so hero sits below it */}
-      <div className="px-12 pt-34">
+      <div className="pt-34">
         <HeroAnimatedBg
           tileDisplayMode="fixedMosaic"
           fixedMosaicCols={24}
@@ -517,7 +517,7 @@ function AdvancedSliderPageContent() {
         />
       </div>
 
-      <div className="relative w-full">
+      <div className="relative mx-auto w-full max-w-[1920px] px-12">
         <div className="pointer-events-none absolute inset-y-0 top-10 bottom-15 left-10 z-30 w-[220px] max-w-[min(220px,calc(100vw-3rem))]">
           <div className="pointer-events-auto sticky top-28 lg:top-30 pt-12">
             <nav

@@ -514,7 +514,7 @@ export default function HeroAnimatedBg({
   const heroCardPaddingClass = isRowLayout ? "py-14 md:py-16" : "py-24";
 
   return (
-    <div>
+    <div className="mx-auto w-full max-w-[1920px] px-12">
       <div
         ref={heroCardRef}
         aria-labelledby={heroTitleId}
