@@ -122,7 +122,7 @@ const tabsData: TabData[] = [
         icon: icons.scattered,
         title: "Capital locked for the full term",
         description:
-          "Incumbents lack the blockchain layer and regulatory architecture needed to unlock secondary liquidity; no exit mechanism exists",
+          "Incumbents lack the blockchain layer and regulatory architecture needed to unlock secondary liquidity; no early exit mechanism exists",
       },
       {
         icon: icons.fragmented,
@@ -181,12 +181,13 @@ const tabsData: TabData[] = [
         title: "40-60% of applications never complete",
         titleMaxWidth: "240px",
         description:
-          "Full processing costs absorbed by completed loans, further eroding margins; AI cannot guarantee compliance, meaning a 1% error rate produces thousands of non-compliant loans with no audit trail",
+          "Full processing costs absorbed by completed loans, further eroding margins",
       },
       {
         icon: icons.opaque,
-        title: "Black-box reasoning fails audit requirements",
-        titleMaxWidth: "240px",
+        title:
+          "AI cannot guarantee compliance, meaning a 1% error rate produces thousands of non-compliant loans with no audit trail. Black-box reasoning fails audit requirements",
+        titleMaxWidth: "320px",
         description:
           "No traceable logic, no decision trail, no accountability; existing systems cannot demonstrate how or why a lending decision was made",
       },
