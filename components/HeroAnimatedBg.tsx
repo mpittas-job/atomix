@@ -430,7 +430,9 @@ export default function HeroAnimatedBg({
         if (!base) return;
 
         const col = Number(tile.dataset.tileCol ?? index % fixedMosaicCols);
-        const row = Number(tile.dataset.tileRow ?? Math.floor(index / fixedMosaicCols));
+        const row = Number(
+          tile.dataset.tileRow ?? Math.floor(index / fixedMosaicCols),
+        );
         const seed = col * 928371 + row * 482711 + index * 131;
         const norm = ((seed % 10000) + 10000) % 10000;
         const direction: 1 | -1 = norm % 2 === 0 ? 1 : -1;
@@ -512,6 +514,9 @@ export default function HeroAnimatedBg({
   const heroCardHasCustomBg = hasHeroCardImage || gridDistortionBg || dotGridBg;
   const isRowLayout = contentLayout === "row";
   const heroCardPaddingClass = isRowLayout ? "py-14 md:py-16" : "py-24";
+  const heroCardLayoutClass = fixedMosaicBg
+    ? "min-h-[420px] flex flex-col justify-center"
+    : "";
 
   return (
     <div className="mx-auto w-full max-w-[1920px] px-12">
@@ -520,8 +525,8 @@ export default function HeroAnimatedBg({
         aria-labelledby={heroTitleId}
         className={
           heroCardHasCustomBg
-            ? `relative overflow-hidden rounded-4xl ${heroCardPaddingClass} text-white`
-            : `relative overflow-hidden rounded-4xl bg-[#004152] ${heroCardPaddingClass} text-white`
+            ? `relative overflow-hidden rounded-4xl ${heroCardPaddingClass} ${heroCardLayoutClass} text-white`
+            : `relative overflow-hidden rounded-4xl bg-[#004152] ${heroCardPaddingClass} ${heroCardLayoutClass} text-white`
         }
         style={heroCardStyle}
       >

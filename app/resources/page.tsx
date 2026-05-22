@@ -46,8 +46,8 @@ export default function ResourcesPage() {
   return (
     <>
       <Header />
-      <main className="mt-20 bg-[#EBEFF2]">
-        <div className="pt-14">
+      <main className="bg-[#EBEFF2]">
+        <div className="pt-34">
           <HeroAnimatedBg
             tileDisplayMode="fixedMosaic"
             heroTitleId="resources-hero-title"
@@ -57,7 +57,8 @@ export default function ResourcesPage() {
             descriptionClassName="max-w-none whitespace-nowrap"
             showCta={false}
             fixedMosaicCols={24}
-            fixedMosaicRows={8}
+            fixedMosaicRows={4}
+            fixedMosaicMatchContainer
           />
         </div>
 

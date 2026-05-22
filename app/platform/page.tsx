@@ -514,6 +514,7 @@ function AdvancedSliderPageContent() {
           tileDisplayMode="fixedMosaic"
           fixedMosaicCols={24}
           fixedMosaicRows={4}
+          fixedMosaicMatchContainer
         />
       </div>
 

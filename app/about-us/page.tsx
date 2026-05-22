@@ -20,6 +20,7 @@ export default function AboutUsPage() {
           showCta={false}
           fixedMosaicCols={24}
           fixedMosaicRows={4}
+          fixedMosaicMatchContainer
         />
       </div>
 
