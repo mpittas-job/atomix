@@ -24,7 +24,7 @@ const marketStats = [
   {
     icon: <FaBuilding className="h-10 w-10" />,
     value: "£350bn",
-    description: "total annual UK property loan originations",
+    description: "Total annual UK property loan originations",
   },
   {
     icon: <FaCoins className="h-10 w-10" />,

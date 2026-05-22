@@ -97,6 +97,7 @@ interface MainStatCardProps {
   value: string;
   unit: string;
   description: string;
+  descriptionMaxWidth?: string | number;
   className?: string;
 }
 
@@ -105,6 +106,7 @@ function MainStatCard({
   value,
   unit,
   description,
+  descriptionMaxWidth,
   className,
 }: MainStatCardProps) {
   const countParts = getCountParts(value);
@@ -139,7 +141,21 @@ function MainStatCard({
             <span className="text-2xl font-medium text-white">{unit}</span>
           </span>
         </div>
-        <p className="mt-4 text-lg leading-7 text-white/80">{description}</p>
+        <p
+          className="mt-4 text-lg leading-7 text-white/80"
+          style={
+            descriptionMaxWidth
+              ? {
+                  maxWidth:
+                    typeof descriptionMaxWidth === "number"
+                      ? `${descriptionMaxWidth}px`
+                      : descriptionMaxWidth,
+                }
+              : undefined
+          }
+        >
+          {description}
+        </p>
       </div>
     </div>
   );
@@ -150,6 +166,7 @@ interface SimpleStatBoxProps {
   unit?: string;
   title?: string;
   description: string;
+  descriptionMaxWidth?: string | number;
 }
 
 function SimpleStatBox({
@@ -157,6 +174,7 @@ function SimpleStatBox({
   unit,
   title,
   description,
+  descriptionMaxWidth,
 }: SimpleStatBoxProps) {
   const countParts = getCountParts(value);
   const boxRef = useRef<HTMLDivElement>(null);
@@ -260,6 +278,16 @@ function SimpleStatBox({
       )}
       <p
         className="text-lg leading-relaxed text-white/80 max-w-xl"
+        style={
+          descriptionMaxWidth
+            ? {
+                maxWidth:
+                  typeof descriptionMaxWidth === "number"
+                    ? `${descriptionMaxWidth}px`
+                    : descriptionMaxWidth,
+              }
+            : undefined
+        }
         dangerouslySetInnerHTML={{ __html: description }}
       />
     </div>
@@ -368,7 +396,7 @@ export default function MainTheMarket() {
                 badge="Total Market"
                 value="£350"
                 unit="bn"
-                description="total annual UK property loan originations"
+                description="Total annual UK property loan originations"
                 className="rounded-r-none rounded-b-none"
               />
             </div>
@@ -377,7 +405,7 @@ export default function MainTheMarket() {
                 badge="Core Atomix Market"
                 value="£60"
                 unit="bn"
-                description="Bridging, buy-to-let and SME CRE term loans – the Atomix target segment"
+                description="Across bridging, buy-to-let and SME CRE term loans — the core Atomix market"
                 className="rounded-none"
               />
             </div>
@@ -386,7 +414,7 @@ export default function MainTheMarket() {
                 badge="Immediate Opportunity"
                 value="£11.5"
                 unit="bn"
-                description="Annual UK bridging originations - majority processed manually, smaller loans structurally underserved"
+                description="Annual UK bridging originations — majority processed manually, smaller loans structurally underserved"
                 className="rounded-l-none rounded-b-none"
               />
             </div>
@@ -399,7 +427,8 @@ export default function MainTheMarket() {
                 badge="US Market"
                 value="£2"
                 unit="tn"
-                description="Global expansion - same model, next market"
+                description="The US commercial real estate market opportunity, addressable on the same model"
+                descriptionMaxWidth="500px"
                 className="rounded-t-none rounded-r-none"
               />
             </div>
@@ -408,7 +437,8 @@ export default function MainTheMarket() {
                 badge="Global Market"
                 value="£4"
                 unit="tn"
-                description="Global expansion - same model, next market"
+                description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
+                descriptionMaxWidth="500px"
                 className="rounded-t-none rounded-l-none"
               />
             </div>
@@ -421,7 +451,7 @@ export default function MainTheMarket() {
                 value="70"
                 unit="%"
                 title="Broker-led Loan Origination"
-                description="70% of bridging loans come through brokers, making smaller loans costly to service — automation changes this."
+                description="70% of bridging loans originate through brokers — smaller loans unprofitable to service; automation changes this"
               />
             </div>
             <div className="market-reveal-item">
@@ -429,7 +459,7 @@ export default function MainTheMarket() {
                 value="30"
                 unit="%"
                 title="Direct-to-Customer Growth"
-                description="30% of commercial lending is already direct-to-customer <br/> a growing channel Atomix supports natively."
+                description="30% of commercial lending already direct-to-customer — a growing channel Atomix supports natively  "
               />
             </div>
             <div className="market-reveal-item">
@@ -437,7 +467,7 @@ export default function MainTheMarket() {
                 value="70"
                 unit="%"
                 title="Rising Tech Adoption"
-                description="70% of lenders are considering tech investment<br/> Atomix’s pay-as-you-go model lowers the barrier to entry."
+                description="70% of lenders actively considering technology investment — Atomix pay-as-you-go model removes the barrier to entry"
               />
             </div>
             <div className="market-reveal-item">
@@ -445,7 +475,7 @@ export default function MainTheMarket() {
                 value="64"
                 unit="%"
                 title="Refinancing Pressure"
-                description="64% of leading non-bank lenders need to raise or refinance within 12 months — compliance and transparency are key."
+                description="64% of leading non-bank lenders need to raise or refinance within 12 months — compliance and transparency is the unlock"
               />
             </div>
           </div>
