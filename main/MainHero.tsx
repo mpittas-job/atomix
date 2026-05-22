@@ -24,26 +24,26 @@ const aboutAtomixSections = [
     title: "What we are",
     description:
       "A Platform-as-a-Service automating the full lifecycle of property loans, end-to-end; <br/>fully configurable and white-label ready",
-    image: "/images/hero-tabs-1.jpg",
+    image: "/about/about-us-img-1.jpg",
   },
   {
     id: "what-sets-us-apart",
     title: "What sets us apart",
     description:
       "Rules-first architecture, immutable on-chain audit and goal-driven intelligence; compliance enforced at every level, not bolted on",
-    image: "/images/hero-tabs-2.jpg",
+    image: "/about/about-us-img-2.jpg",
   },
   {
     id: "who-we-serve",
     title: "Who we serve",
     description: "Lenders, capital providers, brokers, lawyers and borrowers",
-    image: "/images/hero-tabs-3.jpg",
+    image: "/about/about-us-img-3.jpg",
   },
   {
     id: "where-we-operate",
     title: "Where we operate",
     description: "UK-based, with global expansion built into the model",
-    image: "/images/hero-tabs-4.jpg",
+    image: "/about/about-us-img-4.jpg",
   },
 ];
 
@@ -89,8 +89,6 @@ function AboutSectionCard({
       className={`absolute inset-0 rounded-2xl overflow-hidden transition-opacity duration-500 ${isActive ? "opacity-100 z-10" : "opacity-0 z-0"}`}
     >
       <Image src={image} alt="" fill className="object-cover" priority />
-      <div className="absolute inset-0 bg-[#1BA8CE] mix-blend-overlay opacity-70 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#041B21]/0 to-[#041B21]/100 opacity-70" />
       <div className="absolute inset-0 flex items-center p-8 md:p-12">
         <p
           className="text-white text-xl md:text-2xl lg:text-2xl leading-relaxed max-w-lg"

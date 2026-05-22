@@ -511,10 +511,8 @@ function AdvancedSliderPageContent() {
       {/* Fixed header does not consume layout height — reserve its space so hero sits below it */}
       <div className="pt-34">
         <HeroAnimatedBg
-          tileDisplayMode="fixedMosaic"
-          fixedMosaicCols={24}
-          fixedMosaicRows={4}
-          fixedMosaicMatchContainer
+          tileDisplayMode="static"
+          heroCardBackgroundImage="/hero/hero-platform.jpg"
         />
       </div>
 

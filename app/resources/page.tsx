@@ -49,16 +49,14 @@ export default function ResourcesPage() {
       <main className="bg-[#EBEFF2]">
         <div className="pt-34">
           <HeroAnimatedBg
-            tileDisplayMode="fixedMosaic"
+            tileDisplayMode="static"
+            heroCardBackgroundImage="/hero/hero-resources.jpg"
             heroTitleId="resources-hero-title"
             title="Resources"
             description="Explore our guides, videos, and insights."
             titleClassName="max-w-none whitespace-nowrap"
             descriptionClassName="max-w-none whitespace-nowrap"
             showCta={false}
-            fixedMosaicCols={24}
-            fixedMosaicRows={4}
-            fixedMosaicMatchContainer
           />
         </div>
 

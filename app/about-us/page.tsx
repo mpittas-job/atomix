@@ -11,16 +11,14 @@ export default function AboutUsPage() {
 
       <div className="pt-34 mb-18">
         <HeroAnimatedBg
-          tileDisplayMode="fixedMosaic"
+          tileDisplayMode="static"
+          heroCardBackgroundImage="/hero/hero-about.jpg"
           heroTitleId="about-us-hero-title"
           title="About Atomix"
           description="Property lending is overdue for a rebuild. Atomix is it."
           titleClassName="max-w-none whitespace-nowrap"
           descriptionClassName="max-w-none whitespace-nowrap"
           showCta={false}
-          fixedMosaicCols={24}
-          fixedMosaicRows={4}
-          fixedMosaicMatchContainer
         />
       </div>
 

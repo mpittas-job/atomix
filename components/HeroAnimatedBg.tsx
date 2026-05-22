@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useRef } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Button } from "@/components/ui";
@@ -500,13 +501,7 @@ export default function HeroAnimatedBg({
 
   const heroCardStyle =
     hasHeroCardImage && !gridDistortionBg && !dotGridBg
-      ? {
-          backgroundColor: "#004152",
-          backgroundImage: `url("${heroCardBackgroundImage}")`,
-          backgroundSize: "cover" as const,
-          backgroundPosition: "center" as const,
-          backgroundRepeat: "no-repeat" as const,
-        }
+      ? { backgroundColor: "#004152" }
       : gridDistortionBg || dotGridBg
         ? { backgroundColor: "#004152" }
         : undefined;
@@ -514,9 +509,10 @@ export default function HeroAnimatedBg({
   const heroCardHasCustomBg = hasHeroCardImage || gridDistortionBg || dotGridBg;
   const isRowLayout = contentLayout === "row";
   const heroCardPaddingClass = isRowLayout ? "py-14 md:py-16" : "py-24";
-  const heroCardLayoutClass = fixedMosaicBg
-    ? "min-h-[420px] flex flex-col justify-center"
-    : "";
+  const heroCardLayoutClass =
+    fixedMosaicBg || (staticBg && hasHeroCardImage)
+      ? "min-h-[420px] flex flex-col justify-center"
+      : "";
 
   return (
     <div className="mx-auto w-full max-w-[1920px] px-12">
@@ -530,6 +526,20 @@ export default function HeroAnimatedBg({
         }
         style={heroCardStyle}
       >
+        {hasHeroCardImage && !gridDistortionBg && !dotGridBg ? (
+          <Image
+            src={heroCardBackgroundImage}
+            alt=""
+            fill
+            priority
+            quality={100}
+            unoptimized
+            sizes="1920px"
+            className="pointer-events-none absolute inset-0 z-0 object-cover object-center"
+            aria-hidden
+          />
+        ) : null}
+
         {dotGridBg ? (
           <div className="absolute inset-0 z-0 min-h-0 min-w-0" aria-hidden>
             <DotGrid
