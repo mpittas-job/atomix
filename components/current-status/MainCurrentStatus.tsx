@@ -31,13 +31,14 @@ const TABS: TabData[] = [
   {
     title: "Loan\norigination",
     description:
-      "Data entered once, then structured workflow from application to drawdown.",
+      "Data entered once, eligibility checked instantly, indicative offer returned in real time — fully configurable by stakeholders, no developer involvement.",
     mainImage: "/dashboard/current-status-dashboard-1.svg",
     smallImages: ["/dashboard/current-status-dashboard-1-small.svg"],
   },
   {
     title: "Lawyer workflow",
-    description: "End-to-end legal, no chasing.",
+    description:
+      "Every legal step managed on-platform — from instruction to execution, no manual chasing, no fragmented communication.",
     mainImage: "/dashboard/current-status-dashboard-2.svg",
     smallImages: [
       "/dashboard/current-status-dashboard-2-small-1.svg",
@@ -46,7 +47,8 @@ const TABS: TabData[] = [
   },
   {
     title: "Loan management",
-    description: "Automated lifecycle, start to finish.",
+    description:
+      "Automated lifecycle management from drawdown to exit — breach detection, payment distributions and borrower self-service, every action on blockchain.",
     mainImage: "/dashboard/current-status-dashboard-2.svg",
     smallImages: [
       "/dashboard/current-status-dashboard-3-small-1.svg",
@@ -55,7 +57,8 @@ const TABS: TabData[] = [
   },
   {
     title: "Capital provider dashboards",
-    description: "Real-time loan insights, all in one place.",
+    description:
+      "Real-time visibility across every funded loan — performance, distributions and compliance in a single dedicated dashboard.",
     mainImage: "/dashboard/current-status-dashboard-2.svg",
     smallImages: [
       "/dashboard/current-status-dashboard-4-small-1.svg",
@@ -758,7 +761,8 @@ export default function CurrentStatusV2() {
           data-cs-statement-2
           className="text-3xl text-white text-center font-semibold py-4"
         >
-          Statement 2 comes here
+          Atomix is built on the following platform modules, available across
+          all products.
         </div>
 
         <div data-cs-connectors>
