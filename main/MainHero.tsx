@@ -30,13 +30,13 @@ const aboutAtomixSections = [
     id: "what-sets-us-apart",
     title: "What sets us apart",
     description:
-      "Rules-first architecture, immutable on-chain audit and goal-driven intelligence operating within both; compliance enforced at every level, not bolted on",
+      "Rules-first architecture, immutable on-chain audit and goal-driven intelligence; compliance enforced at every level, not bolted on",
     image: "/images/hero-tabs-2.jpg",
   },
   {
     id: "who-we-serve",
     title: "Who we serve",
-    description: "Lenders, capital providers, brokers and borrowers",
+    description: "Lenders, capital providers, brokers, lawyers and borrowers",
     image: "/images/hero-tabs-3.jpg",
   },
   {

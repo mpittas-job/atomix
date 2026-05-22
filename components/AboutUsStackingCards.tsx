@@ -39,9 +39,9 @@ const missionCards: AboutCardData[] = [
   {
     title: "Capital providers",
     items: [
-      "Replace blind trust with real-time visibility — live loan status, policy adherence and portfolio analytics on demand",
+      "Real-time visibility — live loan status and portfolio analytics on demand",
       "Enforce every rule automatically — capital deployed exactly as intended, no self-certification required",
-      "Record every decision immutably on-chain — compliance instant and continuous",
+      "Record every decision immutably on-chain — tamper proof transparency",
       "Connect institutional and private capital to multiple lenders via a single integration — lower barriers, lower due diligence costs",
       "Automate portfolio reporting — granular loan positions monitored at no additional overhead, removing the penalty on diversified small-loan portfolios",
       "Connect all parties in a unified workspace — capital providers maintain live visibility across every funded loan and decision in real time",
@@ -56,7 +56,7 @@ const missionCards: AboutCardData[] = [
       "Make smaller loans economical and scale without hiring — near-zero marginal processing cost and pay-as-you-go pricing remove both the fixed cost floor and the headcount barrier",
       "Eliminate developer dependency — no-code configuration puts product changes, rule updates and workflow modifications in the hands of the business",
       "Cut the cost of incomplete applications — automated decisioning identifies ineligible applications earlier, protecting margins across the book",
-      "Make every lending decision auditable — on-chain records provide a complete, traceable trail from application to drawdown, removing black-box risk",
+      "Make every lending decision auditable — on-chain records provide a complete, traceable trail from application to exit, removing black-box risk",
       "Apply goal-driven reasoning to find the most efficient compliant route — every loan processed at pace without manual routing",
       "Connect all parties in a unified workspace — lenders maintain live visibility across every document, decision and stakeholder throughout",
       "A self-reinforcing network takes hold — as lenders onboard, brokers and capital providers follow, driving volume and deepening the marketplace",
