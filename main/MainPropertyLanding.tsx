@@ -16,7 +16,7 @@ const cards = [
       "rules-first architecture, immutable on-chain audit and goal-driven intelligence operating within both; compliance enforced at every level, not bolted on",
   },
   {
-    title: "Who we serve",
+    title: "Who are our users",
     description: "lenders, capital providers, brokers and borrowers",
   },
   {

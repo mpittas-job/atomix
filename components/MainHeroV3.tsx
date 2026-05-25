@@ -23,7 +23,7 @@ const aboutAtomixItems = [
   },
   {
     icon: "/icons/white/rocket-launch-white.svg",
-    title: "Who we serve",
+    title: "Who are our users",
     subtitle: "Lenders, capital providers, brokers and borrowers",
   },
   {

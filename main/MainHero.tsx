@@ -36,7 +36,7 @@ const aboutAtomixSections = [
   },
   {
     id: "who-we-serve",
-    title: "Who we serve",
+    title: "Who are our users",
     description: "Lenders, capital providers, brokers, lawyers and borrowers",
     image: "/about/about-us-img-3.jpg",
   },
@@ -301,169 +301,169 @@ export default function MainHero() {
           />
         </div>
 
-      {/* FIRST TITLE - page load animation */}
-      <div
-        className="text-white px-6 flex flex-col gap-y-8 justify-center items-center text-center absolute left-1/2 -translate-x-1/2 top-[10%] max-w-[600px] w-full"
-        id="def-hero-title-1"
-      >
-        <Image
-          src="/logo/atomix-logo-big-white.svg"
-          alt="Atomix Logo"
-          width={200}
-          height={60}
-          className="w-[150px] md:w-[200px] h-auto"
-          id="def-hero-logo"
-          style={{ visibility: "hidden" }}
-          priority
-        />
-        <div id="def-hero-split-text" style={{ visibility: "hidden" }}>
-          <SplitText
-            ref={title1SplitRef}
-            startPaused
-            text="Platform-as-a-Service [[accent:Automating Lending End-to-End]]"
-            accentColor="#5BC7E4"
-          />
-        </div>
-        <div id="def-hero-load-btn" style={{ visibility: "hidden" }}>
-          <DefButton size="large" onClick={openBookDemoModal}>
-            Contact Us
-          </DefButton>
-        </div>
-      </div>
-
-      {/* IMAGES - page load animation */}
-      <div
-        className="absolute top-[70%] left-1/2 w-[65%]"
-        id="def-hero-images"
-        style={{ visibility: "hidden" }}
-      >
-        <div className="relative w-full" id="def-hero-image-desktop">
-          <Image
-            src="/dashboard/hero-desktop-img.svg"
-            alt="Atomix desktop dashboard preview"
-            width={1200}
-            height={800}
-            className="w-full select-none object-contain pl-[12%]"
-            priority
-          />
-        </div>
-
-        <div id="def-hero-image-mobile">
-          <Image
-            src="/dashboard/hero-mobile-img.svg"
-            alt="Atomix mobile form preview"
-            width={300}
-            height={600}
-            className="absolute left-0 bottom-6 w-[22%] select-none object-contain"
-            priority
-          />
-        </div>
-      </div>
-
-      {/* SECOND TITLE BACKGROUND - scroll-driven animation */}
-      <div
-        className="absolute top-0 left-0 w-full h-full min-w-full min-h-full overflow-hidden pointer-events-none"
-        id="def-hero-title-2-bg"
-      >
+        {/* FIRST TITLE - page load animation */}
         <div
-          id="def-hero-title-2-bg-shader"
-          className="absolute inset-0 pointer-events-none"
+          className="text-white px-6 flex flex-col gap-y-8 justify-center items-center text-center absolute left-1/2 -translate-x-1/2 top-[10%] max-w-[600px] w-full"
+          id="def-hero-title-1"
         >
-          <InkSpill
-            ref={inkSpillRef}
-            color="#EBEFF2"
-            speed={0.9}
-            scale={1.8}
-            edgeSoftness={0.22}
-          />
-          <div
-            id="def-hero-title-2-bg-aurora"
-            className="absolute inset-0 pointer-events-none mix-blend-multiply"
+          <Image
+            src="/logo/atomix-logo-big-white.svg"
+            alt="Atomix Logo"
+            width={200}
+            height={60}
+            className="w-[150px] md:w-[200px] h-auto"
+            id="def-hero-logo"
             style={{ visibility: "hidden" }}
-          >
-            <SoftAurora
-              speed={1.3}
-              scale={1.2}
-              brightness={0.65}
-              color1="#effaffff"
-              color2="#d7f6faff"
-              noiseFrequency={1}
-              noiseAmplitude={3.5}
-              bandHeight={0.4}
-              bandSpread={1}
-              octaveDecay={0.12}
-              layerOffset={0.5}
-              colorSpeed={1}
-              enableMouseInteraction={false}
-              mouseInfluence={0.2}
+            priority
+          />
+          <div id="def-hero-split-text" style={{ visibility: "hidden" }}>
+            <SplitText
+              ref={title1SplitRef}
+              startPaused
+              text="Platform-as-a-Service [[accent:Automating Lending End-to-End]]"
+              accentColor="#5BC7E4"
+            />
+          </div>
+          <div id="def-hero-load-btn" style={{ visibility: "hidden" }}>
+            <DefButton size="large" onClick={openBookDemoModal}>
+              Contact Us
+            </DefButton>
+          </div>
+        </div>
+
+        {/* IMAGES - page load animation */}
+        <div
+          className="absolute top-[70%] left-1/2 w-[65%]"
+          id="def-hero-images"
+          style={{ visibility: "hidden" }}
+        >
+          <div className="relative w-full" id="def-hero-image-desktop">
+            <Image
+              src="/dashboard/hero-desktop-img.svg"
+              alt="Atomix desktop dashboard preview"
+              width={1200}
+              height={800}
+              className="w-full select-none object-contain pl-[12%]"
+              priority
+            />
+          </div>
+
+          <div id="def-hero-image-mobile">
+            <Image
+              src="/dashboard/hero-mobile-img.svg"
+              alt="Atomix mobile form preview"
+              width={300}
+              height={600}
+              className="absolute left-0 bottom-6 w-[22%] select-none object-contain"
+              priority
             />
           </div>
         </div>
-      </div>
 
-      {/* SECOND TITLE CONTENT - scroll-driven animation */}
-      <div
-        className="text-[#011F27] flex flex-col justify-center items-start text-left absolute top-0 left-0 w-full h-full min-w-full min-h-full p-8 md:py-12 md:px-24"
-        id="def-hero-title-2"
-        style={{ visibility: "hidden" }}
-      >
+        {/* SECOND TITLE BACKGROUND - scroll-driven animation */}
         <div
-          id="def-hero-about-sections"
-          className="w-full h-full"
+          className="absolute top-0 left-0 w-full h-full min-w-full min-h-full overflow-hidden pointer-events-none"
+          id="def-hero-title-2-bg"
+        >
+          <div
+            id="def-hero-title-2-bg-shader"
+            className="absolute inset-0 pointer-events-none"
+          >
+            <InkSpill
+              ref={inkSpillRef}
+              color="#EBEFF2"
+              speed={0.9}
+              scale={1.8}
+              edgeSoftness={0.22}
+            />
+            <div
+              id="def-hero-title-2-bg-aurora"
+              className="absolute inset-0 pointer-events-none mix-blend-multiply"
+              style={{ visibility: "hidden" }}
+            >
+              <SoftAurora
+                speed={1.3}
+                scale={1.2}
+                brightness={0.65}
+                color1="#effaffff"
+                color2="#d7f6faff"
+                noiseFrequency={1}
+                noiseAmplitude={3.5}
+                bandHeight={0.4}
+                bandSpread={1}
+                octaveDecay={0.12}
+                layerOffset={0.5}
+                colorSpeed={1}
+                enableMouseInteraction={false}
+                mouseInfluence={0.2}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* SECOND TITLE CONTENT - scroll-driven animation */}
+        <div
+          className="text-[#011F27] flex flex-col justify-center items-start text-left absolute top-0 left-0 w-full h-full min-w-full min-h-full p-8 md:py-12 md:px-24"
+          id="def-hero-title-2"
           style={{ visibility: "hidden" }}
         >
-          <div className="flex flex-col  justify-center h-full max-w-[1900px] mx-auto">
-            {/* Top heading row */}
-            <DefHeading
-              theme="dark"
-              badgeText=""
-              title="About Atomix"
-              description="Property lending is overdue for a rebuild. Atomix is the rebuild."
-              showBadge={false}
-              className="mx-0 mb-20 max-w-[1800px]"
-              align="left"
-            />
+          <div
+            id="def-hero-about-sections"
+            className="w-full h-full"
+            style={{ visibility: "hidden" }}
+          >
+            <div className="flex flex-col  justify-center h-full max-w-[1900px] mx-auto">
+              {/* Top heading row */}
+              <DefHeading
+                theme="dark"
+                badgeText=""
+                title="About Atomix"
+                description="Property lending is overdue for a rebuild. Atomix is the rebuild."
+                showBadge={false}
+                className="mx-0 mb-20 max-w-[1800px]"
+                align="left"
+              />
 
-            {/* Bottom two-column row */}
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-36 items-center">
-              {/* Left side - Section navigation */}
-              <div className="lg:col-span-2 flex flex-col justify-center">
-                <div className="space-y-1">
+              {/* Bottom two-column row */}
+              <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-36 items-center">
+                {/* Left side - Section navigation */}
+                <div className="lg:col-span-2 flex flex-col justify-center">
+                  <div className="space-y-1">
+                    {aboutAtomixSections.map((section, index) => (
+                      <AboutSectionNavItem
+                        key={section.id}
+                        section={section}
+                        isActive={activeSection === index}
+                        onClick={() => handleAboutSectionClick(index)}
+                        itemRef={(el) => {
+                          aboutNavRefs.current[index] = el;
+                        }}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Right side - Image cards */}
+                <div className="lg:col-span-3 relative h-[340px] md:h-[460px]">
                   {aboutAtomixSections.map((section, index) => (
-                    <AboutSectionNavItem
+                    <AboutSectionCard
                       key={section.id}
-                      section={section}
-                      isActive={activeSection === index}
-                      onClick={() => handleAboutSectionClick(index)}
-                      itemRef={(el) => {
-                        aboutNavRefs.current[index] = el;
+                      cardRef={(el) => {
+                        aboutCardRefs.current[index] = el;
                       }}
+                      title={section.title}
+                      description={section.description}
+                      image={section.image}
+                      isActive={activeSection === index}
+                      index={index}
                     />
                   ))}
                 </div>
               </div>
-
-              {/* Right side - Image cards */}
-              <div className="lg:col-span-3 relative h-[340px] md:h-[460px]">
-                {aboutAtomixSections.map((section, index) => (
-                  <AboutSectionCard
-                    key={section.id}
-                    cardRef={(el) => {
-                      aboutCardRefs.current[index] = el;
-                    }}
-                    title={section.title}
-                    description={section.description}
-                    image={section.image}
-                    isActive={activeSection === index}
-                    index={index}
-                  />
-                ))}
-              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
     </div>
   );
 }
