@@ -846,9 +846,11 @@ export default function MainCurrentStatusLight() {
         </div>
 
         <div data-cs-buttons className="w-full flex gap-x-4 justify-center">
-          <DefButton>Learn more</DefButton>
+          <DefButton href="/about-us">Learn more</DefButton>
 
-          <DefButton variant="outline">Watch Videos</DefButton>
+          <DefButton variant="outline" href="/resources">
+            Watch Videos
+          </DefButton>
         </div>
       </div>
     </div>

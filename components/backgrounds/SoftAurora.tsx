@@ -215,9 +215,17 @@ export default function SoftAurora({
       targetMouse = [0.5, 0.5];
     }
 
-    const resizeObserver = new ResizeObserver(() => {
+    const syncCanvasSize = () => {
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+      if (width <= 0 || height <= 0) return;
+
       renderer.dpr = window.devicePixelRatio || 1;
-      renderer.setSize(container.offsetWidth, container.offsetHeight);
+      renderer.setSize(width, height);
+      gl.canvas.style.display = "block";
+      gl.canvas.style.width = "100%";
+      gl.canvas.style.height = "100%";
+
       if (program) {
         program.uniforms.uResolution.value = [
           gl.canvas.width,
@@ -225,6 +233,10 @@ export default function SoftAurora({
           gl.canvas.width / gl.canvas.height,
         ];
       }
+    };
+
+    const resizeObserver = new ResizeObserver(() => {
+      syncCanvasSize();
     });
     resizeObserver.observe(container);
 
@@ -261,6 +273,7 @@ export default function SoftAurora({
 
     const mesh = new Mesh(gl, { geometry, program });
     container.appendChild(gl.canvas);
+    syncCanvasSize();
 
     if (enableMouseInteraction) {
       gl.canvas.addEventListener("mousemove", handleMouseMove);
@@ -314,5 +327,10 @@ export default function SoftAurora({
     mouseInfluence,
   ]);
 
-  return <div ref={containerRef} className="w-full h-full" />;
+  return (
+    <div
+      ref={containerRef}
+      className="absolute inset-0 h-full w-full min-h-full min-w-full"
+    />
+  );
 }

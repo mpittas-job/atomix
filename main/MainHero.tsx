@@ -15,6 +15,7 @@ import type { InkSpillHandle } from "@/components/backgrounds/InkSpill";
 import { FaArrowRight } from "react-icons/fa";
 import { useCallback, useState } from "react";
 import DefHeading from "@/components/typo/DefHeading";
+import { useBookDemoModal } from "@/components/BookDemoModalProvider";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -142,6 +143,7 @@ function AboutSectionNavItem({
 }
 
 export default function MainHero() {
+  const { openBookDemoModal } = useBookDemoModal();
   const title1SplitRef = useRef<SplitTextHandle>(null);
   const inkSpillRef = useRef<InkSpillHandle>(null);
   const aboutCardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -275,26 +277,29 @@ export default function MainHero() {
   }, []);
 
   return (
-    <section
-      className="mx-auto flex w-full max-w-[1920px] flex-col h-[calc(100vh-var(--header-height,5.5rem)-(var(--hero-y-gap,1rem)*2))] bg-gradient-to-b from-[#014355] to-[#247691] rounded-3xl overflow-hidden relative px-12"
-      id="atomix-playground-v1"
-    >
-      <SoftAurora
-        speed={1.3}
-        scale={1.2}
-        brightness={0.65}
-        color1="#78cfe3"
-        color2="#87b9d4"
-        noiseFrequency={1}
-        noiseAmplitude={3.5}
-        bandHeight={0.85}
-        bandSpread={1}
-        octaveDecay={0.12}
-        layerOffset={0.5}
-        colorSpeed={1}
-        enableMouseInteraction={false}
-        mouseInfluence={0.2}
-      />
+    <div className="mx-auto w-full max-w-[1920px] px-12">
+      <section
+        className="flex flex-col h-[calc(100vh-var(--header-height,5.5rem)-(var(--hero-y-gap,1rem)*2))] bg-gradient-to-b from-[#014355] to-[#247691] rounded-3xl overflow-hidden relative"
+        id="atomix-playground-v1"
+      >
+        <div className="pointer-events-none absolute inset-0 z-0 min-h-full min-w-full">
+          <SoftAurora
+            speed={1.3}
+            scale={1.2}
+            brightness={0.65}
+            color1="#78cfe3"
+            color2="#87b9d4"
+            noiseFrequency={1}
+            noiseAmplitude={3.5}
+            bandHeight={0.85}
+            bandSpread={1}
+            octaveDecay={0.12}
+            layerOffset={0.5}
+            colorSpeed={1}
+            enableMouseInteraction={false}
+            mouseInfluence={0.2}
+          />
+        </div>
 
       {/* FIRST TITLE - page load animation */}
       <div
@@ -320,7 +325,9 @@ export default function MainHero() {
           />
         </div>
         <div id="def-hero-load-btn" style={{ visibility: "hidden" }}>
-          <DefButton size="large">Contact Us</DefButton>
+          <DefButton size="large" onClick={openBookDemoModal}>
+            Contact Us
+          </DefButton>
         </div>
       </div>
 
@@ -457,5 +464,6 @@ export default function MainHero() {
         </div>
       </div>
     </section>
+    </div>
   );
 }

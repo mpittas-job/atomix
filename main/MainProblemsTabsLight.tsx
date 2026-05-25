@@ -468,7 +468,7 @@ export default function MainProblemsTabsLight() {
         </div>
 
         <div ref={learnMoreRef} className="w-full flex justify-center">
-          <DefButton href="/landing-platform-benefits">Learn more</DefButton>
+          <DefButton href="/about-us">Learn more</DefButton>
         </div>
       </div>
     </div>
