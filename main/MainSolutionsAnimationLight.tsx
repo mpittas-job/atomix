@@ -1017,7 +1017,7 @@ export default function MainSolutionsAnimationLight() {
         </div>
 
         <div className="w-full flex justify-center">
-          <DefButton href="/about-us">Learn more</DefButton>
+          <DefButton href="/platform">Learn more</DefButton>
         </div>
       </div>
     </div>
