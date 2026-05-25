@@ -73,53 +73,22 @@ const FACE_SLOT_VISIBILITY = [
   "",
 ] as const;
 
-const FACE_ASSETS = [
-  {
-    src: "/people-faces/face-1.png",
-    alt: "Team member portrait",
-  },
-  {
-    src: "/people-faces/face-2.png",
-    alt: "Team member portrait",
-  },
-  {
-    src: "/people-faces/face-3.png",
-    alt: "Team member portrait",
-  },
-  {
-    src: "/people-faces/face-4.png",
-    alt: "Team member portrait",
-  },
-  {
-    src: "/people-faces/face-5.png",
-    alt: "Team member portrait",
-  },
-  {
-    src: "/people-faces/face-6.png",
-    alt: "Team member portrait",
-  },
-  {
-    src: "/people-faces/face-7.png",
-    alt: "Team member portrait",
-  },
-  {
-    src: "/people-faces/face-8.png",
-    alt: "Team member portrait",
-  },
-  {
-    src: "/people-faces/face-9.png",
-    alt: "Team member portrait",
-  },
-  {
-    src: "/people-faces/face-10.png",
-    alt: "Team member portrait",
-  },
+const FACE_IMAGE_IDS = [
+  1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+  23, 24, 25, 26, 27,
 ] as const;
 
+const FACE_ASSET_COUNT = FACE_IMAGE_IDS.length;
+const FACE_COOLDOWN_MS = 10_000;
+
+const FACE_ASSETS = FACE_IMAGE_IDS.map((id) => ({
+  src: `/people-faces/face-${id}.png`,
+  alt: "Team member portrait",
+}));
+
 const FACE_COUNT = INITIAL_FACE_PLACEMENTS.length;
-const FACE_ASSET_COUNT = FACE_ASSETS.length;
 /** Spread initial avatars across the full face pool (hydration-safe). */
-const INITIAL_SLOT_FACES = [0, 2, 4, 6, 8] as const;
+const INITIAL_SLOT_FACES = [0, 5, 10, 15, 20] as const;
 
 function getFacePosition(placement: FacePlacement) {
   const positions =
@@ -167,11 +136,82 @@ function pickNextPlacement(
   return current;
 }
 
-function pickOtherFaceIndex(current: number): number {
-  const choices = Array.from({ length: FACE_ASSET_COUNT }, (_, i) => i).filter(
-    (i) => i !== current,
+type FaceUsageTracker = {
+  lastShownAt: Record<number, number>;
+  rotationCursor: number;
+};
+
+function createFaceUsageTracker(
+  initialVisible: readonly number[],
+): FaceUsageTracker {
+  const now = Date.now();
+  const lastShownAt: Record<number, number> = {};
+
+  initialVisible.forEach((index) => {
+    lastShownAt[index] = now;
+  });
+
+  return { lastShownAt, rotationCursor: -1 };
+}
+
+function markFaceShown(
+  tracker: FaceUsageTracker,
+  faceIndex: number,
+  at = Date.now(),
+) {
+  tracker.lastShownAt[faceIndex] = at;
+}
+
+function isFaceOnCooldown(
+  tracker: FaceUsageTracker,
+  faceIndex: number,
+  at = Date.now(),
+) {
+  const lastShown = tracker.lastShownAt[faceIndex];
+  if (lastShown === undefined) return false;
+  return at - lastShown < FACE_COOLDOWN_MS;
+}
+
+function pickNextFaceWithCooldown(
+  current: number,
+  currentlyVisible: number[],
+  tracker: FaceUsageTracker,
+): number {
+  const visible = new Set(currentlyVisible);
+  const now = Date.now();
+  const allFaces = Array.from({ length: FACE_ASSET_COUNT }, (_, index) => index);
+
+  const cooledCandidates = allFaces.filter(
+    (index) =>
+      index !== current &&
+      !visible.has(index) &&
+      !isFaceOnCooldown(tracker, index, now),
   );
-  return choices[Math.floor(Math.random() * choices.length)]!;
+
+  if (cooledCandidates.length > 0) {
+    for (let step = 0; step < FACE_ASSET_COUNT; step++) {
+      tracker.rotationCursor =
+        (tracker.rotationCursor + 1) % FACE_ASSET_COUNT;
+      if (cooledCandidates.includes(tracker.rotationCursor)) {
+        return tracker.rotationCursor;
+      }
+    }
+
+    return cooledCandidates[0]!;
+  }
+
+  const relaxedCandidates = allFaces
+    .filter((index) => index !== current && !visible.has(index))
+    .sort(
+      (a, b) =>
+        (tracker.lastShownAt[a] ?? 0) - (tracker.lastShownAt[b] ?? 0),
+    );
+
+  if (relaxedCandidates.length > 0) {
+    return relaxedCandidates[0]!;
+  }
+
+  return (current + 1) % FACE_ASSET_COUNT;
 }
 
 /** Random px drift — keep smaller so swaps don’t pull avatars into the headline */
@@ -242,6 +282,9 @@ export default function HeroCareers() {
   const auxTimersRef = useRef<gsap.core.Tween[]>([]);
   const slotBusyRef = useRef<boolean[]>(
     Array.from({ length: FACE_COUNT }, () => false),
+  );
+  const faceUsageRef = useRef<FaceUsageTracker>(
+    createFaceUsageTracker(INITIAL_SLOT_FACES),
   );
 
   const [slotFaces, setSlotFaces] = useState<number[]>(() => [
@@ -350,7 +393,13 @@ export default function HeroCareers() {
             setSlotFaces((prev) => {
               const next = [...prev];
               const cur = next[slot]!;
-              next[slot] = pickOtherFaceIndex(cur);
+              const faceIdx = pickNextFaceWithCooldown(
+                cur,
+                prev,
+                faceUsageRef.current,
+              );
+              markFaceShown(faceUsageRef.current, faceIdx);
+              next[slot] = faceIdx;
               return next;
             });
 
@@ -420,6 +469,7 @@ export default function HeroCareers() {
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         clearAllTimers();
         slotBusyRef.current = Array.from({ length: FACE_COUNT }, () => false);
+        faceUsageRef.current = createFaceUsageTracker(INITIAL_SLOT_FACES);
         gsap.killTweensOf(faceElements);
 
         faceElements.forEach((el) => {
