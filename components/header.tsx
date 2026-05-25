@@ -107,12 +107,12 @@ export default function Header() {
                   </a>
                 ))}
               </div>
-              <DefButton onClick={openBookDemoModal}>Book a demo</DefButton>
+              <DefButton onClick={openBookDemoModal}>Register Interest</DefButton>
             </div>
 
             {/* Mobile Menu Button + CTA */}
             <div className="flex md:hidden items-center gap-3">
-              <DefButton onClick={openBookDemoModal}>Book a demo</DefButton>
+              <DefButton onClick={openBookDemoModal}>Register Interest</DefButton>
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

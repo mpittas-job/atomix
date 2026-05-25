@@ -108,14 +108,14 @@ export default function HeaderRounded() {
                 ))}
               </div>
               <DefButton onClick={openBookDemoModal}>
-                Book a demo
+                Register Interest
               </DefButton>
             </div>
 
             {/* Mobile Menu Button + CTA */}
             <div className="flex md:hidden items-center gap-3">
               <DefButton onClick={openBookDemoModal}>
-                Book a demo
+                Register Interest
               </DefButton>
 
               <button

@@ -188,7 +188,7 @@ export default function BookDemoModal({ isOpen, onClose }: BookDemoModalProps) {
               id="book-demo-title"
               className="text-3xl font-semibold tracking-tight text-gray-900 sm:text-[2rem]"
             >
-              Book a demo
+              Register Interest
             </h2>
             <p className="mt-3 max-w-xl text-sm leading-6 text-gray-600 sm:text-[15px]">
               See how Atomix enables faster, more efficient lending through
@@ -341,7 +341,7 @@ export default function BookDemoModal({ isOpen, onClose }: BookDemoModalProps) {
             type="submit"
             className="w-full rounded-full bg-[#24A9C8] py-4 text-base font-semibold text-white transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#24A9C8] focus:ring-offset-2"
           >
-            Book a demo
+            Register Interest
           </button>
         </form>
       </div>
