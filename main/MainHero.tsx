@@ -9,8 +9,8 @@ import type { SplitTextHandle } from "@/components/typo/SplitText";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import SoftAurora from "@/components/backgrounds/SoftAurora";
-import type { SoftAuroraHandle } from "@/components/backgrounds/SoftAurora";
+import LazySoftAurora from "@/components/backgrounds/LazySoftAurora";
+import type { SoftAuroraHandle } from "@/components/backgrounds/LazySoftAurora";
 import InkSpill from "@/components/backgrounds/InkSpill";
 import type { InkSpillHandle } from "@/components/backgrounds/InkSpill";
 import { FaArrowRight } from "react-icons/fa";
@@ -77,7 +77,14 @@ function AboutSectionCard({
       data-section-index={index}
       className={`absolute inset-0 rounded-2xl overflow-hidden transition-opacity duration-300 ${isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"}`}
     >
-      <Image src={image} alt="" fill className="object-cover" priority={index === 0} sizes="(min-width: 1024px) 50vw, 100vw" />
+      <Image
+        src={image}
+        alt=""
+        fill
+        className="object-cover"
+        priority={index === 0}
+        sizes="(min-width: 1024px) 50vw, 100vw"
+      />
       <div className="absolute inset-0 flex items-center p-8 md:p-12">
         <p
           className="text-white text-xl md:text-2xl lg:text-2xl leading-relaxed max-w-lg"
@@ -304,8 +311,9 @@ export default function MainHero() {
         id="atomix-playground-v1"
       >
         <div className="pointer-events-none absolute inset-0 z-0 min-h-full min-w-full">
-          <SoftAurora
+          <LazySoftAurora
             ref={bgAuroraRef}
+            loadStrategy="immediate"
             speed={1.3}
             scale={1.2}
             brightness={0.65}
@@ -404,8 +412,10 @@ export default function MainHero() {
               className="absolute inset-0 pointer-events-none mix-blend-multiply"
               style={{ visibility: "hidden" }}
             >
-              <SoftAurora
+              <LazySoftAurora
                 ref={fgAuroraRef}
+                loadStrategy="deferred"
+                className="absolute inset-0 h-full w-full min-h-full min-w-full"
                 speed={1.3}
                 scale={1.2}
                 brightness={0.65}

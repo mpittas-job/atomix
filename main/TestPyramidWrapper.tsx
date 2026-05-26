@@ -13,8 +13,8 @@ import { ScrollToPlugin } from "gsap/ScrollToPlugin";
 import { useGSAP } from "@gsap/react";
 import TestPyramidNewDesign from "@/animations/TestPyramidNewDesign";
 import { FiCheck, FiChevronLeft, FiChevronRight, FiX } from "react-icons/fi";
-import SoftAurora from "@/components/backgrounds/SoftAurora";
-import type { SoftAuroraHandle } from "@/components/backgrounds/SoftAurora";
+import LazySoftAurora from "@/components/backgrounds/LazySoftAurora";
+import type { SoftAuroraHandle } from "@/components/backgrounds/LazySoftAurora";
 import DefHeading from "@/components/typo/DefHeading";
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
@@ -55,8 +55,7 @@ const iconBoxesData: IconBoxData[] = [
   {
     icon: "/icons/gradient/target-blue-gradient.png",
     title: "Ut labore",
-    description:
-      "ut labore et dolore magna aliqua ut enim ad minim",
+    description: "ut labore et dolore magna aliqua ut enim ad minim",
     items: [
       {
         icon: <FiCheck className="text-white/70 w-5 h-5 shrink-0" />,
@@ -641,8 +640,11 @@ export default function TestPyramidWrapper() {
       className="h-[calc(100vh-130px)] rounded-3xl bg-gradient-to-b from-[#014355] to-[#247691] relative overflow-hidden flex flex-col justify-center items-center"
     >
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-        <SoftAurora
+        <LazySoftAurora
           ref={auroraRef}
+          loadStrategy="viewport"
+          rootMargin="320px 0px"
+          className="absolute inset-0 h-full w-full min-h-full min-w-full"
           speed={1.3}
           scale={1.2}
           brightness={0.65}

@@ -6,7 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import { Button as DefButton } from "@/components/ui";
-import SoftAurora from "@/components/backgrounds/SoftAurora";
+import LazySoftAurora from "@/components/backgrounds/LazySoftAurora";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -219,24 +219,23 @@ export default function MainMissionVisionCards() {
       className="h-[calc(100vh-110px)] min-h-[calc(100vh-110px)] bg-white flex flex-col justify-center py-14 px-12"
     >
       <div className="relative mx-auto flex w-full min-h-0 flex-1 flex-col justify-center overflow-hidden rounded-3xl bg-linear-to-b from-[#004152] via-[#01485C] to-[#004152] text-white shadow-[0_24px_80px_-12px_rgba(0,30,40,0.35)]">
-        <div className="absolute top-0 left-0 h-[500px] w-full">
-          <SoftAurora
-            speed={1.3}
-            scale={1.2}
-            brightness={0.65}
-            color1="#78cfe3"
-            color2="#87b9d4"
-            noiseFrequency={1}
-            noiseAmplitude={3.5}
-            bandHeight={0.85}
-            bandSpread={1}
-            octaveDecay={0.12}
-            layerOffset={0.5}
-            colorSpeed={1}
-            enableMouseInteraction={false}
-            mouseInfluence={0.2}
-          />
-        </div>
+        <LazySoftAurora
+          className="absolute top-0 left-0 h-[500px] w-full"
+          speed={1.3}
+          scale={1.2}
+          brightness={0.65}
+          color1="#78cfe3"
+          color2="#87b9d4"
+          noiseFrequency={1}
+          noiseAmplitude={3.5}
+          bandHeight={0.85}
+          bandSpread={1}
+          octaveDecay={0.12}
+          layerOffset={0.5}
+          colorSpeed={1}
+          enableMouseInteraction={false}
+          mouseInfluence={0.2}
+        />
 
         <div className="relative min-h-[520px] w-full md:min-h-[420px]">
           <MissionVisionCard

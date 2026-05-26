@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import DefHeading from "@/components/typo/DefHeading";
-import SoftAurora from "@/components/backgrounds/SoftAurora";
+import LazySoftAurora from "@/components/backgrounds/LazySoftAurora";
 import { BadgeHeadingPill } from "@/components/ui/BadgeHeadingPill";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -359,24 +359,23 @@ export default function MainTheMarket() {
 
   return (
     <div className="min-h-[calc(100vh-126px)] rounded-3xl bg-linear-to-b from-[#004152] via-[#01485C] to-[#004152] relative overflow-hidden flex flex-col justify-center items-center">
-      <div className="absolute top-0 left-0 w-full h-[500px]">
-        <SoftAurora
-          speed={1.3}
-          scale={1.2}
-          brightness={0.65}
-          color1="#78cfe3"
-          color2="#87b9d4"
-          noiseFrequency={1}
-          noiseAmplitude={3.5}
-          bandHeight={0.85}
-          bandSpread={1}
-          octaveDecay={0.12}
-          layerOffset={0.5}
-          colorSpeed={1}
-          enableMouseInteraction={false}
-          mouseInfluence={0.2}
-        />
-      </div>
+      <LazySoftAurora
+        className="absolute top-0 left-0 w-full h-[500px]"
+        speed={1.3}
+        scale={1.2}
+        brightness={0.65}
+        color1="#78cfe3"
+        color2="#87b9d4"
+        noiseFrequency={1}
+        noiseAmplitude={3.5}
+        bandHeight={0.85}
+        bandSpread={1}
+        octaveDecay={0.12}
+        layerOffset={0.5}
+        colorSpeed={1}
+        enableMouseInteraction={false}
+        mouseInfluence={0.2}
+      />
 
       <div className="relative z-10 flex flex-col gap-y-12 w-full max-w-[1900px] px-32 py-32">
         <DefHeading
