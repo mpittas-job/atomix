@@ -298,9 +298,13 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
       canvas,
       antialias: true,
       alpha: true,
+      depth: true,
+      stencil: false,
+      powerPreference: "high-performance",
     });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(cfg.colors.background, 0);
+    renderer.sortObjects = false;
     const camera = new THREE.PerspectiveCamera(cfg.camera.fov, 1, 0.1, 100);
     camera.position.set(0, 0, cfg.camera.distance);
     camera.lookAt(0, 0, 0);
@@ -426,9 +430,7 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
 
     const TC = new THREE.Color(cfg.colors.apexEdge),
       PC = new THREE.Color(cfg.colors.baseEdge);
-    const apexLeftEdgeMat = new THREE.LineBasicMaterial({ color: TC });
-    const apexRightEdgeMat = new THREE.LineBasicMaterial({ color: TC });
-    const apexRearEdgeMat = new THREE.LineBasicMaterial({ color: TC });
+    const apexEdgeMat = new THREE.LineBasicMaterial({ color: TC });
     const bottomEdgeMat = new LineMaterial({
       color: PC,
       transparent: true,
@@ -452,9 +454,9 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
     });
 
     grp.add(
-      mkEdge(apex, b1, apexLeftEdgeMat),
-      mkEdge(apex, b2, apexRightEdgeMat),
-      mkEdge(apex, b3, apexRearEdgeMat),
+      mkEdge(apex, b1, apexEdgeMat),
+      mkEdge(apex, b2, apexEdgeMat),
+      mkEdge(apex, b3, apexEdgeMat),
       mkThickEdge(b1, b2, bottomEdgeMat),
       mkThickEdge(b2, b3, rightEdgeMat),
       mkThickEdge(b3, b1, leftEdgeMat),
@@ -464,11 +466,14 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
       color: cfg.colors.dotColor,
     });
     const dotGeom = new THREE.SphereGeometry(0.12, 16, 16);
-    [apex, b1, b2, b3].forEach((v) => {
-      const dot = new THREE.Mesh(dotGeom, dotMat);
-      dot.position.copy(v);
-      grp.add(dot);
+    const dotMesh = new THREE.InstancedMesh(dotGeom, dotMat, 4);
+    const dotMatrix = new THREE.Matrix4();
+    [apex, b1, b2, b3].forEach((v, i) => {
+      dotMatrix.makeTranslation(v.x, v.y, v.z);
+      dotMesh.setMatrixAt(i, dotMatrix);
     });
+    dotMesh.instanceMatrix.needsUpdate = true;
+    grp.add(dotMesh);
 
     const el = cfg.edgeLabels;
     const mkText = (text: string) => {
@@ -577,19 +582,31 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
     grp.add(spr);
 
     let forceRender = true;
+    let resizeTimer = 0;
+    let cachedApexW = 0;
+    let cachedApexH = 0;
     const resize = () => {
       const w = wrapper.clientWidth,
         h = wrapper.clientHeight;
-      renderer.setSize(w, h);
+      if (w <= 0 || h <= 0) return;
+      renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       bottomEdgeMat.resolution.set(w, h);
       rightEdgeMat.resolution.set(w, h);
       leftEdgeMat.resolution.set(w, h);
+      cachedApexW = 0;
+      cachedApexH = 0;
       forceRender = true;
     };
     resize();
-    window.addEventListener("resize", resize);
+    const resizeObserver = new ResizeObserver(() => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(resize, 120);
+    });
+    resizeObserver.observe(wrapper);
+
+    renderer.compile(scene, camera);
 
     const rot = cfg.rotation;
     const aOff = { ...cfg.apexCallout.offset };
@@ -603,20 +620,38 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
     const tempProjV = new THREE.Vector3();
 
     let isIntersecting = true;
+    let isPageVisible = !document.hidden;
+    let lastUpdatedT = -1;
+    let lastLeftWeight = -1;
+    let lastRightWeight = -1;
+    let lastBottomWeight = -1;
+    let lastFinalHighlightOnly = false;
+    let lastLabelOpacities = [-1, -1, -1];
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           isIntersecting = entry.isIntersecting;
         });
       },
-      { threshold: 0.01 }
+      { threshold: 0.01 },
     );
     observer.observe(wrapper);
+
+    const handleVisibilityChange = () => {
+      isPageVisible = !document.hidden;
+      if (isPageVisible) forceRender = true;
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    const requestRender = () => {
+      forceRender = true;
+    };
 
     const animate = (now: number) => {
       afId = requestAnimationFrame(animate);
 
-      if (!isIntersecting) {
+      if (!isIntersecting || !isPageVisible) {
         last = now;
         return;
       }
@@ -626,7 +661,6 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
 
       const tgt = scrollProgressRef.current;
       const rawT = curTRef.current;
-      const introT = Math.min(1, rawT / HIGHLIGHT_SEQUENCE_END);
       const t =
         rawT <= HIGHLIGHT_SEQUENCE_END
           ? 0
@@ -635,8 +669,10 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
       const diff = Math.abs(tgt - rawT);
       const isSpinning = t > rot.spinThreshold;
       const isSettling = diff > 0.0001 || Math.abs(spinRef.current) > 0.001;
+      const highlightModeChanged =
+        finalHighlightOnlyRef.current !== lastFinalHighlightOnly;
 
-      if (!forceRender && !isSettling && !isSpinning) {
+      if (!forceRender && !isSettling && !isSpinning && !highlightModeChanged) {
         return;
       }
       forceRender = false;
@@ -647,9 +683,9 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
       const updatedT =
         updatedRawT <= HIGHLIGHT_SEQUENCE_END
           ? 0
-          : (updatedRawT - HIGHLIGHT_SEQUENCE_END) / (1 - HIGHLIGHT_SEQUENCE_END);
+          : (updatedRawT - HIGHLIGHT_SEQUENCE_END) /
+            (1 - HIGHLIGHT_SEQUENCE_END);
 
-      // Snap to exact target if extremely close to prevent micro-render overhead
       if (diff <= 0.0001 && Math.abs(spinRef.current) <= 0.001 && !isSpinning) {
         curTRef.current = tgt;
         spinRef.current = 0;
@@ -671,7 +707,8 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
         bottomWeight = blend;
       } else {
         const blend =
-          (updatedIntroT - HIGHLIGHT_PHASE_2_END) / (1 - HIGHLIGHT_PHASE_2_END);
+          (updatedIntroT - HIGHLIGHT_PHASE_2_END) /
+          (1 - HIGHLIGHT_PHASE_2_END);
         leftWeight = blend;
         rightWeight = 1 - blend;
         bottomWeight = 1;
@@ -688,32 +725,54 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
         bottomWeight = 1;
       }
 
-      applyFaceHighlight(leftFaceMat, leftWeight);
-      applyFaceHighlight(rightFaceMat, rightWeight);
-      applyFaceHighlight(bottomFaceMat, bottomWeight);
-      applyEdgeHighlight(leftEdgeMat, leftWeight);
-      applyEdgeHighlight(rightEdgeMat, rightWeight);
-      applyEdgeHighlight(bottomEdgeMat, bottomWeight);
+      const weightsChanged =
+        highlightModeChanged ||
+        Math.abs(leftWeight - lastLeftWeight) > 0.001 ||
+        Math.abs(rightWeight - lastRightWeight) > 0.001 ||
+        Math.abs(bottomWeight - lastBottomWeight) > 0.001;
 
-      const shouldForceAllEdgeLabelsVisible =
-        !finalHighlightOnlyRef.current && updatedRawT >= HIGHLIGHT_SEQUENCE_END;
-      eMeshes.forEach((mesh, index) => {
-        const material = mesh.material;
-        const weightVal = index === 0 ? bottomWeight : (index === 1 ? rightWeight : leftWeight);
-        const opacity = shouldForceAllEdgeLabelsVisible
-          ? 1
-          : EDGE_LABEL_BASE_OPACITY +
-            EDGE_LABEL_ACTIVE_BOOST * weightVal;
-        if (Array.isArray(material)) {
-          material.forEach((mat) => {
-            if (mat instanceof THREE.MeshBasicMaterial) {
-              mat.opacity = opacity;
-            }
-          });
-        } else if (material instanceof THREE.MeshBasicMaterial) {
-          material.opacity = opacity;
-        }
-      });
+      if (weightsChanged) {
+        applyFaceHighlight(leftFaceMat, leftWeight);
+        applyFaceHighlight(rightFaceMat, rightWeight);
+        applyFaceHighlight(bottomFaceMat, bottomWeight);
+        applyEdgeHighlight(leftEdgeMat, leftWeight);
+        applyEdgeHighlight(rightEdgeMat, rightWeight);
+        applyEdgeHighlight(bottomEdgeMat, bottomWeight);
+
+        const shouldForceAllEdgeLabelsVisible =
+          !finalHighlightOnlyRef.current &&
+          updatedRawT >= HIGHLIGHT_SEQUENCE_END;
+        eMeshes.forEach((mesh, index) => {
+          const material = mesh.material;
+          const weightVal =
+            index === 0
+              ? bottomWeight
+              : index === 1
+                ? rightWeight
+                : leftWeight;
+          const opacity = shouldForceAllEdgeLabelsVisible
+            ? 1
+            : EDGE_LABEL_BASE_OPACITY + EDGE_LABEL_ACTIVE_BOOST * weightVal;
+
+          if (Math.abs(opacity - lastLabelOpacities[index]) <= 0.001) return;
+          lastLabelOpacities[index] = opacity;
+
+          if (Array.isArray(material)) {
+            material.forEach((mat) => {
+              if (mat instanceof THREE.MeshBasicMaterial) {
+                mat.opacity = opacity;
+              }
+            });
+          } else if (material instanceof THREE.MeshBasicMaterial) {
+            material.opacity = opacity;
+          }
+        });
+
+        lastLeftWeight = leftWeight;
+        lastRightWeight = rightWeight;
+        lastBottomWeight = bottomWeight;
+        lastFinalHighlightOnly = finalHighlightOnlyRef.current;
+      }
 
       if (updatedT > rot.spinThreshold) {
         if (!hasTriggeredInfiniteSpinRef.current) {
@@ -733,7 +792,8 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
           Math.pow(
             0.5,
             dt /
-              (rot.decayHalfLife / Math.max(0.001, 1 - updatedT / rot.spinThreshold)),
+              (rot.decayHalfLife /
+                Math.max(0.001, 1 - updatedT / rot.spinThreshold)),
           );
         if (Math.abs(spinRef.current) < 0.001) spinRef.current = 0;
       }
@@ -742,24 +802,19 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
       grp.rotation.y =
         rot.startY + (rot.endY - rot.startY) * updatedT + spinRef.current;
 
-      eld.forEach((d) => {
-        tempYA.lerpVectors(d.ys, d.ye, updatedT).normalize();
-        tempZA.crossVectors(d.x, tempYA).normalize();
-        tempXP.crossVectors(tempYA, tempZA).normalize();
-        tempM4.makeBasis(tempXP, tempYA, tempZA);
-        d.m.quaternion.setFromRotationMatrix(tempM4);
-      });
+      if (Math.abs(updatedT - lastUpdatedT) > 0.00001 || isSpinning) {
+        eld.forEach((d) => {
+          tempYA.lerpVectors(d.ys, d.ye, updatedT).normalize();
+          tempZA.crossVectors(d.x, tempYA).normalize();
+          tempXP.crossVectors(tempYA, tempZA).normalize();
+          tempM4.makeBasis(tempXP, tempYA, tempZA);
+          d.m.quaternion.setFromRotationMatrix(tempM4);
+        });
+        lastUpdatedT = updatedT;
+      }
 
-      renderer.render(scene, camera);
       grp.updateMatrixWorld();
-      const ww = wrapper.clientWidth,
-        wh = wrapper.clientHeight;
-      const proj = (pt: V3, width: number, height: number) => {
-        tempProjV.copy(pt);
-        grp.localToWorld(tempProjV);
-        tempProjV.project(camera);
-        return { x: (tempProjV.x * 0.5 + 0.5) * width, y: (-tempProjV.y * 0.5 + 0.5) * height };
-      };
+      renderer.render(scene, camera);
 
       if (apexRef.current) {
         const ac = cfg.apexCallout;
@@ -767,19 +822,40 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
           0,
           Math.min(1, (updatedT - ac.fadeStart) / (ac.fadeEnd - ac.fadeStart)),
         );
-        const pA = proj(apex, ww, wh);
-        apexRef.current.style.opacity = String(aOp);
-        const ar = apexRef.current.getBoundingClientRect();
-        const a = clamp(
-          pA.x + aOff.dx,
-          pA.y + aOff.dy,
-          ar.width,
-          ar.height,
-          ww,
-          wh,
-          cfg.padding,
-        );
-        apexRef.current.style.transform = `translate(${a.x}px,${a.y}px)`;
+
+        if (aOp <= 0) {
+          if (apexRef.current.style.opacity !== "0") {
+            apexRef.current.style.opacity = "0";
+          }
+        } else {
+          const ww = wrapper.clientWidth;
+          const wh = wrapper.clientHeight;
+          tempProjV.copy(apex);
+          grp.localToWorld(tempProjV);
+          tempProjV.project(camera);
+          const pA = {
+            x: (tempProjV.x * 0.5 + 0.5) * ww,
+            y: (-tempProjV.y * 0.5 + 0.5) * wh,
+          };
+
+          if (cachedApexW === 0 || cachedApexH === 0) {
+            const ar = apexRef.current.getBoundingClientRect();
+            cachedApexW = ar.width;
+            cachedApexH = ar.height;
+          }
+
+          apexRef.current.style.opacity = String(aOp);
+          const a = clamp(
+            pA.x + aOff.dx,
+            pA.y + aOff.dy,
+            cachedApexW,
+            cachedApexH,
+            ww,
+            wh,
+            cfg.padding,
+          );
+          apexRef.current.style.transform = `translate(${a.x}px,${a.y}px)`;
+        }
       }
     };
 
@@ -788,24 +864,29 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
       setSlider: (v: number, instant?: boolean) => {
         const clamped = clamp01(v);
         scrollProgressRef.current = clamped;
+        requestRender();
         if (instant) {
-          // Bypass the per-frame smoothing so the visible pyramid
-          // state matches `v` immediately. Useful when callers need to
-          // hard-reset the pyramid (e.g. after a programmatic snap)
-          // and don't want curTRef to lag behind into the wrong phase.
           curTRef.current = clamped;
           spinRef.current = 0;
           hasTriggeredInfiniteSpinRef.current = false;
+          lastUpdatedT = -1;
+          lastLeftWeight = -1;
+          lastRightWeight = -1;
+          lastBottomWeight = -1;
+          lastLabelOpacities = [-1, -1, -1];
         }
       },
       setFinalHighlightOnly: (locked: boolean) => {
         finalHighlightOnlyRef.current = locked;
+        requestRender();
       },
     });
 
     return () => {
       cancelAnimationFrame(afId);
-      window.removeEventListener("resize", resize);
+      window.clearTimeout(resizeTimer);
+      resizeObserver.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       observer.disconnect();
       grp.traverse((o) => {
         const m = o as THREE.Mesh;
@@ -838,6 +919,7 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
           width: "100%",
           height: `${cfg.canvasHeight}px`,
           overflow: "visible",
+          contain: "strict",
         }}
       >
         <canvas

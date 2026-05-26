@@ -14,6 +14,7 @@ import { useGSAP } from "@gsap/react";
 import TestPyramidNewDesign from "@/animations/TestPyramidNewDesign";
 import { FiCheck, FiChevronLeft, FiChevronRight, FiX } from "react-icons/fi";
 import SoftAurora from "@/components/backgrounds/SoftAurora";
+import type { SoftAuroraHandle } from "@/components/backgrounds/SoftAurora";
 import DefHeading from "@/components/typo/DefHeading";
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
@@ -257,6 +258,7 @@ export default function TestPyramidWrapper() {
     api.setSlider(0);
   }, []);
   const pyramidApiRef = useRef<PyramidApi | null>(null);
+  const auroraRef = useRef<SoftAuroraHandle>(null);
   const highlightBoxRef = useRef<HTMLDivElement>(null);
   const highlightContentRef = useRef<HTMLDivElement>(null);
   const highlightTitleRef = useRef<HTMLHeadingElement>(null);
@@ -311,6 +313,10 @@ export default function TestPyramidWrapper() {
         pinSpacing: true,
         scrub: true,
         invalidateOnRefresh: true,
+        onEnter: () => auroraRef.current?.setActive(true),
+        onEnterBack: () => auroraRef.current?.setActive(true),
+        onLeave: () => auroraRef.current?.setActive(false),
+        onLeaveBack: () => auroraRef.current?.setActive(false),
         onUpdate: (self) => {
           // Skip our own snap tweens so onUpdate only reacts to genuine
           // user-driven scrolling.
@@ -636,6 +642,7 @@ export default function TestPyramidWrapper() {
     >
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
         <SoftAurora
+          ref={auroraRef}
           speed={1.3}
           scale={1.2}
           brightness={0.65}
@@ -742,6 +749,7 @@ export default function TestPyramidWrapper() {
             style={{
               maxWidth: `${pyramidConfig.maxWidth}px`,
               willChange: "transform",
+              contain: "layout style paint",
             }}
           >
             <TestPyramidNewDesign
