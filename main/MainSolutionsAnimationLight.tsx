@@ -15,8 +15,6 @@ const GLOW_CONFIG = {
 };
 
 const CONNECTOR_STROKE = "#7ccbe6";
-const ICON_URL = (name: string) =>
-  `https://api.iconify.design/lucide:${name}.svg?color=%23011f27`;
 
 const ICON_MASK_URL = (name: string) =>
   `https://api.iconify.design/lucide:${name}.svg`;

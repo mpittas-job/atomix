@@ -2,7 +2,6 @@ import AdvSliderMainImage from "@/components/AdvSliderMainImage";
 import AdvSliderTooltipSequence, {
   type AdvSliderTooltipSequenceStep,
 } from "@/components/AdvSliderTooltipSequence";
-import { FaUser } from "react-icons/fa6";
 import { MdEditDocument } from "react-icons/md";
 import { HiDocumentCheck } from "react-icons/hi2";
 import { PiChartLineUpBold } from "react-icons/pi";

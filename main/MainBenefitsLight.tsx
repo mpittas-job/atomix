@@ -5,9 +5,7 @@ import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Button as DefButton } from "@/components/ui";
 import DefHeading from "@/components/typo/DefHeading";
-import { FiCheck } from "react-icons/fi";
 import { IoShieldCheckmark } from "react-icons/io5";
 
 gsap.registerPlugin(ScrollTrigger);

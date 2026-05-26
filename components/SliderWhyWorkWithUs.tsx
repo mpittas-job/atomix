@@ -9,15 +9,7 @@ import {
   useMemo,
   useRef,
 } from "react";
-import {
-  FiArrowLeft,
-  FiArrowRight,
-  FiCheck,
-  FiCpu,
-  FiGlobe,
-  FiKey,
-  FiUsers,
-} from "react-icons/fi";
+import { FiCheck } from "react-icons/fi";
 import { Button as DefButton } from "@/components/ui";
 import { CgArrowsHAlt } from "react-icons/cg";
 import { FaUsers, FaMicrochip, FaKey, FaRocket, FaGlobe } from "react-icons/fa";

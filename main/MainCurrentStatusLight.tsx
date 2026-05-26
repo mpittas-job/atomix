@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef } from "react";
-import SoftAurora from "@/components/backgrounds/SoftAurora";
 import CurrentStatusConnectorsV2 from "@/main/CurrentStatusConnectorsV2";
 import DefHeading from "@/components/typo/DefHeading";
 import { FaHouse, FaGavel } from "react-icons/fa6";
@@ -291,7 +290,6 @@ export default function MainCurrentStatusLight() {
         duration: number,
         glowIndex: number,
       ) => {
-        const len = path.getTotalLength ? path.getTotalLength() : 1000;
         const pathTl = gsap.timeline();
 
         pathTl.to(path, {

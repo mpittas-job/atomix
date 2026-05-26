@@ -243,35 +243,6 @@ function nextHiddenDelay() {
   return gsap.utils.random(1.1, 2);
 }
 
-function WaveBackdrop() {
-  return (
-    <svg
-      className="pointer-events-none absolute inset-x-0 top-1/2 z-0 h-[min(55vw,420px)] -translate-y-1/2 opacity-[0.45]"
-      viewBox="0 0 1440 320"
-      preserveAspectRatio="none"
-      aria-hidden
-    >
-      <defs>
-        <linearGradient id="heroCareersWaveFade" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ffffff" stopOpacity="0" />
-          <stop offset="35%" stopColor="#ffffff" stopOpacity="0.85" />
-          <stop offset="65%" stopColor="#ffffff" stopOpacity="0.85" />
-          <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <path
-        fill="url(#heroCareersWaveFade)"
-        d="M0,160 C180,100 360,220 540,160 C720,100 900,220 1080,160 C1260,100 1350,140 1440,130 L1440,320 L0,320 Z"
-      />
-      <path
-        fill="#ffffff"
-        fillOpacity="0.35"
-        d="M0,180 C200,120 400,240 600,175 C800,110 1000,230 1200,165 C1320,130 1380,150 1440,145 L1440,320 L0,320 Z"
-      />
-    </svg>
-  );
-}
-
 export default function HeroCareers() {
   const copyScopeRef = useRef<HTMLDivElement>(null);
   const facesScopeRef = useRef<HTMLDivElement>(null);

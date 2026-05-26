@@ -3,7 +3,6 @@ import AdvSliderOverlayImage from "@/components/AdvSliderOverlayImage";
 import AdvSliderTooltipSequence, {
   type AdvSliderTooltipSequenceStep,
 } from "@/components/AdvSliderTooltipSequence";
-import { FaMoneyBillTransfer } from "react-icons/fa6";
 import { FaRepeat } from "react-icons/fa6";
 import { RiBankFill } from "react-icons/ri";
 

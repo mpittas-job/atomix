@@ -48,23 +48,6 @@ const aboutAtomixSections = [
   },
 ];
 
-function renderTypewriterTitle(title: string) {
-  const lines = [title];
-  return lines.map((line, lineIdx) => (
-    <span key={lineIdx} className="block leading-[1.05]">
-      {Array.from(line).map((ch, i) => (
-        <span
-          key={`${lineIdx}-${i}`}
-          data-hero-type-char
-          className="inline-block opacity-0"
-        >
-          {ch === " " ? "\u00A0" : ch}
-        </span>
-      ))}
-    </span>
-  ));
-}
-
 interface AboutSectionCardProps {
   cardRef:
     | ((el: HTMLDivElement | null) => void)

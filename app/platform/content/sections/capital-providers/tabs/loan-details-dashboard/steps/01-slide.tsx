@@ -2,7 +2,6 @@ import AdvSliderMainImage from "@/components/AdvSliderMainImage";
 import AdvSliderTooltipSequence, {
   type AdvSliderTooltipSequenceStep,
 } from "@/components/AdvSliderTooltipSequence";
-import { MdDescription } from "react-icons/md";
 import { PiChartLineUpBold } from "react-icons/pi";
 import { IoShieldCheckmarkSharp } from "react-icons/io5";
 

@@ -3,7 +3,6 @@ import AdvSliderOverlayImage from "@/components/AdvSliderOverlayImage";
 import AdvSliderTooltipSequence, {
   type AdvSliderTooltipSequenceStep,
 } from "@/components/AdvSliderTooltipSequence";
-import { FaClock } from "react-icons/fa6";
 import { FaBuildingCircleCheck } from "react-icons/fa6";
 import { FaBuildingCircleExclamation } from "react-icons/fa6";
 import { FaMoneyBills } from "react-icons/fa6";
