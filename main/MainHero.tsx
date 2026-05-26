@@ -10,6 +10,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SoftAurora from "@/components/backgrounds/SoftAurora";
+import type { SoftAuroraHandle } from "@/components/backgrounds/SoftAurora";
 import InkSpill from "@/components/backgrounds/InkSpill";
 import type { InkSpillHandle } from "@/components/backgrounds/InkSpill";
 import { FaArrowRight } from "react-icons/fa";
@@ -18,6 +19,10 @@ import DefHeading from "@/components/typo/DefHeading";
 import { useBookDemoModal } from "@/components/BookDemoModalProvider";
 
 gsap.registerPlugin(ScrollTrigger);
+
+/** Scroll progress thresholds for aurora render gating (timeline ≈ 4.25 units) */
+const AURORA_FG_START = 0.22;
+const AURORA_BG_END = 0.38;
 
 const aboutAtomixSections = [
   {
@@ -70,9 +75,9 @@ function AboutSectionCard({
     <div
       ref={cardRef as React.RefObject<HTMLDivElement>}
       data-section-index={index}
-      className={`absolute inset-0 rounded-2xl overflow-hidden transition-opacity duration-500 ${isActive ? "opacity-100 z-10" : "opacity-0 z-0"}`}
+      className={`absolute inset-0 rounded-2xl overflow-hidden transition-opacity duration-300 ${isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"}`}
     >
-      <Image src={image} alt="" fill className="object-cover" priority />
+      <Image src={image} alt="" fill className="object-cover" priority={index === 0} sizes="(min-width: 1024px) 50vw, 100vw" />
       <div className="absolute inset-0 flex items-center p-8 md:p-12">
         <p
           className="text-white text-xl md:text-2xl lg:text-2xl leading-relaxed max-w-lg"
@@ -129,6 +134,8 @@ export default function MainHero() {
   const { openBookDemoModal } = useBookDemoModal();
   const title1SplitRef = useRef<SplitTextHandle>(null);
   const inkSpillRef = useRef<InkSpillHandle>(null);
+  const bgAuroraRef = useRef<SoftAuroraHandle>(null);
+  const fgAuroraRef = useRef<SoftAuroraHandle>(null);
   const aboutCardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const aboutNavRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [activeSection, setActiveSection] = useState(0);
@@ -167,7 +174,20 @@ export default function MainHero() {
     gsap.set("#def-hero-title-2-bg-aurora", { autoAlpha: 0 });
     gsap.set("#def-hero-title-2", { autoAlpha: 0 });
     gsap.set("#def-hero-about-sections", { autoAlpha: 0 });
-    gsap.set("#def-hero-images", { xPercent: -50, yPercent: 0, force3D: true });
+    gsap.set("#def-hero-title-1", {
+      top: "50%",
+      left: "50%",
+      xPercent: -50,
+      yPercent: -80,
+      force3D: true,
+    });
+    gsap.set("#def-hero-images", {
+      top: "50%",
+      left: "50%",
+      xPercent: -50,
+      yPercent: 40,
+      force3D: true,
+    });
     gsap.set(["#def-hero-image-mobile", "#def-hero-image-desktop"], {
       xPercent: 0,
       force3D: true,
@@ -180,9 +200,16 @@ export default function MainHero() {
       scrollTrigger: {
         trigger: "#def-hero-main",
         start: "top top",
-        end: "+=4200",
-        scrub: 2.5,
+        end: "+=5400",
+        scrub: 1.1,
         pin: true,
+        anticipatePin: 1,
+        fastScrollEnd: true,
+        onUpdate: (self) => {
+          const p = self.progress;
+          bgAuroraRef.current?.setActive(p < AURORA_BG_END);
+          fgAuroraRef.current?.setActive(p >= AURORA_FG_START);
+        },
         onLeave: () => {
           clickTargetSectionRef.current = null;
         },
@@ -193,10 +220,14 @@ export default function MainHero() {
     });
     tlRef.current = tl;
 
-    // Stage 1: Title 1 exits upward, images rise to center
-    tl.to("#def-hero-title-1", { top: "-20%", opacity: 0, duration: 1 }, 0).to(
+    // Stage 1: Title 1 exits upward, images rise to center (transform-only)
+    tl.to(
+      "#def-hero-title-1",
+      { yPercent: -160, opacity: 0, duration: 1, ease: "power2.inOut" },
+      0,
+    ).to(
       "#def-hero-images",
-      { top: "50%", yPercent: -50, duration: 1 },
+      { yPercent: -50, duration: 1, ease: "power2.inOut" },
       0,
     );
 
@@ -252,6 +283,13 @@ export default function MainHero() {
       )
       .addLabel("aboutComplete", "section1+=0.15")
       .to({}, { duration: 1.2 }, "aboutComplete");
+
+    const st = tl.scrollTrigger;
+    if (st) {
+      const p = st.progress;
+      bgAuroraRef.current?.setActive(p < AURORA_BG_END);
+      fgAuroraRef.current?.setActive(p >= AURORA_FG_START);
+    }
   }, []);
 
   const handleAboutSectionClick = useCallback((index: number) => {
@@ -267,6 +305,7 @@ export default function MainHero() {
       >
         <div className="pointer-events-none absolute inset-0 z-0 min-h-full min-w-full">
           <SoftAurora
+            ref={bgAuroraRef}
             speed={1.3}
             scale={1.2}
             brightness={0.65}
@@ -286,7 +325,7 @@ export default function MainHero() {
 
         {/* FIRST TITLE - page load animation */}
         <div
-          className="text-white px-6 flex flex-col gap-y-8 justify-center items-center text-center absolute left-1/2 -translate-x-1/2 top-[10%] max-w-[600px] w-full"
+          className="text-white px-6 flex flex-col gap-y-8 justify-center items-center text-center absolute max-w-[600px] w-full will-change-transform"
           id="def-hero-title-1"
         >
           <Image
@@ -316,7 +355,7 @@ export default function MainHero() {
 
         {/* IMAGES - page load animation */}
         <div
-          className="absolute top-[70%] left-1/2 w-[65%]"
+          className="absolute w-[65%] will-change-transform"
           id="def-hero-images"
           style={{ visibility: "hidden" }}
         >
@@ -358,6 +397,7 @@ export default function MainHero() {
               speed={0.9}
               scale={1.8}
               edgeSoftness={0.22}
+              maxDpr={1.25}
             />
             <div
               id="def-hero-title-2-bg-aurora"
@@ -365,6 +405,7 @@ export default function MainHero() {
               style={{ visibility: "hidden" }}
             >
               <SoftAurora
+                ref={fgAuroraRef}
                 speed={1.3}
                 scale={1.2}
                 brightness={0.65}
@@ -379,6 +420,7 @@ export default function MainHero() {
                 colorSpeed={1}
                 enableMouseInteraction={false}
                 mouseInfluence={0.2}
+                startActive={false}
               />
             </div>
           </div>

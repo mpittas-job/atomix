@@ -12,6 +12,13 @@ interface InkSpillProps {
   speed?: number;
   scale?: number;
   edgeSoftness?: number;
+  maxDpr?: number;
+  paused?: boolean;
+}
+
+function getCappedDpr(maxDpr: number) {
+  if (typeof window === "undefined") return 1;
+  return Math.min(window.devicePixelRatio || 1, maxDpr);
 }
 
 function hexToVec3(hex: string): [number, number, number] {
@@ -101,7 +108,7 @@ void main() {
 `;
 
 const InkSpill = forwardRef<InkSpillHandle, InkSpillProps>(function InkSpill(
-  { color = "#EBEFF2", speed = 1, scale = 2.0, edgeSoftness = 0.18 },
+  { color = "#EBEFF2", speed = 1, scale = 2.0, edgeSoftness = 0.18, maxDpr = 1.25, paused = false },
   ref,
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -118,12 +125,12 @@ const InkSpill = forwardRef<InkSpillHandle, InkSpillProps>(function InkSpill(
   );
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || paused) return;
     const container = containerRef.current;
-    const renderer = new Renderer({ 
-      alpha: true, 
+    const renderer = new Renderer({
+      alpha: true,
       premultipliedAlpha: false,
-      dpr: typeof window !== "undefined" ? window.devicePixelRatio : 1 
+      dpr: getCappedDpr(maxDpr),
     });
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
@@ -144,7 +151,7 @@ const InkSpill = forwardRef<InkSpillHandle, InkSpillProps>(function InkSpill(
     const mesh = new Mesh(gl, { geometry, program });
 
     const resizeObserver = new ResizeObserver(() => {
-      renderer.dpr = window.devicePixelRatio || 1;
+      renderer.dpr = getCappedDpr(maxDpr);
       renderer.setSize(container.offsetWidth, container.offsetHeight);
       program.uniforms.uResolution.value = [gl.canvas.width, gl.canvas.height];
     });
@@ -153,23 +160,70 @@ const InkSpill = forwardRef<InkSpillHandle, InkSpillProps>(function InkSpill(
     container.appendChild(gl.canvas);
 
     let animationFrameId = 0;
+    let isVisible = true;
+    let isPageVisible = !document.hidden;
+    let lastRenderedProgress = -1;
+    let hasRenderedFinalFrame = false;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        isVisible = entries.some((entry) => entry.isIntersecting);
+      },
+      { threshold: 0.01 },
+    );
+    observer.observe(container);
+
+    const handleVisibilityChange = () => {
+      isPageVisible = !document.hidden;
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
     function update(time: number) {
       animationFrameId = requestAnimationFrame(update);
-      program.uniforms.uTime.value = time * 0.001 * speed;
-      program.uniforms.uProgress.value = progressRef.current;
+
+      if (!isVisible || !isPageVisible) return;
+
+      const progress = progressRef.current;
+
+      if (progress <= 0) {
+        lastRenderedProgress = 0;
+        hasRenderedFinalFrame = false;
+        return;
+      }
+
+      const isAnimating = progress > 0 && progress < 1;
+      const progressChanged = progress !== lastRenderedProgress;
+
+      if (!isAnimating && !progressChanged) {
+        if (progress >= 1 && hasRenderedFinalFrame) return;
+      }
+
+      if (isAnimating) {
+        program.uniforms.uTime.value = time * 0.001 * speed;
+        hasRenderedFinalFrame = false;
+      }
+
+      program.uniforms.uProgress.value = progress;
       renderer.render({ scene: mesh });
+      lastRenderedProgress = progress;
+
+      if (progress >= 1) {
+        hasRenderedFinalFrame = true;
+      }
     }
     animationFrameId = requestAnimationFrame(update);
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       resizeObserver.disconnect();
       if (gl.canvas.parentNode === container) {
         container.removeChild(gl.canvas);
       }
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
-  }, [color, speed, scale, edgeSoftness]);
+  }, [color, speed, scale, edgeSoftness, maxDpr, paused]);
 
   return <div ref={containerRef} className="w-full h-full" />;
 });
