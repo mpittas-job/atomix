@@ -193,7 +193,7 @@ export default function MainHero() {
       force3D: true,
     });
     gsap.set(["#def-hero-image-mobile", "#def-hero-image-desktop"], {
-      xPercent: 0,
+      x: 0,
       force3D: true,
     });
 
@@ -239,12 +239,12 @@ export default function MainHero() {
     tl.addLabel("centerReached", 1)
       .to(
         "#def-hero-image-mobile",
-        { xPercent: -300, duration: 1.35, ease: "power2.inOut" },
+        { x: "-100vw", duration: 1.35, ease: "power2.inOut" },
         "centerReached",
       )
       .to(
         "#def-hero-image-desktop",
-        { xPercent: 170, duration: 1.35, ease: "power2.inOut" },
+        { x: "100vw", duration: 1.35, ease: "power2.inOut" },
         "centerReached",
       )
       .to(
@@ -359,24 +359,24 @@ export default function MainHero() {
           id="def-hero-images"
           style={{ visibility: "hidden" }}
         >
-          <div className="relative w-full" id="def-hero-image-desktop">
+          <div className="relative w-full will-change-transform" id="def-hero-image-desktop">
             <Image
               src="/dashboard/hero-desktop-img.svg"
               alt="Atomix desktop dashboard preview"
               width={1200}
               height={800}
-              className="w-full select-none object-contain pl-[12%]"
+              className="w-full h-auto select-none object-contain pl-[12%]"
               priority
             />
           </div>
 
-          <div id="def-hero-image-mobile">
+          <div id="def-hero-image-mobile" className="absolute left-0 bottom-6 w-[22%] will-change-transform">
             <Image
               src="/dashboard/hero-mobile-img.svg"
               alt="Atomix mobile form preview"
               width={300}
               height={600}
-              className="absolute left-0 bottom-6 w-[22%] select-none object-contain"
+              className="w-full h-auto select-none object-contain"
               priority
             />
           </div>
