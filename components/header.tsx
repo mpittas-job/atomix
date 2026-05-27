@@ -70,7 +70,7 @@ export default function Header() {
     <header
       className={`fixed z-999 top-0 left-0 right-0 z-50 bg-white transition-all duration-300 ${isScrolled ? "" : ""}`}
     >
-      <div className="mx-auto w-full max-w-[1920px] px-12">
+      <div className="mx-auto w-full max-w-[1920px] px-4 md:px-12">
         <nav>
           <div className="flex py-6 items-center justify-between">
             {/* Logo */}
