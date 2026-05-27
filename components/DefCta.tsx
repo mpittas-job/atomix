@@ -62,7 +62,7 @@ const DefCta: React.FC<DefCtaProps> = ({ title }) => {
           </div>
         </div>
 
-        <div ref={imagesRef} className="absolute top-[10%] right-10 w-[40%]">
+        <div ref={imagesRef} className="absolute -bottom-10 right-10 w-[45%] lg:w-[40%]">
           <div className="relative w-full">
             <img
               src="/dashboard/hero-desktop-img.svg"
