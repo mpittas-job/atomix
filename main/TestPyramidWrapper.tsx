@@ -4,6 +4,7 @@ import React, {
   useRef,
   useState,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useCallback,
 } from "react";
@@ -20,6 +21,71 @@ import DefHeading from "@/components/typo/DefHeading";
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
 const PYRAMID_SECTION_SCROLL_DISTANCE_MULTIPLIER = 6;
+const FALLBACK_HEADER_OFFSET_PX = 88;
+
+type PinnedSectionLayout = {
+  pinTop: number;
+  sectionHeight: number;
+};
+
+function getOuterVerticalGapPx(outerContainer: HTMLElement | null) {
+  if (!outerContainer) {
+    return { top: 16, bottom: 16 };
+  }
+
+  const style = getComputedStyle(outerContainer);
+  return {
+    top: Math.ceil(parseFloat(style.paddingTop) || 0),
+    bottom: Math.ceil(parseFloat(style.paddingBottom) || 0),
+  };
+}
+
+function getPinnedSectionLayout(
+  outerContainer?: HTMLElement | null,
+): PinnedSectionLayout {
+  if (typeof window === "undefined") {
+    return {
+      pinTop: FALLBACK_HEADER_OFFSET_PX,
+      sectionHeight: 700,
+    };
+  }
+
+  const header = document.querySelector("header");
+  const headerBottom = header
+    ? Math.ceil(header.getBoundingClientRect().bottom)
+    : FALLBACK_HEADER_OFFSET_PX;
+
+  const { top: gapTop, bottom: gapBottom } =
+    getOuterVerticalGapPx(outerContainer ?? null);
+  const pinTop = headerBottom + gapTop;
+
+  const visualViewport = window.visualViewport;
+  const viewportBottom = visualViewport
+    ? visualViewport.offsetTop + visualViewport.height
+    : document.documentElement.clientHeight;
+
+  const sectionHeight = Math.max(
+    0,
+    Math.floor(viewportBottom - pinTop - gapBottom),
+  );
+
+  return { pinTop, sectionHeight };
+}
+
+function applyPinnedSectionLayout(
+  section: HTMLElement | null,
+  outerContainer?: HTMLElement | null,
+) {
+  if (!section) return getPinnedSectionLayout(outerContainer);
+
+  const layout = getPinnedSectionLayout(outerContainer);
+  section.style.boxSizing = "border-box";
+  section.style.height = `${layout.sectionHeight}px`;
+  section.style.maxHeight = `${layout.sectionHeight}px`;
+  section.style.minHeight = "0";
+
+  return layout;
+}
 
 // --- CONFIGURABLE PYRAMID SCALE ---
 // Change this single number to scale the entire pyramid (and its labels, logo, and spacing) proportionally!
@@ -32,6 +98,115 @@ const PYRAMID_VERTICAL_OFFSET = 0.5;
 // --- CONFIGURABLE PYRAMID LEFT-SIDE VERTICAL SHIFT ---
 // Shift the pyramid container down when it transitions to the left side (only in the final icon-boxes phase, not during the triangle highlight phase)
 const PYRAMID_LEFT_SIDE_Y_SHIFT = 60; // in pixels (higher = more down)
+
+// --- MOBILE LAYOUT (edit this block to tune phone/tablet positioning) ---
+const MOBILE_LAYOUT = {
+  /** Shared by highlight list (triangle phase) + icon list (pyramid phase) */
+  list: {
+    /** px from animation-area top — base clearance below DefHeading */
+    topOffset: 180,
+    /** px extra space above the final icon list (above pyramid phase only) */
+    finalListExtraTop: 40,
+    /** px inset from left/right edges — same for both lists */
+    horizontalInset: 40,
+    /** px gap between pyramid zone and list zone */
+    zoneGap: 8,
+    /** px max width for both mobile lists (0 = full width minus insets) */
+    maxWidth: 430,
+  },
+
+  /** Triangle intro — 3 sides, pyramid on top, highlight list below */
+  triangle: {
+    /** px — container top within animation area */
+    topOffset: 70,
+    /** px — extra Y nudge on the pyramid container */
+    yOffset: 0,
+    /** % of animation area height for the pyramid container */
+    heightPercent: 52,
+    /** 3D scale inside the canvas */
+    scale: 2.35,
+    /** 3D vertical offset inside canvas (+ up, − down) */
+    verticalOffset: -0.25,
+    /** px max width cap (0 = auto from viewport) */
+    maxWidth: 0,
+  },
+
+  /** Final pyramid — list on top, pyramid parked at bottom */
+  pyramid: {
+    /** px — inset from animation-area bottom */
+    bottomInset: 20,
+    /** px — extra Y nudge when parked at bottom */
+    yOffset: 0,
+    /** % of animation area height for the pyramid container */
+    heightPercent: 52,
+    /** 3D scale inside the canvas */
+    scale: 2.35,
+    /** 3D vertical offset inside canvas (+ up, − down) */
+    verticalOffset: -0.25,
+    /** px max width cap (0 = auto from viewport) */
+    maxWidth: 0,
+  },
+} as const;
+
+function getMobileHighlightListTop(animationAreaHeight: number) {
+  const { triangle, list } = MOBILE_LAYOUT;
+  return (
+    triangle.topOffset +
+    (animationAreaHeight * triangle.heightPercent) / 100 +
+    list.zoneGap
+  );
+}
+
+function getMobileFinalIconListTop() {
+  const { list } = MOBILE_LAYOUT;
+  return list.topOffset + list.finalListExtraTop;
+}
+
+function getMobileListMaxHeight(
+  animationAreaHeight: number,
+  pyramidContainerHeight: number,
+) {
+  const { list } = MOBILE_LAYOUT;
+  const listTop = getMobileFinalIconListTop();
+  return Math.max(
+    140,
+    Math.round(
+      animationAreaHeight -
+        listTop -
+        pyramidContainerHeight -
+        list.zoneGap,
+    ),
+  );
+}
+
+function getMobilePyramidSwapY(
+  animationAreaHeight: number,
+  pyramidContainerHeight: number,
+) {
+  const { pyramid } = MOBILE_LAYOUT;
+  return Math.max(
+    0,
+    Math.round(
+      animationAreaHeight -
+        pyramidContainerHeight -
+        pyramid.bottomInset +
+        pyramid.yOffset,
+    ),
+  );
+}
+
+function getMobileListBoxLayout(animationAreaWidth: number) {
+  const { list } = MOBILE_LAYOUT;
+  const available = Math.max(0, animationAreaWidth - list.horizontalInset * 2);
+  const width =
+    list.maxWidth > 0 ? Math.min(list.maxWidth, available) : available;
+
+  return {
+    left: "50%",
+    xPercent: -50,
+    width,
+  };
+}
 
 type IconBoxData = {
   icon: string;
@@ -226,29 +401,68 @@ type PyramidApi = {
 };
 
 export default function TestPyramidWrapper() {
-  const [windowWidth, setWindowWidth] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 1200
-  );
+  // Keep SSR and the first client render identical; measure viewport after mount.
+  const [windowWidth, setWindowWidth] = useState(1200);
+  const [sectionHeightPx, setSectionHeightPx] = useState<number | null>(null);
+  const pinnedLayoutRef = useRef<PinnedSectionLayout>({
+    pinTop: FALLBACK_HEADER_OFFSET_PX,
+    sectionHeight: 700,
+  });
+  const pyramidSectionRef = useRef<HTMLDivElement>(null);
+  const outerContainerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+  useLayoutEffect(() => {
+    const syncViewport = () => {
+      const layout = applyPinnedSectionLayout(
+        pyramidSectionRef.current,
+        outerContainerRef.current,
+      );
+      pinnedLayoutRef.current = layout;
+      setWindowWidth(window.innerWidth);
+      setSectionHeightPx(layout.sectionHeight);
+      ScrollTrigger.refresh();
+    };
+
+    syncViewport();
+
+    const syncAfterLayout = () => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(syncViewport);
+      });
+    };
+
+    window.addEventListener("resize", syncAfterLayout);
+    window.visualViewport?.addEventListener("resize", syncAfterLayout);
+    window.visualViewport?.addEventListener("scroll", syncAfterLayout);
+
+    return () => {
+      window.removeEventListener("resize", syncAfterLayout);
+      window.visualViewport?.removeEventListener("resize", syncAfterLayout);
+      window.visualViewport?.removeEventListener("scroll", syncAfterLayout);
+    };
   }, []);
 
   const isMobile = windowWidth < 1024;
+  const [isPastPyramidSequence, setIsPastPyramidSequence] = useState(false);
 
   const pyramidConfig = useMemo(() => {
     let scale = PYRAMID_SCALE;
     let maxWidth = 700;
     let canvasHeight = 570;
-    
+    let verticalOffset = PYRAMID_VERTICAL_OFFSET;
+
     if (isMobile) {
-        // Base scale 1.6 at 390px, min 1.5, max 2.2
-        scale = Math.max(1.5, Math.min(2.2, (windowWidth / 390) * 1.6));
-        maxWidth = Math.max(320, Math.min(460, windowWidth - 40));
-        canvasHeight = Math.max(280, Math.min(420, (windowWidth - 40) * 0.9));
+      const phase = isPastPyramidSequence
+        ? MOBILE_LAYOUT.pyramid
+        : MOBILE_LAYOUT.triangle;
+
+      scale = phase.scale;
+      verticalOffset = phase.verticalOffset;
+      maxWidth =
+        phase.maxWidth > 0
+          ? phase.maxWidth
+          : Math.max(320, Math.min(460, windowWidth - 40));
+      canvasHeight = Math.max(280, Math.min(420, (windowWidth - 40) * 0.9));
     }
 
     // Proportional scaling factor relative to the base scale (2.2)
@@ -258,7 +472,7 @@ export default function TestPyramidWrapper() {
       maxWidth: isMobile ? maxWidth : Math.round(maxWidth * scaleRatio),
       canvasHeight: isMobile ? canvasHeight : Math.round(canvasHeight * scaleRatio),
       pyramidScale: scale,
-      verticalOffset: isMobile ? -0.25 : PYRAMID_VERTICAL_OFFSET,
+      verticalOffset: isMobile ? verticalOffset : PYRAMID_VERTICAL_OFFSET,
       edgeLabels: {
         fontSize: Math.round((isMobile ? 12 : 14) * scaleRatio),
         worldHeight: 0.44 * scaleRatio,
@@ -269,12 +483,12 @@ export default function TestPyramidWrapper() {
         verticalOffset: 0.44 * scaleRatio,
       },
     };
-  }, [isMobile, windowWidth]);
+  }, [isMobile, isPastPyramidSequence, windowWidth]);
 
-  const pyramidSectionRef = useRef<HTMLDivElement>(null);
   const headingWrapRef = useRef<HTMLDivElement>(null);
   const animationWrapRef = useRef<HTMLDivElement>(null);
   const pyramidColRef = useRef<HTMLDivElement>(null);
+  const iconListColRef = useRef<HTMLDivElement>(null);
   const iconBoxRefs = useRef<Array<HTMLDivElement | null>>([]);
   const handlePyramidReady = useCallback((api: PyramidApi) => {
     pyramidApiRef.current = api;
@@ -289,7 +503,6 @@ export default function TestPyramidWrapper() {
   const highlightItemsRef = useRef<Array<HTMLLIElement | null>>([]);
   const timelineRef = useRef<gsap.core.Timeline | null>(null);
   const [highlightIndex, setHighlightIndex] = useState(0);
-  const [isPastPyramidSequence, setIsPastPyramidSequence] = useState(false);
   const lastHighlightIndexRef = useRef(0);
   const lastIsPastPyramidSequenceRef = useRef(false);
   const isFirstRenderRef = useRef(true);
@@ -308,6 +521,7 @@ export default function TestPyramidWrapper() {
     const headingWrap = headingWrapRef.current;
     const animationWrap = animationWrapRef.current;
     const pyramidCol = pyramidColRef.current;
+    const iconListCol = iconListColRef.current;
     const boxes = iconBoxRefs.current.filter(
       (box): box is HTMLDivElement => box !== null,
     );
@@ -316,6 +530,7 @@ export default function TestPyramidWrapper() {
       !headingWrap ||
       !animationWrap ||
       !pyramidCol ||
+      !iconListCol ||
       boxes.length === 0
     )
       return;
@@ -332,27 +547,76 @@ export default function TestPyramidWrapper() {
 
         gsap.set(headingWrap, { autoAlpha: 0, y: 32 });
         gsap.set(animationWrap, { autoAlpha: 0, y: 28 });
-        gsap.set(boxes, { autoAlpha: 0, y: 32 });
+        gsap.set(boxes, { autoAlpha: 0, y: isDesktop ? 16 : 0 });
         gsap.set(highlightBoxRef.current, { autoAlpha: 1 });
 
         if (isDesktop) {
           gsap.set(pyramidCol, { xPercent: 85, y: 0 });
+          gsap.set(iconListCol, { autoAlpha: 0, clearProps: "maxHeight" });
         } else {
-          gsap.set(pyramidCol, { xPercent: 0, y: 0 });
+          const { triangle, list, pyramid: pyramidPhase } = MOBILE_LAYOUT;
+          const listLayout = getMobileListBoxLayout(animationWrap.offsetWidth);
+          const wrapH = animationWrap.offsetHeight;
+
+          gsap.set(pyramidCol, {
+            position: "absolute",
+            top: triangle.topOffset,
+            left: 0,
+            right: 0,
+            xPercent: 0,
+            y: triangle.yOffset,
+            height: `${triangle.heightPercent}%`,
+            maxHeight: `${triangle.heightPercent}%`,
+          });
+          gsap.set(iconListCol, {
+            position: "absolute",
+            top: getMobileFinalIconListTop(),
+            ...listLayout,
+            autoAlpha: 0,
+            x: 0,
+            y: 0,
+            maxHeight: getMobileListMaxHeight(wrapH, pyramidCol.offsetHeight),
+            overflow: "hidden",
+            pointerEvents: "none",
+          });
+          gsap.set(highlightBoxRef.current, {
+            position: "absolute",
+            top: getMobileHighlightListTop(wrapH),
+            ...listLayout,
+            bottom: pyramidPhase.bottomInset,
+            autoAlpha: 1,
+            overflow: "auto",
+          });
         }
+
+        const syncPinnedSection = () => {
+          const layout = applyPinnedSectionLayout(
+            section,
+            outerContainerRef.current,
+          );
+          pinnedLayoutRef.current = layout;
+          return layout;
+        };
 
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: section,
-            start: isDesktop ? "top top+=110px" : "top top+=60px",
+            start: () => `top top+=${syncPinnedSection().pinTop}px`,
             end: () =>
               `+=${section.offsetHeight * PYRAMID_SECTION_SCROLL_DISTANCE_MULTIPLIER}`,
             pin: true,
             pinSpacing: true,
             scrub: true,
             invalidateOnRefresh: true,
-            onEnter: () => auroraRef.current?.setActive(true),
-            onEnterBack: () => auroraRef.current?.setActive(true),
+            onRefresh: syncPinnedSection,
+            onEnter: () => {
+              syncPinnedSection();
+              auroraRef.current?.setActive(true);
+            },
+            onEnterBack: () => {
+              syncPinnedSection();
+              auroraRef.current?.setActive(true);
+            },
             onLeave: () => auroraRef.current?.setActive(false),
             onLeaveBack: () => auroraRef.current?.setActive(false),
             onUpdate: (self) => {
@@ -488,31 +752,9 @@ export default function TestPyramidWrapper() {
               PYRAMID_PROGRESS_TWEEN_START + HIGHLIGHT_SEQUENCE_END,
             )
             .to(
-              boxes,
-              {
-                autoAlpha: 1,
-                y: 0,
-                ease: "power2.out",
-                duration: 0.25,
-                stagger: 0.08,
-              },
+              iconListCol,
+              { autoAlpha: 1, ease: "power2.out", duration: 0.01 },
               1.12,
-            );
-        } else {
-          tl.to(
-            pyramidCol,
-            {
-              xPercent: 0,
-              y: 200,
-              ease: "none",
-              duration: 0.22,
-            },
-            PYRAMID_PROGRESS_TWEEN_START + HIGHLIGHT_SEQUENCE_END,
-          )
-            .to(
-              highlightBoxRef.current,
-              { autoAlpha: 0, ease: "power2.out", duration: 0.15 },
-              PYRAMID_PROGRESS_TWEEN_START + HIGHLIGHT_SEQUENCE_END,
             )
             .to(
               boxes,
@@ -525,6 +767,74 @@ export default function TestPyramidWrapper() {
               },
               1.12,
             );
+        } else {
+          const { pyramid: pyramidPhase } = MOBILE_LAYOUT;
+
+          const swapStart =
+            PYRAMID_PROGRESS_TWEEN_START + HIGHLIGHT_SEQUENCE_END;
+
+          tl.to(
+            highlightBoxRef.current,
+            {
+              autoAlpha: 0,
+              ease: "power2.in",
+              duration: 0.18,
+            },
+            swapStart,
+          )
+            .to(
+              iconListCol,
+              {
+                autoAlpha: 1,
+                overflow: "auto",
+                pointerEvents: "auto",
+                ease: "power2.out",
+                duration: 0.22,
+              },
+              swapStart + 0.04,
+            )
+            .to(
+              pyramidCol,
+              {
+                y: () =>
+                  getMobilePyramidSwapY(
+                    animationWrap.offsetHeight,
+                    pyramidCol.offsetHeight,
+                  ),
+                height: `${pyramidPhase.heightPercent}%`,
+                maxHeight: `${pyramidPhase.heightPercent}%`,
+                ease: "power2.inOut",
+                duration: 0.34,
+              },
+              swapStart,
+            )
+            .to(
+              boxes,
+              {
+                autoAlpha: 1,
+                ease: "power2.out",
+                duration: 0.22,
+                stagger: 0.06,
+              },
+              swapStart + 0.1,
+            );
+
+          tl.eventCallback("onUpdate", () => {
+            if (tl.time() < swapStart) return;
+            const listLayout = getMobileListBoxLayout(animationWrap.offsetWidth);
+            gsap.set(animationWrap, { y: 0 });
+            gsap.set(iconListCol, {
+              top: getMobileFinalIconListTop(),
+              ...listLayout,
+              x: 0,
+              y: 0,
+              maxHeight: getMobileListMaxHeight(
+                animationWrap.offsetHeight,
+                pyramidCol.offsetHeight,
+              ),
+            });
+            gsap.set(boxes, { y: 0, x: 0 });
+          });
         }
       }
     );
@@ -675,9 +985,22 @@ export default function TestPyramidWrapper() {
 
   return (
     <div
-      ref={pyramidSectionRef}
-      className="h-[calc(100vh-130px)] rounded-3xl bg-gradient-to-b from-[#014355] to-[#247691] relative overflow-hidden flex flex-col justify-center items-center"
+      ref={outerContainerRef}
+      className="mx-auto w-full max-w-[1920px] p-4 md:p-12"
     >
+      <div
+        ref={pyramidSectionRef}
+        className="rounded-3xl bg-gradient-to-b from-[#014355] to-[#247691] relative overflow-hidden flex flex-col justify-start items-center box-border shrink-0"
+        style={{
+          height:
+            sectionHeightPx ??
+            "calc(100dvh - var(--header-height, 5.5rem) - 2rem)",
+          maxHeight:
+            sectionHeightPx ??
+            "calc(100dvh - var(--header-height, 5.5rem) - 2rem)",
+          minHeight: 0,
+        }}
+      >
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
         <LazySoftAurora
           ref={auroraRef}
@@ -712,8 +1035,8 @@ export default function TestPyramidWrapper() {
         onClick={handleNextSide}
       />
 
-      <div className="relative z-10 my-auto flex w-full max-w-[1600px] flex-col items-center justify-center gap-4">
-        <div ref={headingWrapRef} className="w-full mt-6 sm:mt-10 lg:mt-20 px-4 md:px-8 [&_h2]:text-xl [&_h2]:sm:text-3xl [&_h2]:lg:text-5xl [&_h2]:leading-snug [&_[data-description]]:text-[10px] [&_[data-description]]:sm:text-sm [&_[data-description]]:lg:text-xl [&_[data-description]]:leading-relaxed [&_[data-description]]:mt-2 [&_div]:gap-y-2 lg:[&_div]:gap-y-6 lg:px-0">
+      <div className="relative z-10 flex h-full w-full max-w-[1600px] min-h-0 flex-col items-center">
+        <div ref={headingWrapRef} className="pointer-events-none absolute inset-x-0 top-0 z-20 px-4 pt-6 sm:pt-8 lg:pt-10 md:px-8 [&_h2]:text-2xl [&_h2]:sm:text-4xl [&_h2]:lg:text-6xl [&_h2]:leading-snug [&_[data-description]]:text-sm [&_[data-description]]:sm:text-base [&_[data-description]]:lg:text-2xl [&_[data-description]]:leading-relaxed [&_[data-description]]:mt-2 [&_div]:gap-y-2 lg:[&_div]:gap-y-4 lg:px-0">
           <DefHeading
             theme="light"
             badgeText=""
@@ -725,12 +1048,81 @@ export default function TestPyramidWrapper() {
 
         <div
           ref={animationWrapRef}
-          className="w-full flex flex-col items-center lg:flex-row lg:justify-center relative mt-2 lg:-mt-16 h-[460px] lg:h-auto px-4"
+          className="relative flex h-full min-h-0 w-full flex-col items-stretch gap-0 overflow-hidden px-4 pt-2 lg:flex-row lg:items-center lg:justify-center lg:pt-0"
         >
-          {/* Left highlight info box - absolutely positioned on left during pyramid highlight sequence */}
+          {/* Mobile: list slot at top (phase 2). Desktop: right column. */}
+          <div
+            ref={iconListColRef}
+            className="z-10 mx-auto flex w-full max-w-[430px] flex-col gap-3 overflow-y-auto overscroll-contain sm:gap-4 lg:relative lg:order-3 lg:mx-0 lg:flex lg:h-full lg:w-1/2 lg:max-w-[550px] lg:justify-center lg:gap-8 lg:overflow-visible lg:-left-10"
+          >
+            {iconBoxesData.map((box, index) => {
+              const sectionId =
+                PYRAMID_SIDES.find((side) => side.sectionIndex === index)?.id ??
+                `pyramid-section-${index}`;
+              return (
+                <div
+                  key={index}
+                  id={sectionId}
+                  ref={(el) => {
+                    iconBoxRefs.current[index] = el;
+                  }}
+                  className="flex scroll-mt-28 items-start gap-3 sm:gap-4 lg:gap-6 md:scroll-mt-32"
+                  style={{ willChange: "transform, opacity" }}
+                >
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-14 lg:h-14 shrink-0 flex justify-center items-center rounded-lg lg:rounded-xl bg-[#015167]">
+                    <img src={box.icon} alt={box.title} className="w-5 h-5 sm:w-6 sm:h-6 lg:w-9 lg:h-9" />
+                  </div>
+                  <div>
+                    <h3 className="text-white font-semibold text-base sm:text-lg lg:text-2xl mb-1 lg:mb-2">
+                      {box.title}
+                    </h3>
+                    <p
+                      className={`text-white/75 text-xs sm:text-sm lg:text-lg leading-relaxed ${
+                        box.items ? "mb-2 lg:mb-4" : ""
+                      }`}
+                    >
+                      {box.description}
+                    </p>
+                    {box.items && (
+                      <ul className="space-y-1 lg:space-y-1.5">
+                        {box.items.map((item, itemIndex) => (
+                          <li
+                            key={itemIndex}
+                            className="flex items-center gap-2 lg:gap-3 text-white/75 text-xs sm:text-sm lg:text-lg"
+                          >
+                            <span className="[&_svg]:w-3.5 [&_svg]:h-3.5 lg:[&_svg]:w-5 lg:[&_svg]:h-5">{item.icon}</span> {item.text}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div
+            ref={pyramidColRef}
+            className="z-0 mx-auto flex w-full items-center justify-center lg:relative lg:order-2 lg:mx-0 lg:h-full lg:w-1/2 lg:max-h-none"
+            style={{
+              maxWidth: `${pyramidConfig.maxWidth}px`,
+              willChange: "transform",
+              contain: "layout style paint",
+            }}
+          >
+            <TestPyramidNewDesign
+              disableScrollTrigger
+              fillHeight
+              config={pyramidConfig}
+              onReady={handlePyramidReady}
+              className="h-full w-full"
+            />
+          </div>
+
+          {/* Mobile: highlight list below pyramid (phase 1). Desktop: left overlay. */}
           <div
             ref={highlightBoxRef}
-            className="absolute left-4 right-4 md:left-auto md:right-auto md:w-[480px] top-[250px] lg:left-34 lg:top-1/2 lg:-translate-y-1/2 lg:w-[520px] lg:absolute opacity-0 z-10"
+            className="z-10 w-full overflow-y-auto px-1 lg:absolute lg:left-34 lg:top-1/2 lg:w-[520px] lg:max-w-none lg:-translate-y-1/2 lg:overflow-visible lg:px-0"
           >
             <div
               ref={highlightContentRef}
@@ -738,17 +1130,17 @@ export default function TestPyramidWrapper() {
             >
               <h3
                 ref={highlightTitleRef}
-                className="text-white font-semibold text-lg sm:text-xl lg:text-4xl leading-tight mb-2 lg:mb-4"
+                className="text-white font-semibold text-xl sm:text-2xl lg:text-4xl leading-tight mb-2 lg:mb-4"
               >
                 {highlightInfo.title}
               </h3>
               <p
                 ref={highlightDescRef}
-                className="text-white/80 text-xs sm:text-sm lg:text-xl leading-relaxed mb-4 lg:mb-9 max-w-[400px]"
+                className="text-white/80 text-sm sm:text-base lg:text-xl leading-relaxed mb-4 lg:mb-9 max-w-[400px]"
               >
                 {highlightInfo.description}
               </p>
-              <ul className="space-y-2 lg:space-y-6">
+              <ul className="space-y-3 lg:space-y-6">
                 {highlightInfo.items.map((item, idx) => (
                   <li
                     key={idx}
@@ -771,10 +1163,10 @@ export default function TestPyramidWrapper() {
                       )}
                     </div>
                     <div className="flex flex-col pt-0 lg:pt-0.5">
-                      <span className="text-white font-semibold text-xs sm:text-sm lg:text-2xl leading-tight">
+                      <span className="text-white font-semibold text-sm sm:text-base lg:text-2xl leading-tight">
                         {item.title}
                       </span>
-                      <span className="text-white/70 text-[10px] sm:text-xs lg:text-lg leading-relaxed mt-0.5">
+                      <span className="text-white/70 text-xs sm:text-sm lg:text-lg leading-relaxed mt-0.5">
                         {item.description}
                       </span>
                     </div>
@@ -783,71 +1175,9 @@ export default function TestPyramidWrapper() {
               </ul>
             </div>
           </div>
-
-          <div
-            ref={pyramidColRef}
-            className="absolute top-0 w-full flex justify-center lg:relative lg:top-auto lg:w-1/2"
-            style={{
-              maxWidth: `${pyramidConfig.maxWidth}px`,
-              willChange: "transform",
-              contain: "layout style paint",
-            }}
-          >
-            <TestPyramidNewDesign
-              disableScrollTrigger
-              config={pyramidConfig}
-              onReady={handlePyramidReady}
-            />
-          </div>
-
-          <div className="absolute top-0 left-4 right-4 md:left-auto md:right-auto md:w-[480px] flex flex-col justify-center gap-2 sm:gap-4 pl-0 lg:relative lg:top-auto lg:left-auto lg:right-auto lg:w-1/2 lg:max-w-[550px] lg:-left-10 lg:pt-10 lg:gap-8">
-            {iconBoxesData.map((box, index) => {
-              const sectionId =
-                PYRAMID_SIDES.find((side) => side.sectionIndex === index)?.id ??
-                `pyramid-section-${index}`;
-              return (
-                <div
-                  key={index}
-                  id={sectionId}
-                  ref={(el) => {
-                    iconBoxRefs.current[index] = el;
-                  }}
-                  className="flex scroll-mt-28 items-start gap-3 sm:gap-4 lg:gap-6 md:scroll-mt-32"
-                  style={{ willChange: "transform, opacity" }}
-                >
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-14 lg:h-14 shrink-0 flex justify-center items-center rounded-lg lg:rounded-xl bg-[#015167]">
-                    <img src={box.icon} alt={box.title} className="w-5 h-5 sm:w-6 sm:h-6 lg:w-9 lg:h-9" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-semibold text-sm sm:text-base lg:text-2xl mb-0.5 lg:mb-2">
-                      {box.title}
-                    </h3>
-                    <p
-                      className={`text-white/75 text-[10px] sm:text-xs lg:text-lg leading-relaxed ${
-                        box.items ? "mb-1.5 lg:mb-4" : ""
-                      }`}
-                    >
-                      {box.description}
-                    </p>
-                    {box.items && (
-                      <ul className="space-y-0.5 lg:space-y-1">
-                        {box.items.map((item, itemIndex) => (
-                          <li
-                            key={itemIndex}
-                            className="flex items-center gap-1.5 lg:gap-3 text-white/75 text-[9px] sm:text-xs lg:text-lg"
-                          >
-                            <span className="[&_svg]:w-3 [&_svg]:h-3 lg:[&_svg]:w-5 lg:[&_svg]:h-5">{item.icon}</span> {item.text}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -20,7 +20,7 @@ const SHOW_SECTIONS_BELOW_MISSION_VISION = false;
 
 export default function LandingPage() {
   return (
-    <div className="overflow-x-hidden bg-white">
+    <div className="overflow-x-hidden bg-white" style={{ ["--header-height" as string]: "5.5rem" }}>
       <Header />
       <div
         id="def-hero-main"

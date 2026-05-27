@@ -193,6 +193,7 @@ export interface TestPyramidNewDesignProps {
   }) => void;
   onInfiniteSpinStart?: () => void;
   disableScrollTrigger?: boolean;
+  fillHeight?: boolean;
 }
 
 const clamp = (
@@ -232,6 +233,7 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
   onReady,
   onInfiniteSpinStart,
   disableScrollTrigger = false,
+  fillHeight = false,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -908,6 +910,7 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
         position: "relative",
         width: "100%",
         maxWidth: `${cfg.maxWidth}px`,
+        ...(fillHeight ? { height: "100%" } : {}),
         fontFamily:
           "-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif",
       }}
@@ -917,7 +920,7 @@ const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
         style={{
           position: "relative",
           width: "100%",
-          height: `${cfg.canvasHeight}px`,
+          height: fillHeight ? "100%" : `${cfg.canvasHeight}px`,
           overflow: "visible",
           contain: "strict",
         }}
