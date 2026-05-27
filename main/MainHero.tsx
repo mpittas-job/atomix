@@ -73,7 +73,7 @@ function AboutSectionCard({
     <div
       ref={cardRef as React.RefObject<HTMLDivElement>}
       data-section-index={index}
-      className={`absolute inset-0 rounded-2xl overflow-hidden transition-opacity duration-300 ${isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"}`}
+      className={`absolute inset-0 rounded-2xl overflow-hidden transition-opacity duration-300 will-change-opacity ${isActive ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"}`}
     >
       <Image
         src={image}
@@ -154,27 +154,27 @@ export default function MainHero() {
       .fromTo(
         "#def-hero-logo",
         { autoAlpha: 0, y: 30 },
-        { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" },
+        { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out", force3D: true },
       )
       .set("#def-hero-split-text", { autoAlpha: 1 }, 0.3)
       .add(() => title1SplitRef.current?.play(), 0.3)
       .fromTo(
         "#def-hero-load-btn",
         { autoAlpha: 0, y: 20 },
-        { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out" },
+        { autoAlpha: 1, y: 0, duration: 0.6, ease: "power3.out", force3D: true },
         0.8,
       )
       .fromTo(
         "#def-hero-images",
         { autoAlpha: 0, y: 40 },
-        { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out" },
+        { autoAlpha: 1, y: 0, duration: 0.8, ease: "power3.out", force3D: true },
         0.6,
       );
 
     // --- Set initial hidden states for scroll-animated elements ---
     gsap.set("#def-hero-title-2-bg", { autoAlpha: 1 });
     gsap.set("#def-hero-title-2-bg-shader", { opacity: 1 });
-    gsap.set("#def-hero-title-2-bg-slide", { opacity: 0, yPercent: 100 });
+    gsap.set("#def-hero-title-2-bg-slide", { opacity: 0, yPercent: 100, force3D: true });
     gsap.set("#def-hero-title-2-bg-aurora", { autoAlpha: 0 });
     gsap.set("#def-hero-title-2", { autoAlpha: 0 });
     gsap.set("#def-hero-about-sections", { autoAlpha: 0 });
@@ -199,6 +199,9 @@ export default function MainHero() {
 
     // About cards use React isActive + CSS only (no scroll-driven GSAP opacity on cards).
 
+    let bgActive = true;
+    let fgActive = false;
+
     // --- SCROLL TIMELINE (scrub, no snap) ---
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -211,8 +214,16 @@ export default function MainHero() {
         fastScrollEnd: true,
         onUpdate: (self) => {
           const p = self.progress;
-          bgAuroraRef.current?.setActive(p < AURORA_BG_END);
-          fgAuroraRef.current?.setActive(p >= AURORA_FG_START);
+          const nextBgActive = p < AURORA_BG_END;
+          const nextFgActive = p >= AURORA_FG_START;
+          if (nextBgActive !== bgActive) {
+            bgActive = nextBgActive;
+            bgAuroraRef.current?.setActive(nextBgActive);
+          }
+          if (nextFgActive !== fgActive) {
+            fgActive = nextFgActive;
+            fgAuroraRef.current?.setActive(nextFgActive);
+          }
         },
         onLeave: () => {
           clickTargetSectionRef.current = null;
@@ -227,11 +238,11 @@ export default function MainHero() {
     // Stage 1: Title 1 exits upward, images rise to center (transform-only)
     tl.to(
       "#def-hero-title-1",
-      { yPercent: -160, opacity: 0, duration: 1, ease: "power2.inOut" },
+      { yPercent: -160, opacity: 0, duration: 1, ease: "power2.inOut", force3D: true },
       0,
     ).to(
       "#def-hero-images",
-      { yPercent: -50, duration: 1, ease: "power2.inOut" },
+      { yPercent: -50, duration: 1, ease: "power2.inOut", force3D: true },
       0,
     );
 
@@ -239,17 +250,17 @@ export default function MainHero() {
     tl.addLabel("centerReached", 1)
       .to(
         "#def-hero-image-mobile",
-        { x: "-100vw", duration: 1.35, ease: "power2.inOut" },
+        { x: "-100vw", duration: 1.35, ease: "power2.inOut", force3D: true },
         "centerReached",
       )
       .to(
         "#def-hero-image-desktop",
-        { x: "100vw", duration: 1.35, ease: "power2.inOut" },
+        { x: "100vw", duration: 1.35, ease: "power2.inOut", force3D: true },
         "centerReached",
       )
       .to(
         "#def-hero-title-2-bg-slide",
-        { yPercent: 0, opacity: 1, duration: 1.5, ease: "power3.inOut" },
+        { yPercent: 0, opacity: 1, duration: 1.5, ease: "power3.inOut", force3D: true },
         "centerReached",
       )
       .to(
@@ -320,13 +331,15 @@ export default function MainHero() {
             colorSpeed={1}
             enableMouseInteraction={false}
             mouseInfluence={0.2}
+            maxDpr={1.2}
           />
         </div>
 
         {/* FIRST TITLE - page load animation */}
         <div
-          className="text-white px-6 flex flex-col gap-y-8 justify-center items-center text-center absolute max-w-[600px] w-full will-change-transform"
+          className="text-white px-6 flex flex-col gap-y-8 justify-center items-center text-center absolute max-w-[600px] w-full"
           id="def-hero-title-1"
+          style={{ willChange: "transform, opacity" }}
         >
           <Image
             src="/logo/atomix-logo-big-white.svg"
@@ -335,10 +348,10 @@ export default function MainHero() {
             height={60}
             className="w-[150px] md:w-[200px] h-auto"
             id="def-hero-logo"
-            style={{ visibility: "hidden" }}
+            style={{ visibility: "hidden", willChange: "transform, opacity" }}
             priority
           />
-          <div id="def-hero-split-text" style={{ visibility: "hidden" }}>
+          <div id="def-hero-split-text" style={{ visibility: "hidden", willChange: "transform, opacity" }}>
             <SplitText
               ref={title1SplitRef}
               startPaused
@@ -346,7 +359,7 @@ export default function MainHero() {
               accentColor="#5BC7E4"
             />
           </div>
-          <div id="def-hero-load-btn" style={{ visibility: "hidden" }}>
+          <div id="def-hero-load-btn" style={{ visibility: "hidden", willChange: "transform, opacity" }}>
             <DefButton size="large" onClick={openBookDemoModal}>
               Contact Us
             </DefButton>
@@ -357,7 +370,7 @@ export default function MainHero() {
         <div
           className="absolute w-[65%] will-change-transform"
           id="def-hero-images"
-          style={{ visibility: "hidden" }}
+          style={{ visibility: "hidden", willChange: "transform, opacity" }}
         >
           <div className="relative w-full will-change-transform" id="def-hero-image-desktop">
             <Image
@@ -395,6 +408,7 @@ export default function MainHero() {
             <div
               id="def-hero-title-2-bg-slide"
               className="absolute inset-0 bg-[#EBEFF2] will-change-transform"
+              style={{ willChange: "transform, opacity" }}
             >
               {/* Soft feathered edge for smooth bottom-to-top slide translation */}
               <div className="absolute bottom-[calc(100%-2px)] left-0 right-0 h-[45vh] bg-gradient-to-t from-[#EBEFF2] to-[#EBEFF2]/0 pointer-events-none" />
@@ -402,7 +416,7 @@ export default function MainHero() {
             <div
               id="def-hero-title-2-bg-aurora"
               className="absolute inset-0 pointer-events-none mix-blend-multiply"
-              style={{ visibility: "hidden" }}
+              style={{ visibility: "hidden", willChange: "opacity" }}
             >
               <LazySoftAurora
                 ref={fgAuroraRef}
@@ -423,6 +437,7 @@ export default function MainHero() {
                 enableMouseInteraction={false}
                 mouseInfluence={0.2}
                 startActive={false}
+                maxDpr={1.2}
               />
             </div>
           </div>
@@ -432,12 +447,12 @@ export default function MainHero() {
         <div
           className="text-[#011F27] flex flex-col justify-center items-start text-left absolute top-0 left-0 w-full h-full min-w-full min-h-full p-8 md:py-12 md:px-24"
           id="def-hero-title-2"
-          style={{ visibility: "hidden" }}
+          style={{ visibility: "hidden", willChange: "opacity" }}
         >
           <div
             id="def-hero-about-sections"
             className="w-full h-full"
-            style={{ visibility: "hidden" }}
+            style={{ visibility: "hidden", willChange: "opacity" }}
           >
             <div className="flex flex-col  justify-center h-full max-w-[1900px] mx-auto">
               {/* Top heading row */}
