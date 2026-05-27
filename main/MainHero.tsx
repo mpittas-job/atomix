@@ -250,12 +250,12 @@ export default function MainHero() {
     tl.addLabel("centerReached", 1)
       .to(
         "#def-hero-image-mobile",
-        { xPercent: -200, duration: 1.35, ease: "power2.inOut", force3D: true },
+        { x: "-60vw", opacity: 0, rotation: 0.01, duration: 1.35, ease: "power2.inOut", force3D: true },
         "centerReached",
       )
       .to(
         "#def-hero-image-desktop",
-        { xPercent: 150, duration: 1.35, ease: "power2.inOut", force3D: true },
+        { x: "60vw", opacity: 0, rotation: 0.01, duration: 1.35, ease: "power2.inOut", force3D: true },
         "centerReached",
       )
       .to(
@@ -379,12 +379,6 @@ export default function MainHero() {
               width={1200}
               height={800}
               className="w-full h-auto select-none object-contain pl-[12%]"
-              style={{
-                willChange: "transform",
-                transform: "translate3d(0,0,0)",
-                backfaceVisibility: "hidden",
-                WebkitBackfaceVisibility: "hidden",
-              }}
               priority
             />
           </div>
@@ -396,12 +390,6 @@ export default function MainHero() {
               width={300}
               height={600}
               className="w-full h-auto select-none object-contain"
-              style={{
-                willChange: "transform",
-                transform: "translate3d(0,0,0)",
-                backfaceVisibility: "hidden",
-                WebkitBackfaceVisibility: "hidden",
-              }}
               priority
             />
           </div>
