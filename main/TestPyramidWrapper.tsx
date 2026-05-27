@@ -202,8 +202,8 @@ function PyramidNavArrow({
       onClick={onClick}
       disabled={disabled}
       className={[
-        "absolute top-1/2 z-20 flex size-15 -translate-y-1/2 items-center justify-center rounded-full border border-white bg-white text-[#014355] shadow-lg shadow-slate-900/15 transition-all duration-200 hover:bg-white/90 active:scale-[0.98]",
-        direction === "prev" ? "left-6" : "right-6",
+        "absolute top-[40%] sm:top-[45%] lg:top-1/2 z-20 flex size-10 lg:size-15 -translate-y-1/2 items-center justify-center rounded-full border border-white bg-white text-[#014355] shadow-lg shadow-slate-900/15 transition-all duration-200 hover:bg-white/90 active:scale-[0.98]",
+        direction === "prev" ? "left-2 sm:left-4 lg:left-6" : "right-2 sm:right-4 lg:right-6",
         disabled
           ? "cursor-not-allowed opacity-40 bg-white/20 border-white/20 text-white/50"
           : "cursor-pointer opacity-100",
@@ -212,9 +212,9 @@ function PyramidNavArrow({
         .join(" ")}
     >
       {direction === "prev" ? (
-        <FiChevronLeft className="size-6 shrink-0" aria-hidden />
+        <FiChevronLeft className="size-5 lg:size-6 shrink-0" aria-hidden />
       ) : (
-        <FiChevronRight className="size-6 shrink-0" aria-hidden />
+        <FiChevronRight className="size-5 lg:size-6 shrink-0" aria-hidden />
       )}
     </button>
   );
@@ -226,17 +226,41 @@ type PyramidApi = {
 };
 
 export default function TestPyramidWrapper() {
+  const [windowWidth, setWindowWidth] = useState(
+    typeof window !== "undefined" ? window.innerWidth : 1200
+  );
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const isMobile = windowWidth < 1024;
+
   const pyramidConfig = useMemo(() => {
+    let scale = PYRAMID_SCALE;
+    let maxWidth = 700;
+    let canvasHeight = 570;
+    
+    if (isMobile) {
+        // Base scale 1.6 at 390px, min 1.5, max 2.2
+        scale = Math.max(1.5, Math.min(2.2, (windowWidth / 390) * 1.6));
+        maxWidth = Math.max(320, Math.min(460, windowWidth - 40));
+        canvasHeight = Math.max(280, Math.min(420, (windowWidth - 40) * 0.9));
+    }
+
     // Proportional scaling factor relative to the base scale (2.2)
-    const scaleRatio = PYRAMID_SCALE / 2.2;
+    const scaleRatio = scale / 2.2;
 
     return {
-      maxWidth: Math.round(700 * scaleRatio),
-      canvasHeight: Math.round(570 * scaleRatio),
-      pyramidScale: PYRAMID_SCALE,
-      verticalOffset: PYRAMID_VERTICAL_OFFSET,
+      maxWidth: isMobile ? maxWidth : Math.round(maxWidth * scaleRatio),
+      canvasHeight: isMobile ? canvasHeight : Math.round(canvasHeight * scaleRatio),
+      pyramidScale: scale,
+      verticalOffset: isMobile ? -0.25 : PYRAMID_VERTICAL_OFFSET,
       edgeLabels: {
-        fontSize: Math.round(14 * scaleRatio),
+        fontSize: Math.round((isMobile ? 12 : 14) * scaleRatio),
         worldHeight: 0.44 * scaleRatio,
         edgeOffset: 0.14 * scaleRatio,
       },
@@ -245,7 +269,7 @@ export default function TestPyramidWrapper() {
         verticalOffset: 0.44 * scaleRatio,
       },
     };
-  }, []);
+  }, [isMobile, windowWidth]);
 
   const pyramidSectionRef = useRef<HTMLDivElement>(null);
   const headingWrapRef = useRef<HTMLDivElement>(null);
@@ -296,107 +320,215 @@ export default function TestPyramidWrapper() {
     )
       return;
 
-    gsap.set(headingWrap, { autoAlpha: 0, y: 32 });
-    gsap.set(animationWrap, { autoAlpha: 0, y: 28 });
-    gsap.set(pyramidCol, { xPercent: 85, y: 0 });
-    gsap.set(boxes, { autoAlpha: 0, y: 32 });
-    gsap.set(highlightBoxRef.current, { autoAlpha: 1 });
+    const mm = gsap.matchMedia();
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: "top top+=110px",
-        end: () =>
-          `+=${section.offsetHeight * PYRAMID_SECTION_SCROLL_DISTANCE_MULTIPLIER}`,
-        pin: true,
-        pinSpacing: true,
-        scrub: true,
-        invalidateOnRefresh: true,
-        onEnter: () => auroraRef.current?.setActive(true),
-        onEnterBack: () => auroraRef.current?.setActive(true),
-        onLeave: () => auroraRef.current?.setActive(false),
-        onLeaveBack: () => auroraRef.current?.setActive(false),
-        onUpdate: (self) => {
-          // Skip our own snap tweens so onUpdate only reacts to genuine
-          // user-driven scrolling.
-          if (isProgrammaticScrollRef.current) return;
-          if (self.direction !== -1) return;
-          if (!hasReachedIconBoxRef.current) return;
-
-          const tlDur = tl.duration();
-          if (tlDur === 0) return;
-
-          // Trigger the exit snap the moment the user, while scrolling
-          // up, would cross out of the Disconnected stacks phase and
-          // into the Bespoke builds phase. Up until this threshold the
-          // user is free to scroll back from the icon-box phase through
-          // Disconnected stacks at their own pace so the pyramid
-          // translation stays tied to scroll speed.
-          const bespokeThresholdPyramidProgress =
-            HIGHLIGHT_PHASE_2_END * HIGHLIGHT_SEQUENCE_END;
-          const bespokeThresholdTime =
-            PYRAMID_PROGRESS_TWEEN_START + bespokeThresholdPyramidProgress;
-          const scrollLen = self.end - self.start;
-          const bespokeThresholdScrollY =
-            self.start + scrollLen * (bespokeThresholdTime / tlDur);
-
-          if (self.scroll() >= bespokeThresholdScrollY) return;
-
-          hasReachedIconBoxRef.current = false;
-          isExitSnappingRef.current = true;
-          pyramidApiRef.current?.setFinalHighlightOnly(true);
-          if (lastHighlightIndexRef.current !== 2) {
-            lastHighlightIndexRef.current = 2;
-            setHighlightIndex(2);
-          }
-          isProgrammaticScrollRef.current = true;
-          const firstSide = PYRAMID_SIDES[0];
-          const releaseExitLock = () => {
-            isProgrammaticScrollRef.current = false;
-            isExitSnappingRef.current = false;
-            // Hard-reset the pyramid's smoothed slider state to 0
-            // BEFORE unlocking. Without `instant: true`, the
-            // pyramid's per-frame lerp would lag the slider behind
-            // the actual scroll position and the user would see the
-            // 3rd side briefly highlighted before it settles back
-            // onto the 1st side.
-            pyramidApiRef.current?.setSlider(0, true);
-            pyramidApiRef.current?.setFinalHighlightOnly(false);
-            // Reset to the first active side so the next downward
-            // scroll starts the highlight sequence from the
-            // beginning (Simple SaaS), instead of briefly showing
-            // Disconnected stacks during the intro animations.
-            if (lastHighlightIndexRef.current !== firstSide.highlightIndex) {
-              lastHighlightIndexRef.current = firstSide.highlightIndex;
-              setHighlightIndex(firstSide.highlightIndex);
-            }
-            if (lastIsPastPyramidSequenceRef.current) {
-              lastIsPastPyramidSequenceRef.current = false;
-              setIsPastPyramidSequence(false);
-            }
-          };
-          gsap.to(window, {
-            scrollTo: {
-              y: Math.max(0, self.start - 1),
-              autoKill: false,
-            },
-            duration: 0.6,
-            ease: "power2.inOut",
-            overwrite: true,
-            onComplete: releaseExitLock,
-            onInterrupt: releaseExitLock,
-          });
-        },
+    mm.add(
+      {
+        isDesktop: "(min-width: 1024px)",
+        isMobile: "(max-width: 1023px)",
       },
-    });
-    timelineRef.current = tl;
-    const pyramidProgress = { value: 0 };
+      (context) => {
+        const { isDesktop } = context.conditions!;
 
-    // Upstream sections (e.g. MainProblemsTabs) change height when their
-    // tabs switch between 3- and 4-column layouts. Window resize alone
-    // won't catch that, so observe the document height and refresh
-    // ScrollTrigger whenever it changes — otherwise the pin start/end
-    // stay stale and the pyramid section jumps mid-scroll.
+        gsap.set(headingWrap, { autoAlpha: 0, y: 32 });
+        gsap.set(animationWrap, { autoAlpha: 0, y: 28 });
+        gsap.set(boxes, { autoAlpha: 0, y: 32 });
+        gsap.set(highlightBoxRef.current, { autoAlpha: 1 });
+
+        if (isDesktop) {
+          gsap.set(pyramidCol, { xPercent: 85, y: 0 });
+        } else {
+          gsap.set(pyramidCol, { xPercent: 0, y: 0 });
+        }
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: section,
+            start: isDesktop ? "top top+=110px" : "top top+=60px",
+            end: () =>
+              `+=${section.offsetHeight * PYRAMID_SECTION_SCROLL_DISTANCE_MULTIPLIER}`,
+            pin: true,
+            pinSpacing: true,
+            scrub: true,
+            invalidateOnRefresh: true,
+            onEnter: () => auroraRef.current?.setActive(true),
+            onEnterBack: () => auroraRef.current?.setActive(true),
+            onLeave: () => auroraRef.current?.setActive(false),
+            onLeaveBack: () => auroraRef.current?.setActive(false),
+            onUpdate: (self) => {
+              if (isProgrammaticScrollRef.current) return;
+              if (self.direction !== -1) return;
+              if (!hasReachedIconBoxRef.current) return;
+
+              const tlDur = tl.duration();
+              if (tlDur === 0) return;
+
+              const bespokeThresholdPyramidProgress =
+                HIGHLIGHT_PHASE_2_END * HIGHLIGHT_SEQUENCE_END;
+              const bespokeThresholdTime =
+                PYRAMID_PROGRESS_TWEEN_START + bespokeThresholdPyramidProgress;
+              const scrollLen = self.end - self.start;
+              const bespokeThresholdScrollY =
+                self.start + scrollLen * (bespokeThresholdTime / tlDur);
+
+              if (self.scroll() >= bespokeThresholdScrollY) return;
+
+              hasReachedIconBoxRef.current = false;
+              isExitSnappingRef.current = true;
+              pyramidApiRef.current?.setFinalHighlightOnly(true);
+              if (lastHighlightIndexRef.current !== 2) {
+                lastHighlightIndexRef.current = 2;
+                setHighlightIndex(2);
+              }
+              isProgrammaticScrollRef.current = true;
+              const firstSide = PYRAMID_SIDES[0];
+              const releaseExitLock = () => {
+                isProgrammaticScrollRef.current = false;
+                isExitSnappingRef.current = false;
+                pyramidApiRef.current?.setSlider(0, true);
+                pyramidApiRef.current?.setFinalHighlightOnly(false);
+                if (lastHighlightIndexRef.current !== firstSide.highlightIndex) {
+                  lastHighlightIndexRef.current = firstSide.highlightIndex;
+                  setHighlightIndex(firstSide.highlightIndex);
+                }
+                if (lastIsPastPyramidSequenceRef.current) {
+                  lastIsPastPyramidSequenceRef.current = false;
+                  setIsPastPyramidSequence(false);
+                }
+              };
+              gsap.to(window, {
+                scrollTo: {
+                  y: Math.max(0, self.start - 1),
+                  autoKill: false,
+                },
+                duration: 0.6,
+                ease: "power2.inOut",
+                overwrite: true,
+                onComplete: releaseExitLock,
+                onInterrupt: releaseExitLock,
+              });
+            },
+          },
+        });
+        timelineRef.current = tl;
+        const pyramidProgress = { value: 0 };
+
+        tl.to(headingWrap, {
+          autoAlpha: 1,
+          y: 0,
+          ease: "power2.out",
+          duration: 0.22,
+        })
+          .to(
+            animationWrap,
+            {
+              autoAlpha: 1,
+              y: 0,
+              ease: "power2.out",
+              duration: 0.18,
+            },
+            0.18,
+          )
+          .to(
+            pyramidProgress,
+            {
+              value: 1,
+              ease: "none",
+              duration: 1,
+              onUpdate: () => {
+                const progress = pyramidProgress.value;
+                pyramidApiRef.current?.setSlider(progress);
+
+                let newIndex = lastHighlightIndexRef.current;
+                if (isExitSnappingRef.current) {
+                  newIndex = 2;
+                } else if (progress < HIGHLIGHT_SEQUENCE_END) {
+                  const introT = Math.min(1, progress / HIGHLIGHT_SEQUENCE_END);
+                  if (introT <= HIGHLIGHT_PHASE_1_END) {
+                    newIndex = 1;
+                  } else if (introT <= HIGHLIGHT_PHASE_2_END) {
+                    newIndex = 0;
+                  } else {
+                    newIndex = 2;
+                  }
+                }
+
+                if (newIndex !== lastHighlightIndexRef.current) {
+                  lastHighlightIndexRef.current = newIndex;
+                  setHighlightIndex(newIndex);
+                }
+
+                const past = progress >= HIGHLIGHT_SEQUENCE_END;
+                if (past !== lastIsPastPyramidSequenceRef.current) {
+                  lastIsPastPyramidSequenceRef.current = past;
+                  setIsPastPyramidSequence(past);
+                }
+                if (past) {
+                  hasReachedIconBoxRef.current = true;
+                }
+              },
+            },
+            PYRAMID_PROGRESS_TWEEN_START,
+          );
+
+        if (isDesktop) {
+          tl.to(
+            pyramidCol,
+            {
+              xPercent: 0,
+              y: PYRAMID_LEFT_SIDE_Y_SHIFT,
+              ease: "none",
+              duration: 0.22,
+            },
+            PYRAMID_PROGRESS_TWEEN_START + HIGHLIGHT_SEQUENCE_END,
+          )
+            .to(
+              highlightBoxRef.current,
+              { autoAlpha: 0, ease: "power2.out", duration: 0.15 },
+              PYRAMID_PROGRESS_TWEEN_START + HIGHLIGHT_SEQUENCE_END,
+            )
+            .to(
+              boxes,
+              {
+                autoAlpha: 1,
+                y: 0,
+                ease: "power2.out",
+                duration: 0.25,
+                stagger: 0.08,
+              },
+              1.12,
+            );
+        } else {
+          tl.to(
+            pyramidCol,
+            {
+              xPercent: 0,
+              y: 200,
+              ease: "none",
+              duration: 0.22,
+            },
+            PYRAMID_PROGRESS_TWEEN_START + HIGHLIGHT_SEQUENCE_END,
+          )
+            .to(
+              highlightBoxRef.current,
+              { autoAlpha: 0, ease: "power2.out", duration: 0.15 },
+              PYRAMID_PROGRESS_TWEEN_START + HIGHLIGHT_SEQUENCE_END,
+            )
+            .to(
+              boxes,
+              {
+                autoAlpha: 1,
+                y: 0,
+                ease: "power2.out",
+                duration: 0.25,
+                stagger: 0.08,
+              },
+              1.12,
+            );
+        }
+      }
+    );
+
     let rafId = 0;
     let lastHeight = document.body.scrollHeight;
     const refreshST = () => {
@@ -412,103 +544,10 @@ export default function TestPyramidWrapper() {
     });
     resizeObserver.observe(document.body);
 
-    tl.to(headingWrap, {
-      autoAlpha: 1,
-      y: 0,
-      ease: "power2.out",
-      duration: 0.22,
-    })
-      .to(
-        animationWrap,
-        {
-          autoAlpha: 1,
-          y: 0,
-          ease: "power2.out",
-          duration: 0.18,
-        },
-        0.18,
-      )
-      .to(
-        pyramidProgress,
-        {
-          value: 1,
-          ease: "none",
-          duration: 1,
-          onUpdate: () => {
-            const progress = pyramidProgress.value;
-            pyramidApiRef.current?.setSlider(progress);
-
-            let newIndex = lastHighlightIndexRef.current;
-            if (isExitSnappingRef.current) {
-              // While the user is being snapped out of the section
-              // backwards, freeze the highlight content on Disconnected
-              // stacks so they don't see the title flash through the
-              // earlier sides as the scrub races back to the start.
-              newIndex = 2;
-            } else if (progress < HIGHLIGHT_SEQUENCE_END) {
-              const introT = Math.min(1, progress / HIGHLIGHT_SEQUENCE_END);
-              if (introT <= HIGHLIGHT_PHASE_1_END) {
-                newIndex = 1;
-              } else if (introT <= HIGHLIGHT_PHASE_2_END) {
-                newIndex = 0;
-              } else {
-                newIndex = 2;
-              }
-            }
-
-            if (newIndex !== lastHighlightIndexRef.current) {
-              lastHighlightIndexRef.current = newIndex;
-              setHighlightIndex(newIndex);
-            }
-
-            const past = progress >= HIGHLIGHT_SEQUENCE_END;
-            if (past !== lastIsPastPyramidSequenceRef.current) {
-              lastIsPastPyramidSequenceRef.current = past;
-              setIsPastPyramidSequence(past);
-            }
-            // Latch on entering the icon-box phase. Stays latched
-            // through the scroll back across Disconnected stacks so
-            // the exit snap can fire once the user reaches the
-            // Bespoke threshold.
-            if (past) {
-              hasReachedIconBoxRef.current = true;
-            }
-          },
-        },
-        PYRAMID_PROGRESS_TWEEN_START,
-      )
-      .to(
-        pyramidCol,
-        {
-          xPercent: 0,
-          y: PYRAMID_LEFT_SIDE_Y_SHIFT,
-          ease: "none",
-          duration: 0.22,
-        },
-        PYRAMID_PROGRESS_TWEEN_START + HIGHLIGHT_SEQUENCE_END,
-      )
-      .to(
-        highlightBoxRef.current,
-        { autoAlpha: 0, ease: "power2.out", duration: 0.15 },
-        PYRAMID_PROGRESS_TWEEN_START + HIGHLIGHT_SEQUENCE_END,
-      )
-      .to(
-        boxes,
-        {
-          autoAlpha: 1,
-          y: 0,
-          ease: "power2.out",
-          duration: 0.25,
-          stagger: 0.08,
-        },
-        1.12,
-      );
-
     return () => {
       resizeObserver.disconnect();
       if (rafId) cancelAnimationFrame(rafId);
-      tl.scrollTrigger?.kill();
-      tl.kill();
+      mm.revert();
       timelineRef.current = null;
     };
   }, []);
@@ -674,7 +713,7 @@ export default function TestPyramidWrapper() {
       />
 
       <div className="relative z-10 my-auto flex w-full max-w-[1600px] flex-col items-center justify-center gap-4">
-        <div ref={headingWrapRef} className="w-full mt-20">
+        <div ref={headingWrapRef} className="w-full mt-6 sm:mt-10 lg:mt-20 px-4 md:px-8 [&_h2]:text-xl [&_h2]:sm:text-3xl [&_h2]:lg:text-5xl [&_h2]:leading-snug [&_[data-description]]:text-[10px] [&_[data-description]]:sm:text-sm [&_[data-description]]:lg:text-xl [&_[data-description]]:leading-relaxed [&_[data-description]]:mt-2 [&_div]:gap-y-2 lg:[&_div]:gap-y-6 lg:px-0">
           <DefHeading
             theme="light"
             badgeText=""
@@ -686,56 +725,56 @@ export default function TestPyramidWrapper() {
 
         <div
           ref={animationWrapRef}
-          className="w-full flex justify-center relative -mt-16"
+          className="w-full flex flex-col items-center lg:flex-row lg:justify-center relative mt-2 lg:-mt-16 h-[460px] lg:h-auto px-4"
         >
           {/* Left highlight info box - absolutely positioned on left during pyramid highlight sequence */}
           <div
             ref={highlightBoxRef}
-            className="absolute left-34 top-1/2 -translate-y-1/2 w-[520px] opacity-0"
+            className="absolute left-4 right-4 md:left-auto md:right-auto md:w-[480px] top-[250px] lg:left-34 lg:top-1/2 lg:-translate-y-1/2 lg:w-[520px] lg:absolute opacity-0 z-10"
           >
             <div
               ref={highlightContentRef}
-              className="highlight-content rounded-2xl relative left-30"
+              className="highlight-content rounded-2xl relative lg:left-30"
             >
               <h3
                 ref={highlightTitleRef}
-                className="text-white font-semibold text-4xl leading-tight mb-4"
+                className="text-white font-semibold text-lg sm:text-xl lg:text-4xl leading-tight mb-2 lg:mb-4"
               >
                 {highlightInfo.title}
               </h3>
               <p
                 ref={highlightDescRef}
-                className="text-white/80 text-xl leading-relaxed mb-9 max-w-[400px]"
+                className="text-white/80 text-xs sm:text-sm lg:text-xl leading-relaxed mb-4 lg:mb-9 max-w-[400px]"
               >
                 {highlightInfo.description}
               </p>
-              <ul className="space-y-6">
+              <ul className="space-y-2 lg:space-y-6">
                 {highlightInfo.items.map((item, idx) => (
                   <li
                     key={idx}
                     ref={(el) => {
                       highlightItemsRef.current[idx] = el;
                     }}
-                    className="flex items-start gap-4"
+                    className="flex items-start gap-3 lg:gap-4"
                   >
                     <div
-                      className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border-2 ${
+                      className={`w-6 h-6 sm:w-8 sm:h-8 lg:w-14 lg:h-14 rounded-lg lg:rounded-2xl flex items-center justify-center shrink-0 border-2 ${
                         item.positive
                           ? "border-white/0 bg-[#015167]"
                           : "border-white/30 bg-transparent"
                       }`}
                     >
                       {item.positive ? (
-                        <FiCheck className="w-8 h-8 text-[#39C6ED]" />
+                        <FiCheck className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 lg:w-8 lg:h-8 text-[#39C6ED]" />
                       ) : (
-                        <FiX className="w-8 h-8 text-white/60" />
+                        <FiX className="w-3.5 h-3.5 sm:w-4.5 sm:h-4.5 lg:w-8 lg:h-8 text-white/60" />
                       )}
                     </div>
-                    <div className="flex flex-col pt-0.5">
-                      <span className="text-white font-semibold text-2xl leading-tight">
+                    <div className="flex flex-col pt-0 lg:pt-0.5">
+                      <span className="text-white font-semibold text-xs sm:text-sm lg:text-2xl leading-tight">
                         {item.title}
                       </span>
-                      <span className="text-white/70 text-lg leading-relaxed mt-1">
+                      <span className="text-white/70 text-[10px] sm:text-xs lg:text-lg leading-relaxed mt-0.5">
                         {item.description}
                       </span>
                     </div>
@@ -747,7 +786,7 @@ export default function TestPyramidWrapper() {
 
           <div
             ref={pyramidColRef}
-            className="w-1/2"
+            className="absolute top-0 w-full flex justify-center lg:relative lg:top-auto lg:w-1/2"
             style={{
               maxWidth: `${pyramidConfig.maxWidth}px`,
               willChange: "transform",
@@ -761,7 +800,7 @@ export default function TestPyramidWrapper() {
             />
           </div>
 
-          <div className="w-1/2 flex flex-col justify-center gap-8 pl-0 max-w-[550px] relative -left-10 pt-10">
+          <div className="absolute top-0 left-4 right-4 md:left-auto md:right-auto md:w-[480px] flex flex-col justify-center gap-2 sm:gap-4 pl-0 lg:relative lg:top-auto lg:left-auto lg:right-auto lg:w-1/2 lg:max-w-[550px] lg:-left-10 lg:pt-10 lg:gap-8">
             {iconBoxesData.map((box, index) => {
               const sectionId =
                 PYRAMID_SIDES.find((side) => side.sectionIndex === index)?.id ??
@@ -773,31 +812,31 @@ export default function TestPyramidWrapper() {
                   ref={(el) => {
                     iconBoxRefs.current[index] = el;
                   }}
-                  className="flex scroll-mt-28 items-start gap-6 md:scroll-mt-32"
+                  className="flex scroll-mt-28 items-start gap-3 sm:gap-4 lg:gap-6 md:scroll-mt-32"
                   style={{ willChange: "transform, opacity" }}
                 >
-                  <div className="w-14 h-14 shrink-0 flex justify-center items-center rounded-xl bg-[#015167]">
-                    <img src={box.icon} alt={box.title} className="w-9 h-9" />
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 lg:w-14 lg:h-14 shrink-0 flex justify-center items-center rounded-lg lg:rounded-xl bg-[#015167]">
+                    <img src={box.icon} alt={box.title} className="w-5 h-5 sm:w-6 sm:h-6 lg:w-9 lg:h-9" />
                   </div>
                   <div>
-                    <h3 className="text-white font-semibold text-2xl mb-2">
+                    <h3 className="text-white font-semibold text-sm sm:text-base lg:text-2xl mb-0.5 lg:mb-2">
                       {box.title}
                     </h3>
                     <p
-                      className={`text-white/75 text-lg leading-relaxed ${
-                        box.items ? "mb-4" : ""
+                      className={`text-white/75 text-[10px] sm:text-xs lg:text-lg leading-relaxed ${
+                        box.items ? "mb-1.5 lg:mb-4" : ""
                       }`}
                     >
                       {box.description}
                     </p>
                     {box.items && (
-                      <ul className="space-y-1">
+                      <ul className="space-y-0.5 lg:space-y-1">
                         {box.items.map((item, itemIndex) => (
                           <li
                             key={itemIndex}
-                            className="flex items-center gap-3 text-white/75 text-base sm:text-lg"
+                            className="flex items-center gap-1.5 lg:gap-3 text-white/75 text-[9px] sm:text-xs lg:text-lg"
                           >
-                            {item.icon} {item.text}
+                            <span className="[&_svg]:w-3 [&_svg]:h-3 lg:[&_svg]:w-5 lg:[&_svg]:h-5">{item.icon}</span> {item.text}
                           </li>
                         ))}
                       </ul>
