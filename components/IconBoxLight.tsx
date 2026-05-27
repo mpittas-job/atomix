@@ -1,6 +1,6 @@
 "use client";
 
-import React, { type ReactNode, useId, isValidElement, cloneElement, useRef, memo, useCallback, useMemo } from "react";
+import React, { type ReactNode, useId, isValidElement, cloneElement, useRef, memo, useCallback, useMemo, useEffect } from "react";
 import { MouseEvent } from "react";
 import gsap from "gsap";
 import { FaShieldHalved } from "react-icons/fa6";
@@ -31,6 +31,13 @@ const IconBoxLight = memo(function IconBoxLight({
   const baseBlurOpacity = 0;
   const lastGlowAngleRef = useRef(45);
   const rectRef = useRef<DOMRect | null>(null);
+
+  // Performance Optimization Refs
+  const mousePosRef = useRef({ x: 0, y: 0 });
+  const rafIdRef = useRef<number | null>(null);
+  const isHoveringRef = useRef(false);
+  const hasMovedRef = useRef(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const normalizeGlowAngle = useCallback((nextAngle: number) => {
     const previousAngle = lastGlowAngleRef.current;
@@ -77,47 +84,97 @@ const IconBoxLight = memo(function IconBoxLight({
     target.style.setProperty("--glow-outer-2-alpha", String(outerGlowStrength * 0.65));
   }, [normalizeGlowAngle]);
 
+  const tickGlow = useCallback(() => {
+    if (!containerRef.current) {
+      rafIdRef.current = null;
+      return;
+    }
+    
+    if (hasMovedRef.current) {
+      updateGlowPosition(
+        containerRef.current,
+        mousePosRef.current.x,
+        mousePosRef.current.y
+      );
+      hasMovedRef.current = false;
+    }
+    
+    if (isHoveringRef.current) {
+      rafIdRef.current = requestAnimationFrame(tickGlow);
+    } else {
+      rafIdRef.current = null;
+    }
+  }, [updateGlowPosition]);
+
   const handleMouseEnter = useCallback((event: MouseEvent<HTMLDivElement>) => {
     const target = event.currentTarget;
     const parent = target.parentElement;
+    
+    isHoveringRef.current = true;
     rectRef.current = target.getBoundingClientRect();
-    updateGlowPosition(target, event.clientX, event.clientY);
+    
+    mousePosRef.current.x = event.clientX;
+    mousePosRef.current.y = event.clientY;
+    hasMovedRef.current = true;
+    
+    if (rafIdRef.current === null) {
+      rafIdRef.current = requestAnimationFrame(tickGlow);
+    }
+    
+    if (parent) {
+      parent.style.zIndex = "10";
+    }
+    
+    gsap.killTweensOf(target);
     gsap.to(target, {
       scale: 1.02,
       force3D: true,
-      "--glow-border-opacity": 1,
-      "--glow-ring-opacity": 0.96,
-      "--glow-blur-opacity": 0.3,
+      "--hover-progress": 1,
       duration: 0.25,
       ease: "power2.out",
     });
-    if (parent) gsap.to(parent, { zIndex: 10, duration: 0.25, ease: "power2.out" });
-  }, [updateGlowPosition]);
+  }, [tickGlow]);
 
   const handleMouseLeave = useCallback((event: MouseEvent<HTMLDivElement>) => {
     const target = event.currentTarget;
     const parent = target.parentElement;
+    
+    isHoveringRef.current = false;
+    
+    gsap.killTweensOf(target);
     gsap.to(target, {
       scale: 1,
       force3D: true,
-      "--glow-border-opacity": baseBorderOpacity,
-      "--glow-ring-opacity": baseRingOpacity,
-      "--glow-blur-opacity": baseBlurOpacity,
-      "--glow-border-alpha": 0,
-      "--glow-outer-1-alpha": 0,
-      "--glow-outer-2-alpha": 0,
+      "--hover-progress": 0,
       duration: 0.3,
       ease: "power2.out",
       onComplete: () => {
         rectRef.current = null;
+        if (parent) {
+          parent.style.zIndex = "";
+        }
       }
     });
-    if (parent) gsap.to(parent, { zIndex: 1, duration: 0.3, ease: "power2.out" });
-  }, [baseBorderOpacity, baseRingOpacity, baseBlurOpacity]);
+  }, []);
 
   const handleMouseMove = useCallback((event: MouseEvent<HTMLDivElement>) => {
-    updateGlowPosition(event.currentTarget, event.clientX, event.clientY);
-  }, [updateGlowPosition]);
+    mousePosRef.current.x = event.clientX;
+    mousePosRef.current.y = event.clientY;
+    hasMovedRef.current = true;
+    
+    if (isHoveringRef.current && rafIdRef.current === null) {
+      rafIdRef.current = requestAnimationFrame(tickGlow);
+    }
+  }, [tickGlow]);
+
+  // Clean up animation frame on unmount
+  useEffect(() => {
+    return () => {
+      if (rafIdRef.current !== null) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+    };
+  }, []);
 
   const renderIcon = useCallback(() => {
     if (icon && isValidElement(icon)) {
@@ -135,23 +192,26 @@ const IconBoxLight = memo(function IconBoxLight({
 
   return (
     <div
+      ref={containerRef}
       className={`group relative rounded-3xl bg-white/40 backdrop-blur-md p-6 overflow-hidden ${className}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
       style={{
         "--glow-angle": baseGlowAngle,
-        "--glow-border-opacity": baseBorderOpacity,
-        "--glow-ring-opacity": baseRingOpacity,
-        "--glow-blur-opacity": baseBlurOpacity,
-        "--glow-border-alpha": 0,
-        "--glow-outer-1-alpha": 0,
-        "--glow-outer-2-alpha": 0,
+        "--glow-border-opacity": "0",
+        "--glow-ring-opacity": "0",
+        "--glow-blur-opacity": "0",
+        "--glow-border-alpha": "0",
+        "--glow-outer-1-alpha": "0",
+        "--glow-outer-2-alpha": "0",
+        "--hover-progress": "0",
         boxShadow:
-          "inset 0 1px 2px rgba(255,255,255,0.6), inset 5px 5px 20px rgba(10,21,44,0.06), 0 0 0 1px rgba(6, 147, 185, var(--glow-border-alpha)), 0 0 14px rgba(6, 147, 185, var(--glow-outer-1-alpha)), 0 0 28px rgba(6, 147, 185, var(--glow-outer-2-alpha))",
+          "inset 0 1px 2px rgba(255,255,255,0.6), inset 5px 5px 20px rgba(10,21,44,0.06), 0 0 0 1px rgba(6, 147, 185, calc(var(--glow-border-alpha) * var(--hover-progress))), 0 0 14px rgba(6, 147, 185, calc(var(--glow-outer-1-alpha) * var(--hover-progress))), 0 0 28px rgba(6, 147, 185, calc(var(--glow-outer-2-alpha) * var(--hover-progress)))",
         backfaceVisibility: "hidden",
         WebkitBackfaceVisibility: "hidden",
         transform: "translateZ(0)",
+        willChange: "transform",
         WebkitFontSmoothing: "subpixel-antialiased",
       } as React.CSSProperties}
     >
@@ -161,7 +221,7 @@ const IconBoxLight = memo(function IconBoxLight({
         style={{
           background:
             "conic-gradient(from var(--glow-angle), rgba(6, 147, 185, 0) 0deg, rgba(6, 147, 185, 0) 278deg, rgba(6, 147, 185, 0.5) 300deg, rgba(6, 147, 185, 1) 329deg, rgba(57, 198, 237, 1) 343deg, rgba(6, 147, 185, 0.44) 356deg, rgba(6, 147, 185, 0) 360deg)",
-          opacity: "var(--glow-border-opacity)",
+          opacity: "calc(var(--glow-border-opacity) * var(--hover-progress))",
           WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
           WebkitMaskComposite: "xor",
           maskComposite: "exclude",
@@ -173,7 +233,7 @@ const IconBoxLight = memo(function IconBoxLight({
         style={{
           background:
             "conic-gradient(from var(--glow-angle), rgba(6, 147, 185, 0) 0deg, rgba(6, 147, 185, 0) 274deg, rgba(6, 147, 185, 0.22) 300deg, rgba(6, 147, 185, 0.96) 330deg, rgba(57, 198, 237, 0.76) 346deg, rgba(6, 147, 185, 0) 360deg)",
-          opacity: "var(--glow-blur-opacity)",
+          opacity: "calc(var(--glow-blur-opacity) * var(--hover-progress))",
           filter: "blur(6px)",
           WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
           WebkitMaskComposite: "xor",
@@ -187,7 +247,7 @@ const IconBoxLight = memo(function IconBoxLight({
         style={{
           background:
             "conic-gradient(from var(--glow-angle), rgba(6, 147, 185, 0) 0deg, rgba(6, 147, 185, 0) 284deg, rgba(6, 147, 185, 0.34) 306deg, rgba(57, 198, 237, 1) 330deg, rgba(6, 147, 185, 0.48) 350deg, rgba(6, 147, 185, 0) 360deg)",
-          opacity: "var(--glow-ring-opacity)",
+          opacity: "calc(var(--glow-ring-opacity) * var(--hover-progress))",
           WebkitMask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
           WebkitMaskComposite: "xor",
           maskComposite: "exclude",

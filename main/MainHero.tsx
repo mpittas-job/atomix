@@ -11,8 +11,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import LazySoftAurora from "@/components/backgrounds/LazySoftAurora";
 import type { SoftAuroraHandle } from "@/components/backgrounds/LazySoftAurora";
-import InkSpill from "@/components/backgrounds/InkSpill";
-import type { InkSpillHandle } from "@/components/backgrounds/InkSpill";
 import { FaArrowRight } from "react-icons/fa";
 import { useCallback, useState } from "react";
 import DefHeading from "@/components/typo/DefHeading";
@@ -140,7 +138,6 @@ function AboutSectionNavItem({
 export default function MainHero() {
   const { openBookDemoModal } = useBookDemoModal();
   const title1SplitRef = useRef<SplitTextHandle>(null);
-  const inkSpillRef = useRef<InkSpillHandle>(null);
   const bgAuroraRef = useRef<SoftAuroraHandle>(null);
   const fgAuroraRef = useRef<SoftAuroraHandle>(null);
   const aboutCardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -175,9 +172,9 @@ export default function MainHero() {
       );
 
     // --- Set initial hidden states for scroll-animated elements ---
-    const inkProgress = { value: 0 };
     gsap.set("#def-hero-title-2-bg", { autoAlpha: 1 });
     gsap.set("#def-hero-title-2-bg-shader", { opacity: 1 });
+    gsap.set("#def-hero-title-2-bg-slide", { opacity: 0, yPercent: 100 });
     gsap.set("#def-hero-title-2-bg-aurora", { autoAlpha: 0 });
     gsap.set("#def-hero-title-2", { autoAlpha: 0 });
     gsap.set("#def-hero-about-sections", { autoAlpha: 0 });
@@ -251,13 +248,8 @@ export default function MainHero() {
         "centerReached",
       )
       .to(
-        inkProgress,
-        {
-          value: 1,
-          duration: 3.6,
-          ease: "power2.out",
-          onUpdate: () => inkSpillRef.current?.setProgress(inkProgress.value),
-        },
+        "#def-hero-title-2-bg-slide",
+        { yPercent: 0, opacity: 1, duration: 1.5, ease: "power3.inOut" },
         "centerReached",
       )
       .to(
@@ -399,14 +391,14 @@ export default function MainHero() {
             id="def-hero-title-2-bg-shader"
             className="absolute inset-0 pointer-events-none"
           >
-            <InkSpill
-              ref={inkSpillRef}
-              color="#EBEFF2"
-              speed={0.9}
-              scale={1.8}
-              edgeSoftness={0.22}
-              maxDpr={1.25}
-            />
+            {/* The separate light gray slide transition overlay (reveals from bottom to top) */}
+            <div
+              id="def-hero-title-2-bg-slide"
+              className="absolute inset-0 bg-[#EBEFF2] will-change-transform"
+            >
+              {/* Soft feathered edge for smooth bottom-to-top slide translation */}
+              <div className="absolute bottom-[calc(100%-2px)] left-0 right-0 h-[45vh] bg-gradient-to-t from-[#EBEFF2] to-[#EBEFF2]/0 pointer-events-none" />
+            </div>
             <div
               id="def-hero-title-2-bg-aurora"
               className="absolute inset-0 pointer-events-none mix-blend-multiply"
