@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Header from "@/components/header";
 import MobileHero from "@/mobile/MobileHero";
 import MainHero from "@/main/MainHero";
@@ -47,24 +46,6 @@ export default function LandingPage() {
     footer,
   } = LANDING_SECTIONS;
 
-  const [isDesktop, setIsDesktop] = useState(false);
-  useEffect(() => {
-    const mql = window.matchMedia("(min-width: 1024px)"); // Tailwind `lg`
-    const onChange = (e: MediaQueryListEvent | MediaQueryList) =>
-      setIsDesktop("matches" in e ? e.matches : e.matches);
-
-    setIsDesktop(mql.matches);
-
-    // Safari < 14 fallback uses addListener/removeListener
-    if ("addEventListener" in mql) {
-      mql.addEventListener("change", onChange);
-      return () => mql.removeEventListener("change", onChange);
-    }
-
-    mql.addListener(onChange);
-    return () => mql.removeListener(onChange);
-  }, []);
-
   return (
     <div className="overflow-x-hidden bg-white">
       <Header />
@@ -76,10 +57,19 @@ export default function LandingPage() {
           ["--hero-y-gap" as string]: "1rem",
         }}
       >
-        {isDesktop ? <MainHero /> : <MobileHero />}
+        <div className="hidden lg:block">
+          <MainHero />
+        </div>
+        <div className="lg:hidden">
+          <MobileHero />
+        </div>
       </div>
 
-      {!isDesktop && <MobileAboutAtomix />}
+      <div className="lg:hidden">
+        <MobileAboutAtomix />
+      </div>
+
+      <MainMissionVisionCards />
 
       {SHOW_SCROLL_TEST_SPACER && (
         <div
@@ -88,8 +78,6 @@ export default function LandingPage() {
           data-scroll-test-spacer
         />
       )}
-
-      {missionVision && <MainMissionVisionCards />}
 
       {(problemsTabs ||
         testPyramid ||

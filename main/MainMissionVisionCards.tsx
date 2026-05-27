@@ -11,6 +11,37 @@ import LazySoftAurora from "@/components/backgrounds/LazySoftAurora";
 gsap.registerPlugin(ScrollTrigger);
 
 const MISSION_VISION_SCROLL_DISTANCE_MULTIPLIER = 2.5;
+const FALLBACK_HEADER_OFFSET_PX = 110;
+
+function getHeaderOffsetPx() {
+  if (typeof window === "undefined") return FALLBACK_HEADER_OFFSET_PX;
+
+  // Prefer the app-wide header CSS var (used elsewhere in the codebase).
+  const rootStyle = getComputedStyle(document.documentElement);
+  const raw = rootStyle.getPropertyValue("--header-height").trim();
+
+  if (raw) {
+    const num = Number.parseFloat(raw);
+    if (!Number.isNaN(num)) {
+      if (raw.endsWith("rem")) {
+        const rootFontSize = Number.parseFloat(
+          getComputedStyle(document.documentElement).fontSize || "16",
+        );
+        return Math.round(num * (Number.isNaN(rootFontSize) ? 16 : rootFontSize));
+      }
+
+      // Covers px and any other numeric-ish value we can treat as px.
+      return Math.round(num);
+    }
+  }
+
+  // Fallback to a real header element if present.
+  const headerEl = document.querySelector("header");
+  const headerRect = headerEl?.getBoundingClientRect();
+  if (headerRect?.height) return Math.round(headerRect.height);
+
+  return FALLBACK_HEADER_OFFSET_PX;
+}
 
 function renderTypewriterTitle(title: string) {
   const lines = [title];
@@ -52,15 +83,16 @@ function MissionVisionCard({
   return (
     <div
       ref={cardRef}
-      className="absolute left-1/2 top-1/2 -translate-1/2 md:py-8 md:px-32 text-left flex flex-col justify-center gap-5 w-full max-w-[1900px]"
+      className="absolute left-1/2 top-1/2 w-full max-w-[1900px] -translate-x-1/2 -translate-y-1/2 px-6 py-10 text-left flex flex-col justify-center gap-5 md:px-32 md:py-8 opacity-0"
+      style={{ visibility: "hidden" }}
     >
-      <h3 className="text-[100px] font-medium uppercase leading-[1.05]">
+      <h3 className="text-6xl font-medium uppercase leading-[1.05] md:text-[80px]">
         {renderTypewriterTitle(title)}
       </h3>
       <div data-mission-vision-item className="w-full h-px bg-white/16 mb-3" />
       <div
         data-mission-vision-item
-        className="text-base md:text-4xl leading-13 mb-6"
+        className="text-2xl leading-9 mb-6 md:text-3xl md:leading-10"
       >
         {descriptionLines.map((line, index) => (
           <span
@@ -111,114 +143,128 @@ export default function MainMissionVisionCards() {
     gsap.set(missionItems, { y: 40, opacity: 0 });
     gsap.set(visionItems, { y: 40, opacity: 0 });
 
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: section,
-        start: "top top+=110px",
-        end: () =>
-          `+=${section.offsetHeight * MISSION_VISION_SCROLL_DISTANCE_MULTIPLIER}`,
-        pin: true,
-        pinSpacing: true,
-        scrub: true,
-        invalidateOnRefresh: true,
-      },
-    });
+    const mm = gsap.matchMedia();
 
-    tl.fromTo(
-      missionCard,
-      { autoAlpha: 0 },
-      { autoAlpha: 1, duration: 0.45, ease: "power2.out" },
-      0,
-    )
-      .to(
-        missionChars,
-        {
-          opacity: 1,
-          duration: 0.06,
-          ease: "none",
-          stagger: 0.095,
+    let tl: gsap.core.Timeline | null = null;
+
+    const buildTimeline = (start: string) => {
+      tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start,
+          end: () =>
+            `+=${section.offsetHeight * MISSION_VISION_SCROLL_DISTANCE_MULTIPLIER}`,
+          pin: true,
+          pinSpacing: true,
+          scrub: true,
+          invalidateOnRefresh: true,
         },
+      });
+
+      tl.fromTo(
+        missionCard,
+        { autoAlpha: 0 },
+        { autoAlpha: 1, duration: 0.45, ease: "power2.out" },
         0,
       )
-      .to(
-        missionItems,
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1.05,
-          ease: "power2.out",
-          stagger: 0.28,
-        },
-        0.45,
-      )
-      .addLabel("visionVisible", 2.4)
-      .to(
-        missionItems,
-        {
-          y: -30,
-          opacity: 0,
-          duration: 0.4,
-          ease: "power2.in",
-          stagger: 0.05,
-        },
-        "visionVisible",
-      )
-      .to(
-        missionChars,
-        {
-          opacity: 0,
-          duration: 0.03,
-          ease: "none",
-          stagger: { each: 0.018, from: "end" },
-        },
-        "visionVisible+=0.05",
-      )
-      .to(
-        missionCard,
-        { autoAlpha: 0, duration: 0.55, ease: "power2.inOut" },
-        "visionVisible+=0.3",
-      )
-      .fromTo(
-        visionCard,
-        { autoAlpha: 0 },
-        { autoAlpha: 1, duration: 0.55, ease: "power2.inOut" },
-        "visionVisible+=0.3",
-      )
-      .to(
-        visionChars,
-        {
-          opacity: 1,
-          duration: 0.06,
-          ease: "none",
-          stagger: 0.095,
-        },
-        "visionVisible+=1.15",
-      )
-      .to(
-        visionItems,
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1.05,
-          ease: "power2.out",
-          stagger: 0.28,
-        },
-        "visionVisible+=1.7",
-      )
-      .to({}, { duration: 1 });
+        .to(
+          missionChars,
+          {
+            opacity: 1,
+            duration: 0.06,
+            ease: "none",
+            stagger: 0.095,
+          },
+          0,
+        )
+        .to(
+          missionItems,
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.05,
+            ease: "power2.out",
+            stagger: 0.28,
+          },
+          0.45,
+        )
+        .addLabel("visionVisible", 2.4)
+        .to(
+          missionItems,
+          {
+            y: -30,
+            opacity: 0,
+            duration: 0.4,
+            ease: "power2.in",
+            stagger: 0.05,
+          },
+          "visionVisible",
+        )
+        .to(
+          missionChars,
+          {
+            opacity: 0,
+            duration: 0.03,
+            ease: "none",
+            stagger: { each: 0.018, from: "end" },
+          },
+          "visionVisible+=0.05",
+        )
+        .to(
+          missionCard,
+          { autoAlpha: 0, duration: 0.55, ease: "power2.inOut" },
+          "visionVisible+=0.3",
+        )
+        .fromTo(
+          visionCard,
+          { autoAlpha: 0 },
+          { autoAlpha: 1, duration: 0.55, ease: "power2.inOut" },
+          "visionVisible+=0.3",
+        )
+        .to(
+          visionChars,
+          {
+            opacity: 1,
+            duration: 0.06,
+            ease: "none",
+            stagger: 0.095,
+          },
+          "visionVisible+=1.15",
+        )
+        .to(
+          visionItems,
+          {
+            y: 0,
+            opacity: 1,
+            duration: 1.05,
+            ease: "power2.out",
+            stagger: 0.28,
+          },
+          "visionVisible+=1.7",
+        )
+        .to({}, { duration: 1 });
+
+      return tl;
+    };
+
+    const startBelowHeader = () => `top top+=${getHeaderOffsetPx()}px`;
+
+    // Mobile + tablet (and really all sizes) should pin right below the header.
+    mm.add("all", () => buildTimeline(startBelowHeader()));
 
     return () => {
-      tl.scrollTrigger?.kill();
-      tl.kill();
+      tl?.scrollTrigger?.kill();
+      tl?.kill();
+      mm.revert();
     };
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="h-[calc(100vh-110px)] min-h-[calc(100vh-110px)] bg-white flex flex-col justify-center py-14 px-12"
+      className="h-[calc(100svh-var(--header-height,110px))] bg-white flex flex-col justify-center py-0 px-0 md:py-14 md:px-0 lg:min-h-[calc(100svh-var(--header-height,110px))]"
     >
-      <div className="relative mx-auto flex w-full min-h-0 flex-1 flex-col justify-center overflow-hidden rounded-3xl bg-linear-to-b from-[#004152] via-[#01485C] to-[#004152] text-white shadow-[0_24px_80px_-12px_rgba(0,30,40,0.35)]">
+      <div className="relative flex w-full min-h-0 flex-1 flex-col justify-center overflow-hidden rounded-none bg-linear-to-b from-[#004152] via-[#01485C] to-[#004152] text-white">
         <LazySoftAurora
           className="absolute top-0 left-0 h-[500px] w-full"
           speed={1.3}
