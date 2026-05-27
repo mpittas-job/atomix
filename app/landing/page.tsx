@@ -15,37 +15,7 @@ import MainCurrentStatusLight from "@/main/MainCurrentStatusLight";
 import SliderWhyWorkWithUs from "@/components/SliderWhyWorkWithUs";
 import MainMissionVisionCards from "@/main/MainMissionVisionCards";
 
-/** TEMP: set false or delete when done testing hero scroll behavior. */
-const SHOW_SCROLL_TEST_SPACER = true;
-
-/** Flip one section to `true` at a time to test responsiveness in isolation. */
-const LANDING_SECTIONS = {
-  missionVision: false,
-  problemsTabs: false,
-  testPyramid: false,
-  solutions: false,
-  benefits: false,
-  theMarket: false,
-  currentStatus: false,
-  whyWorkWithUs: false,
-  defCta: false,
-  footer: false,
-} as const;
-
 export default function LandingPage() {
-  const {
-    missionVision,
-    problemsTabs,
-    testPyramid,
-    solutions,
-    benefits,
-    theMarket,
-    currentStatus,
-    whyWorkWithUs,
-    defCta,
-    footer,
-  } = LANDING_SECTIONS;
-
   return (
     <div className="overflow-x-hidden bg-white">
       <Header />
@@ -71,37 +41,20 @@ export default function LandingPage() {
 
       <MainMissionVisionCards />
 
-      {SHOW_SCROLL_TEST_SPACER && (
-        <div
-          aria-hidden
-          className="h-screen shrink-0 bg-zinc-50"
-          data-scroll-test-spacer
-        />
-      )}
-
-      {(problemsTabs ||
-        testPyramid ||
-        solutions ||
-        benefits ||
-        theMarket ||
-        currentStatus ||
-        whyWorkWithUs) && (
-        <div className="px-12 mt-6 mb-12 flex flex-col gap-6">
-          {problemsTabs && <MainProblemsTabsLight />}
-          {testPyramid && <TestPyramidWrapper />}
-          {solutions && <MainSolutionsAnimationLight />}
-          {benefits && <MainBenefitsLight />}
-          {theMarket && <MainTheMarket />}
-          {currentStatus && <MainCurrentStatusLight />}
-          {whyWorkWithUs && <SliderWhyWorkWithUs />}
+      <div className="hidden lg:block">
+        <div className="mt-6 mb-12 flex flex-col gap-6 px-12">
+          <MainProblemsTabsLight />
+          <TestPyramidWrapper />
+          <MainSolutionsAnimationLight />
+          <MainBenefitsLight />
+          <MainTheMarket />
+          <MainCurrentStatusLight />
+          <SliderWhyWorkWithUs />
         </div>
-      )}
 
-      {defCta && (
         <DefCta title="Build the Future of Asset-Backed Lending" />
-      )}
-
-      {footer && <Footer />}
+        <Footer />
+      </div>
     </div>
   );
 }
