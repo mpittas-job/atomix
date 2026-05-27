@@ -10,7 +10,7 @@ export default function MobileHero() {
 
   return (
     <div className="mx-auto w-full max-w-[1920px] px-4 md:px-12">
-      <section className="relative flex min-h-[70vh] flex-col overflow-hidden rounded-2xl bg-gradient-to-b from-[#014355] to-[#247691]">
+      <section className="relative flex flex-col overflow-hidden rounded-2xl bg-gradient-to-b from-[#014355] to-[#247691]">
         <div className="pointer-events-none absolute inset-0 z-0 min-h-full min-w-full">
           <SoftAurora
             speed={1.3}
@@ -30,7 +30,7 @@ export default function MobileHero() {
           />
         </div>
 
-        <div className="relative z-10 flex flex-col items-center gap-6 px-5 pt-20 pb-6 text-center text-white">
+        <div className="relative z-10 flex flex-col items-center gap-5 px-5 pt-10 pb-4 text-center text-white">
           <Image
             src="/logo/atomix-logo-big-white.svg"
             alt="Atomix Logo"

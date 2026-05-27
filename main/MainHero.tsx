@@ -147,6 +147,9 @@ export default function MainHero() {
   const clickTargetSectionRef = useRef<number | null>(null);
 
   useGSAP(() => {
+    const mm = gsap.matchMedia();
+
+    mm.add("(min-width: 1024px)", () => {
     // --- PAGE LOAD ANIMATION ---
     const loadTl = gsap.timeline({ delay: 0.15 });
 
@@ -300,6 +303,16 @@ export default function MainHero() {
       bgAuroraRef.current?.setActive(p < AURORA_BG_END);
       fgAuroraRef.current?.setActive(p >= AURORA_FG_START);
     }
+
+    return () => {
+      loadTl.kill();
+      tl.scrollTrigger?.kill();
+      tl.kill();
+      tlRef.current = null;
+    };
+    });
+
+    return () => mm.revert();
   }, []);
 
   const handleAboutSectionClick = useCallback((index: number) => {

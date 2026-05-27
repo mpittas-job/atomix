@@ -15,24 +15,32 @@ import MainCurrentStatusLight from "@/main/MainCurrentStatusLight";
 import SliderWhyWorkWithUs from "@/components/SliderWhyWorkWithUs";
 import MainMissionVisionCards from "@/main/MainMissionVisionCards";
 
+/** TEMP: set true when done testing Mission/Vision responsiveness. */
+const SHOW_SECTIONS_BELOW_MISSION_VISION = false;
+
 export default function LandingPage() {
   return (
     <div className="overflow-x-hidden bg-white">
       <Header />
       <div
-        className="pb-[var(--hero-y-gap,1rem)] pt-[calc(var(--header-height,5.5rem)+var(--hero-y-gap,1rem))]"
         id="def-hero-main"
+        className="hidden pb-[var(--hero-y-gap,1rem)] pt-[calc(var(--header-height,5.5rem)+var(--hero-y-gap,1rem))] lg:block"
         style={{
           ["--header-height" as string]: "5.5rem",
           ["--hero-y-gap" as string]: "1rem",
         }}
       >
-        <div className="hidden lg:block">
-          <MainHero />
-        </div>
-        <div className="lg:hidden">
-          <MobileHero />
-        </div>
+        <MainHero />
+      </div>
+
+      <div
+        className="pb-[var(--hero-y-gap,1rem)] pt-[calc(var(--header-height,5.5rem)+var(--hero-y-gap,1rem))] lg:hidden"
+        style={{
+          ["--header-height" as string]: "5.5rem",
+          ["--hero-y-gap" as string]: "1rem",
+        }}
+      >
+        <MobileHero />
       </div>
 
       <div className="lg:hidden">
@@ -41,20 +49,23 @@ export default function LandingPage() {
 
       <MainMissionVisionCards />
 
-      <div className="hidden lg:block">
-        <div className="mt-6 mb-12 flex flex-col gap-6 px-12">
-          <MainProblemsTabsLight />
-          <TestPyramidWrapper />
-          <MainSolutionsAnimationLight />
-          <MainBenefitsLight />
-          <MainTheMarket />
-          <MainCurrentStatusLight />
-          <SliderWhyWorkWithUs />
-        </div>
+      <MainProblemsTabsLight />
 
-        <DefCta title="Build the Future of Asset-Backed Lending" />
-        <Footer />
-      </div>
+      {SHOW_SECTIONS_BELOW_MISSION_VISION && (
+        <div className="hidden lg:block">
+          <div className="mt-6 mb-12 flex flex-col gap-6 px-12">
+            <TestPyramidWrapper />
+            <MainSolutionsAnimationLight />
+            <MainBenefitsLight />
+            <MainTheMarket />
+            <MainCurrentStatusLight />
+            <SliderWhyWorkWithUs />
+          </div>
+
+          <DefCta title="Build the Future of Asset-Backed Lending" />
+          <Footer />
+        </div>
+      )}
     </div>
   );
 }
