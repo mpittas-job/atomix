@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Header from "@/components/header";
 import MobileHero from "@/mobile/MobileHero";
 import MainHero from "@/main/MainHero";
+import MobileAboutAtomix from "@/mobile/MobileAboutAtomix";
 import DefCta from "@/components/DefCta";
 import Footer from "@/components/Footer";
 import MainProblemsTabsLight from "@/main/MainProblemsTabsLight";
@@ -77,6 +78,8 @@ export default function LandingPage() {
       >
         {isDesktop ? <MainHero /> : <MobileHero />}
       </div>
+
+      {!isDesktop && <MobileAboutAtomix />}
 
       {SHOW_SCROLL_TEST_SPACER && (
         <div
