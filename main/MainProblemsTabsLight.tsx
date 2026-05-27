@@ -70,10 +70,18 @@ const TAB_ANIMATION = {
   contentEase: "power2.out",
 };
 
-const getTabButtons = (ref: React.RefObject<HTMLDivElement | null>) =>
-  ref.current
-    ? Array.from(ref.current.querySelectorAll<HTMLElement>('button[role="tab"]'))
-    : [];
+const getTabButtons = (ref: React.RefObject<HTMLDivElement | null>) => {
+  if (!ref.current) return [];
+
+  const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+  if (isDesktop) {
+    return Array.from(ref.current.querySelectorAll<HTMLElement>("[data-tab]"));
+  }
+
+  return Array.from(
+    ref.current.querySelectorAll<HTMLElement>('button[role="tab"]'),
+  );
+};
 
 const getIconBoxes = (ref: React.RefObject<HTMLDivElement | null>) =>
   ref.current ? Array.from(ref.current.children) : [];
@@ -253,6 +261,7 @@ export default function MainProblemsTabsLight() {
   const iconBoxContainerRef = useRef<HTMLDivElement>(null);
   const tabButtonsRef = useRef<HTMLDivElement>(null);
   const tabScrollRef = useRef<HTMLDivElement>(null);
+  const activePillRef = useRef<HTMLDivElement>(null);
   const initialAnimDone = useRef(false);
   const learnMoreRef = useRef<HTMLDivElement>(null);
   const entranceStartedRef = useRef(false);
@@ -265,6 +274,10 @@ export default function MainProblemsTabsLight() {
 
     const tabButtons = getTabButtons(tabButtonsRef);
     if (tabButtons.length) gsap.set(tabButtons, { opacity: 0, y: 15 });
+
+    if (activePillRef.current) {
+      gsap.set(activePillRef.current, { opacity: 0, scale: 0.85 });
+    }
 
     const iconBoxes = getIconBoxes(iconBoxContainerRef);
     if (iconBoxes.length) gsap.set(iconBoxes, { opacity: 0, y: 30 });
@@ -311,7 +324,21 @@ export default function MainProblemsTabsLight() {
       });
     }
 
-    // 2. Tab buttons slide up and fade in with stagger
+    // 2. Active pill scales in (desktop only)
+    if (activePillRef.current) {
+      tl.to(
+        activePillRef.current,
+        {
+          opacity: 1,
+          scale: 1,
+          duration: 0.6,
+          ease: "back.out(1.7)",
+        },
+        "-=0.3",
+      );
+    }
+
+    // 3. Tab buttons slide up and fade in with stagger
     const tabButtons = getTabButtons(tabButtonsRef);
     if (tabButtons.length) {
       tl.to(
@@ -439,21 +466,51 @@ export default function MainProblemsTabsLight() {
         </div>
 
         <div className="w-full flex flex-col gap-y-6">
-          {/* Tab toggles — AdvSlider style; scrollable on mobile/tablet */}
+          {/* Tab toggles */}
           <div ref={tabButtonsRef} className="w-full">
-            <div
-              ref={tabScrollRef}
-              className="-mx-6 overflow-x-auto overscroll-x-contain px-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden lg:mx-0 lg:overflow-visible lg:px-0"
-            >
-              <div className="inline-flex w-max min-w-full justify-start lg:w-full lg:justify-center">
-                <AdvSliderTabToggle
-                  tabs={problemTabs}
-                  activeTabId={String(activeIndex)}
-                  onTabChange={(tabId) => setActiveIndex(Number(tabId))}
-                  ariaLabel="Problem categories"
-                  className="!mx-0 mb-0 shrink-0"
-                />
+            {/* Mobile/tablet — AdvSlider style, horizontally scrollable */}
+            <div className="lg:hidden">
+              <div
+                ref={tabScrollRef}
+                className="-mx-6 overflow-x-auto overscroll-x-contain px-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+              >
+                <div className="inline-flex w-max min-w-full justify-start">
+                  <AdvSliderTabToggle
+                    tabs={problemTabs}
+                    activeTabId={String(activeIndex)}
+                    onTabChange={(tabId) => setActiveIndex(Number(tabId))}
+                    ariaLabel="Problem categories"
+                    className="!mx-0 mb-0 shrink-0"
+                  />
+                </div>
               </div>
+            </div>
+
+            {/* Desktop — original full-width segmented tabs */}
+            <div className="relative hidden w-full rounded-2xl bg-[#DFE4E8] p-1.5 lg:flex">
+              <div
+                ref={activePillRef}
+                className="pointer-events-none absolute top-1.5 bottom-1.5 rounded-2xl bg-white shadow-sm transition-all duration-300 ease-out"
+                style={{
+                  width: `calc((100% - 0.75rem) / ${tabsData.length})`,
+                  left: `calc(0.375rem + ${activeIndex} * (100% - 0.75rem) / ${tabsData.length})`,
+                }}
+              />
+
+              {tabsData.map((tab, index) => (
+                <div
+                  key={tab.title}
+                  data-tab
+                  onClick={() => setActiveIndex(index)}
+                  className={`relative z-10 flex flex-1 cursor-pointer items-center justify-center rounded-xl p-5 transition-colors duration-300 ${
+                    index === activeIndex
+                      ? "font-semibold text-[#011F27]"
+                      : "font-medium text-[#5B6F75] hover:text-[#3a4a4e]"
+                  }`}
+                >
+                  <span className="text-base">{tab.title}</span>
+                </div>
+              ))}
             </div>
           </div>
 

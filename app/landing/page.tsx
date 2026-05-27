@@ -51,10 +51,11 @@ export default function LandingPage() {
 
       <MainProblemsTabsLight />
 
+      <TestPyramidWrapper />
+
       {SHOW_SECTIONS_BELOW_MISSION_VISION && (
         <div className="hidden lg:block">
           <div className="mt-6 mb-12 flex flex-col gap-6 px-12">
-            <TestPyramidWrapper />
             <MainSolutionsAnimationLight />
             <MainBenefitsLight />
             <MainTheMarket />
