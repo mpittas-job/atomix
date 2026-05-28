@@ -50,11 +50,12 @@ export default function LandingPage() {
 
       <TestPyramidSection />
 
+      <MainBenefitsLight />
+
       {SHOW_SECTIONS_BELOW_MISSION_VISION && (
         <div className="hidden lg:block">
           <div className="mt-6 mb-12 flex flex-col gap-6 px-12">
             <MainSolutionsAnimationLight />
-            <MainBenefitsLight />
             {/* TEMP: hidden for now
             <MainTheMarket />
             <MainCurrentStatusLight />

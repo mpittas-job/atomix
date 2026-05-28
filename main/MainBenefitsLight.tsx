@@ -1,10 +1,17 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import {
+  type CSSProperties,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import AdvSliderTabToggle from "@/components/AdvSliderTabToggle";
 import DefHeading from "@/components/typo/DefHeading";
 import { IoShieldCheckmark } from "react-icons/io5";
 
@@ -22,6 +29,114 @@ const TAB_ANIMATION = {
   contentEase: "power2.out",
   cardEase: "power2.out",
 };
+
+/** Fixed height (px) for the light-blue image panel — tweak these values as needed. */
+const IMAGE_PANEL_HEIGHT = {
+  mobile: 380,
+  desktop: 560,
+} as const;
+
+/**
+ * Mobile image layout per tab — edit these values to reposition/size dashboard images.
+ * Index 0 = Capital Providers · 1 = Lenders · 2 = Borrowers
+ *
+ * Positioning uses absolute placement inside the blue panel:
+ * - `top` / `left` — anchor point (e.g. "50%" = panel center)
+ * - `translateX` / `translateY` — shift from that anchor (e.g. "-50%" centers the image)
+ * - `width` / `maxHeight` — size limits so images stay inside the panel
+ */
+type MobileImagePosition = {
+  width: string;
+  maxHeight: string;
+  top: string;
+  left: string;
+  translateX: string;
+  translateY: string;
+};
+
+const MOBILE_BENEFITS_IMAGE_LAYOUT: {
+  label: string;
+  mainSrc: string;
+  smallSrc: string;
+  main: MobileImagePosition;
+  small: MobileImagePosition;
+}[] = [
+  {
+    label: "Capital Providers",
+    mainSrc: "/dashboard/benefits-tab-1-img-lg.svg",
+    smallSrc: "/dashboard/benefits-tab-1-img-sm.png",
+    main: {
+      width: "140%",
+      maxHeight: "88%",
+      top: "50%",
+      left: "50%",
+      translateX: "0%",
+      translateY: "-50%",
+    },
+    small: {
+      width: "70%",
+      maxHeight: "72%",
+      top: "50%",
+      left: "50%",
+      translateX: "-50%",
+      translateY: "-50%",
+    },
+  },
+  {
+    label: "Lenders",
+    mainSrc: "/images/dashboard-lenders-main.svg",
+    smallSrc: "/images/dashboard-lenders-small.svg",
+    main: {
+      width: "120%",
+      maxHeight: "88%",
+      top: "40%",
+      left: "20%",
+      translateX: "0%",
+      translateY: "-50%",
+    },
+    small: {
+      width: "90%",
+      maxHeight: "72%",
+      top: "80%",
+      left: "50%",
+      translateX: "-50%",
+      translateY: "-50%",
+    },
+  },
+  {
+    label: "Borrowers",
+    mainSrc: "/images/dashboard-partner-main.svg",
+    smallSrc: "/images/dashboard-partner-small.svg",
+    main: {
+      width: "140%",
+      maxHeight: "88%",
+      top: "50%",
+      left: "50%",
+      translateX: "0%",
+      translateY: "-50%",
+    },
+    small: {
+      width: "50%",
+      maxHeight: "72%",
+      top: "50%",
+      left: "50%",
+      translateX: "-50%",
+      translateY: "-50%",
+    },
+  },
+];
+
+function mobileImageWrapperStyle(
+  position: MobileImagePosition,
+): CSSProperties {
+  return {
+    width: position.width,
+    maxHeight: position.maxHeight,
+    top: position.top,
+    left: position.left,
+    transform: `translate(${position.translateX}, ${position.translateY})`,
+  };
+}
 
 interface TabItem {
   icon: string;
@@ -156,8 +271,23 @@ const tabsData: TabData[] = [
   },
 ];
 
-const getTabButtons = (ref: React.RefObject<HTMLDivElement | null>) =>
-  ref.current ? Array.from(ref.current.querySelectorAll("[data-tab]")) : [];
+const benefitTabs = tabsData.map((tab, index) => ({
+  id: String(index),
+  label: tab.title,
+}));
+
+const getTabButtons = (ref: React.RefObject<HTMLDivElement | null>) => {
+  if (!ref.current) return [];
+
+  const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+  if (isDesktop) {
+    return Array.from(ref.current.querySelectorAll<HTMLElement>("[data-tab]"));
+  }
+
+  return Array.from(
+    ref.current.querySelectorAll<HTMLElement>('button[role="tab"]'),
+  );
+};
 
 const getTabContent = (ref: React.RefObject<HTMLDivElement | null>) =>
   ref.current ? Array.from(ref.current.children) : [];
@@ -181,6 +311,7 @@ export default function MainBenefitsLight() {
   const [activeIndex, setActiveIndex] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
   const tabButtonsRef = useRef<HTMLDivElement>(null);
+  const tabScrollRef = useRef<HTMLDivElement>(null);
   const activePillRef = useRef<HTMLDivElement>(null);
   const initialAnimDone = useRef(false);
   const entranceStartedRef = useRef(false);
@@ -195,6 +326,8 @@ export default function MainBenefitsLight() {
   const listRef = useRef<HTMLUListElement>(null);
   const mainImageRef = useRef<HTMLImageElement>(null);
   const smallImageRef = useRef<HTMLImageElement>(null);
+
+  const activeImageLayout = MOBILE_BENEFITS_IMAGE_LAYOUT[activeIndex];
 
   const animateActivePanel = () => {
     // Kill any existing tweens on animated elements
@@ -541,48 +674,99 @@ export default function MainBenefitsLight() {
     };
   }, [startTabsEntrance]);
 
+  // Keep the active tab visible inside the horizontal scroll area (mobile/tablet).
+  useLayoutEffect(() => {
+    if (window.matchMedia("(min-width: 1024px)").matches) return;
+
+    const scrollEl = tabScrollRef.current;
+    const root = tabButtonsRef.current;
+    if (!scrollEl || !root) return;
+
+    const activeBtn = root.querySelector<HTMLElement>(
+      'button[role="tab"][aria-selected="true"]',
+    );
+    if (!activeBtn) return;
+
+    const scrollRect = scrollEl.getBoundingClientRect();
+    const btnRect = activeBtn.getBoundingClientRect();
+    const padding = 16;
+    const targetLeft =
+      scrollEl.scrollLeft + (btnRect.left - scrollRect.left) - padding;
+    const maxScroll = scrollEl.scrollWidth - scrollEl.clientWidth;
+
+    scrollEl.scrollTo({
+      left: Math.max(0, Math.min(targetLeft, maxScroll)),
+      behavior: "smooth",
+    });
+  }, [activeIndex]);
+
   return (
-    <div className="min-h-[calc(100vh-126px)] rounded-3xl bg-gradient-to-b from-[#ebeef1] to-[#f5f5f5] relative overflow-hidden flex flex-col justify-center items-center">
-      <div className="relative z-10 flex flex-col gap-y-12 w-full max-w-[1200px] px-8 py-32">
-        <DefHeading
-          theme="dark"
-          badgeText=""
-          title="Benefits"
-          description=""
-          showBadge={false}
-          onAnimationComplete={startTabsEntrance}
-        />
+    <div className="relative flex min-h-0 flex-col items-center justify-center overflow-hidden rounded-none bg-gradient-to-b from-[#ebeef1] to-[#f5f5f5] lg:min-h-[calc(100vh-126px)] lg:rounded-3xl">
+      <div className="relative z-10 flex w-full max-w-[1200px] flex-col gap-y-8 px-6 py-14 lg:gap-y-12 lg:px-8 lg:py-32">
+        <div className="lg:hidden">
+          <h2 className="text-[2.25rem] leading-[1.1] font-semibold text-[#212329] md:text-5xl md:leading-[1.2em]">
+            Benefits
+          </h2>
+        </div>
 
-        <div className="w-full flex flex-col gap-y-6">
-          {/* Tab Buttons - Horizontal */}
-          <div
-            ref={tabButtonsRef}
-            className="relative flex w-full bg-[#DFE4E8] rounded-2xl p-1.5"
-          >
-            {/* Sliding active pill */}
-            <div
-              ref={activePillRef}
-              className="absolute top-1.5 bottom-1.5 rounded-2xl bg-white shadow-sm transition-all duration-300 ease-out pointer-events-none"
-              style={{
-                width: `calc((100% - 0.75rem) / ${tabsData.length})`,
-                left: `calc(0.375rem + ${activeIndex} * (100% - 0.75rem) / ${tabsData.length})`,
-              }}
-            />
+        <div className="hidden lg:block">
+          <DefHeading
+            theme="dark"
+            badgeText=""
+            title="Benefits"
+            description=""
+            showBadge={false}
+            onAnimationComplete={startTabsEntrance}
+          />
+        </div>
 
-            {tabsData.map((tab, index) => (
+        <div className="flex w-full flex-col gap-y-6">
+          {/* Tab toggles */}
+          <div ref={tabButtonsRef} className="w-full">
+            {/* Mobile/tablet — AdvSlider style, horizontally scrollable */}
+            <div className="lg:hidden">
               <div
-                key={tab.title}
-                data-tab
-                onClick={() => setActiveIndex(index)}
-                className={`flex-1 flex items-center justify-center rounded-xl p-5 cursor-pointer transition-colors duration-300 relative z-10 ${
-                  index === activeIndex
-                    ? "text-[#011F27] font-semibold"
-                    : "text-[#5B6F75] font-medium hover:text-[#3a4a4e]"
-                }`}
+                ref={tabScrollRef}
+                className="-mx-6 overflow-x-auto overscroll-x-contain px-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
               >
-                <span className="text-base">{tab.title}</span>
+                <div className="inline-flex w-max min-w-full justify-start">
+                  <AdvSliderTabToggle
+                    tabs={benefitTabs}
+                    activeTabId={String(activeIndex)}
+                    onTabChange={(tabId) => setActiveIndex(Number(tabId))}
+                    ariaLabel="Benefit categories"
+                    className="!mx-0 mb-0 shrink-0"
+                  />
+                </div>
               </div>
-            ))}
+            </div>
+
+            {/* Desktop — full-width segmented tabs */}
+            <div className="relative hidden w-full rounded-2xl bg-[#DFE4E8] p-1.5 lg:flex">
+              <div
+                ref={activePillRef}
+                className="pointer-events-none absolute top-1.5 bottom-1.5 rounded-2xl bg-white shadow-sm transition-all duration-300 ease-out"
+                style={{
+                  width: `calc((100% - 0.75rem) / ${tabsData.length})`,
+                  left: `calc(0.375rem + ${activeIndex} * (100% - 0.75rem) / ${tabsData.length})`,
+                }}
+              />
+
+              {tabsData.map((tab, index) => (
+                <div
+                  key={tab.title}
+                  data-tab
+                  onClick={() => setActiveIndex(index)}
+                  className={`relative z-10 flex flex-1 cursor-pointer items-center justify-center rounded-xl p-5 transition-colors duration-300 ${
+                    index === activeIndex
+                      ? "font-semibold text-[#011F27]"
+                      : "font-medium text-[#5B6F75] hover:text-[#3a4a4e]"
+                  }`}
+                >
+                  <span className="text-base">{tab.title}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Tab content with card layout */}
@@ -603,25 +787,26 @@ export default function MainBenefitsLight() {
                 <div className="absolute -bottom-5 -left-5 w-[45%] h-[45%] rounded-full bg-white/60  blur-xl" />
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 relative">
-                {/* Left side - Content */}
-                <div className="p-8">
+              <div className="relative grid grid-cols-1 lg:grid-cols-2">
+                {/* Content — top on mobile, left on desktop */}
+                <div className="p-6 lg:p-8">
                   <h2
                     ref={titleRef}
-                    className="text-4xl font-semibold mb-4 text-[#011F27]"
+                    className="mb-3 text-[1.75rem] leading-tight font-semibold text-[#011F27] lg:mb-4 lg:text-4xl"
                   >
                     {tabsData[activeIndex].title}
                   </h2>
-                  <p ref={descRef} className="text-[#495F64] mb-10">
+                  <p
+                    ref={descRef}
+                    className="mb-6 text-[0.95rem] leading-6 text-[#495F64] lg:mb-10 lg:text-base lg:leading-normal"
+                  >
                     {tabsData[activeIndex].description}
                   </p>
-                  <ul ref={listRef} className="space-y-5">
+                  <ul ref={listRef} className="space-y-4 lg:space-y-5">
                     {tabsData[activeIndex].items.map((item, idx) => (
                       <li key={idx} className="flex items-start gap-3">
-                        <div className="">
-                          <IoShieldCheckmark className="w-6 h-6 text-[#39C6ED]" />
-                        </div>
-                        <span className="text-[#495F64]">
+                        <IoShieldCheckmark className="mt-0.5 h-5 w-5 shrink-0 text-[#39C6ED] lg:h-6 lg:w-6" />
+                        <span className="text-[0.9rem] leading-6 text-[#495F64] lg:text-base lg:leading-normal">
                           {formatListItemText(item.text)}
                         </span>
                       </li>
@@ -629,46 +814,50 @@ export default function MainBenefitsLight() {
                   </ul>
                 </div>
 
-                {/* Right side - Images */}
+                {/* Images — bottom on mobile, right on desktop */}
                 <div
                   ref={rightColumnRef}
-                  className="bg-[#499DB8] rounded-2xl relative min-h-[400px] lg:min-h-full overflow-hidden"
+                  className="relative h-[var(--benefits-image-panel-h)] overflow-hidden rounded-2xl bg-[#499DB8] lg:h-[var(--benefits-image-panel-h-lg)]"
+                  style={{
+                    ["--benefits-image-panel-h" as string]: `${IMAGE_PANEL_HEIGHT.mobile}px`,
+                    ["--benefits-image-panel-h-lg" as string]: `${IMAGE_PANEL_HEIGHT.desktop}px`,
+                  }}
                 >
                   <div
                     ref={rightColumnBlurRef}
-                    className="w-50 h-50 rounded-full blur-[100px] bg-white/50 absolute -top-25 -right-25"
-                  ></div>
+                    className="absolute -top-25 -right-25 h-50 w-50 rounded-full bg-white/50 blur-[100px]"
+                  />
 
-                  <div>
-                    <Image
-                      ref={mainImageRef}
-                      src={
-                        activeIndex === 0
-                          ? "/dashboard/benefits-tab-1-img-lg.svg"
-                          : "/images/dashboard-lenders-main.svg"
-                      }
-                      alt=""
-                      width={600}
-                      height={400}
-                      className="absolute top-1/2 -translate-y-1/2 -right-10 object-contain rounded-lg w-[85%] h-auto"
-                    />
+                  <div className="relative h-full lg:block">
+                    <div
+                      className="absolute lg:contents"
+                      style={mobileImageWrapperStyle(activeImageLayout.main)}
+                    >
+                      <Image
+                        ref={mainImageRef}
+                        src={activeImageLayout.mainSrc}
+                        alt=""
+                        width={600}
+                        height={400}
+                        className="h-auto w-full max-h-full object-contain lg:absolute lg:top-1/2 lg:-right-4 lg:max-h-[92%] lg:w-[94%] lg:-translate-y-1/2"
+                      />
+                    </div>
 
-                    <Image
-                      ref={smallImageRef}
-                      src={
-                        activeIndex === 0
-                          ? "/dashboard/benefits-tab-1-img-sm.png"
-                          : activeIndex === 1
-                            ? "/images/dashboard-lenders-small.svg"
-                            : "/images/dashboard-partner-small.svg"
-                      }
-                      alt=""
-                      width={600}
-                      height={400}
-                      className={`absolute top-1/2 left-20 -translate-y-1/2 object-contain rounded-lg h-auto ${
-                        activeIndex === 2 ? "w-[34%]" : "w-[40%]"
-                      }`}
-                    />
+                    <div
+                      className="absolute lg:contents"
+                      style={mobileImageWrapperStyle(activeImageLayout.small)}
+                    >
+                      <Image
+                        ref={smallImageRef}
+                        src={activeImageLayout.smallSrc}
+                        alt=""
+                        width={600}
+                        height={400}
+                        className={`h-auto w-full max-h-full object-contain lg:absolute lg:top-1/2 lg:left-14 lg:max-h-[78%] lg:-translate-y-1/2 ${
+                          activeIndex === 2 ? "lg:w-[42%]" : "lg:w-[48%]"
+                        }`}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
