@@ -14,6 +14,7 @@ export interface IconBoxSimpleProps {
   titleMaxWidth?: string;
   className?: string;
   children?: ReactNode;
+  bgCircleClassName?: string;
 }
 
 export default function IconBoxSimple({
@@ -23,6 +24,7 @@ export default function IconBoxSimple({
   titleMaxWidth,
   className = "",
   children,
+  bgCircleClassName = "bg-white/60",
 }: IconBoxSimpleProps) {
   const gradientId = useId().replace(/:/g, "");
   const gradientUrl = `url(#${gradientId})`;
@@ -50,8 +52,8 @@ export default function IconBoxSimple({
       }}
     >
       <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-3xl">
-        <div className="absolute -top-5 -right-5 h-[35%] w-[35%] rounded-full bg-white/60 blur-xl" />
-        <div className="absolute -bottom-5 -left-5 h-[35%] w-[35%] rounded-full bg-white/60 blur-xl" />
+        <div className={`absolute -top-5 -right-5 h-[35%] w-[35%] rounded-full blur-xl ${bgCircleClassName}`} />
+        <div className={`absolute -bottom-5 -left-5 h-[35%] w-[35%] rounded-full blur-xl ${bgCircleClassName}`} />
       </div>
 
       <div className="relative flex h-full flex-col items-start gap-3 text-left">

@@ -13,6 +13,7 @@ import MainBenefitsLight from "@/main/MainBenefitsLight";
 import MainMissionVisionCards from "@/main/MainMissionVisionCards";
 import MainTheMarket from "@/main/MainTheMarket";
 import MobileCurrentStatus from "@/mobile/MobileCurrentStatus";
+import MobileTeamOpportunities from "@/mobile/MobileTeamOpportunities";
 import MainCurrentStatusLight from "@/main/MainCurrentStatusLight";
 
 /** TEMP: set true when done testing Mission/Vision responsiveness. */
@@ -61,6 +62,10 @@ export default function LandingPage() {
 
       <div className="lg:hidden py-6">
         <MobileCurrentStatus />
+      </div>
+
+      <div className="lg:hidden py-6">
+        <MobileTeamOpportunities />
       </div>
 
       <div className="hidden lg:block px-4 py-6 md:px-12 md:py-12">
