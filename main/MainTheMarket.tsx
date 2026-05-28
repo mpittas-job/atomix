@@ -113,7 +113,7 @@ function MainStatCard({
 
   return (
     <div
-      className={`relative h-full overflow-hidden rounded-3xl bg-[#145060] border border-white/8 p-6 ${className || ""}`}
+      className={`relative h-full overflow-hidden bg-[#145060] p-6 ${className || ""}`}
     >
       {/* <div className="absolute inset-0 bg-gradient-to-br from-[#4a8a9a]/10 via-transparent to-transparent" /> */}
 
@@ -127,22 +127,22 @@ function MainStatCard({
         <div className="mt-4 flex items-baseline gap-1 market-count-glow-group">
           <span className="market-count-glow-target inline-flex items-baseline gap-1">
             {countParts.prefix && (
-              <span className="text-7xl font-semibold text-white">
+              <span className="text-5xl md:text-7xl font-semibold text-white">
                 {countParts.prefix}
               </span>
             )}
             <span
-              className="text-7xl font-semibold text-white market-count-value"
+              className="text-5xl md:text-7xl font-semibold text-white market-count-value"
               data-count-target={countParts.target}
               data-count-decimals={countParts.decimals}
             >
               {formatCount(0, countParts.decimals)}
             </span>
-            <span className="text-2xl font-medium text-white">{unit}</span>
+            <span className="text-xl md:text-2xl font-medium text-white">{unit}</span>
           </span>
         </div>
         <p
-          className="mt-4 text-lg leading-7 text-white/80"
+          className="mt-4 text-base md:text-lg leading-7 text-white/80"
           style={
             descriptionMaxWidth
               ? {
@@ -274,10 +274,10 @@ function SimpleStatBox({
         </div>
       </div>
       {title && (
-        <h3 className="text-2xl font-semibold text-white mb-2">{title}</h3>
+        <h3 className="text-xl md:text-2xl font-semibold text-white mb-2">{title}</h3>
       )}
       <p
-        className="text-lg leading-relaxed text-white/80 max-w-xl"
+        className="text-base md:text-lg leading-relaxed text-white/80 max-w-xl"
         style={
           descriptionMaxWidth
             ? {
@@ -377,7 +377,7 @@ export default function MainTheMarket() {
         mouseInfluence={0.2}
       />
 
-      <div className="relative z-10 flex flex-col gap-y-12 w-full max-w-[1900px] px-32 py-32">
+      <div className="relative z-10 flex flex-col gap-y-8 md:gap-y-12 w-full max-w-[1900px] px-6 py-12 md:px-32 md:py-32">
         <DefHeading
           theme="light"
           badgeText=""
@@ -387,16 +387,16 @@ export default function MainTheMarket() {
           onAnimationComplete={handleHeadingComplete}
         />
 
-        <div ref={contentRef} className="w-full space-y-2">
+        <div ref={contentRef} className="w-full space-y-0 md:space-y-2">
           {/* Top row - 3 main stat cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-0 md:gap-2">
             <div className="market-reveal-item">
               <MainStatCard
                 badge="Total Market"
                 value="£350"
                 unit="bn"
                 description="Total annual UK property loan originations"
-                className="rounded-r-none rounded-b-none"
+                className="rounded-t-3xl border-t border-x border-b-0 border-white/8 md:rounded-3xl md:border md:rounded-r-none md:rounded-b-none"
               />
             </div>
             <div className="market-reveal-item">
@@ -405,7 +405,7 @@ export default function MainTheMarket() {
                 value="£60"
                 unit="bn"
                 description="Across bridging, buy-to-let and SME CRE term loans — the core Atomix market"
-                className="rounded-none"
+                className="rounded-none border-t border-x border-b-0 border-white/8 md:border"
               />
             </div>
             <div className="market-reveal-item">
@@ -414,13 +414,13 @@ export default function MainTheMarket() {
                 value="£11.5"
                 unit="bn"
                 description="Annual UK bridging originations — majority processed manually, smaller loans structurally underserved"
-                className="rounded-l-none rounded-b-none"
+                className="rounded-none border-t border-x border-b-0 border-white/8 md:rounded-3xl md:border md:rounded-l-none md:rounded-b-none"
               />
             </div>
           </div>
 
           {/* Second row - 2 stat cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-2">
             <div className="market-reveal-item">
               <MainStatCard
                 badge="US Market"
@@ -428,7 +428,7 @@ export default function MainTheMarket() {
                 unit="tn"
                 description="The US commercial real estate market opportunity, addressable on the same model"
                 descriptionMaxWidth="500px"
-                className="rounded-t-none rounded-r-none"
+                className="rounded-none border-t border-x border-b-0 border-white/8 md:rounded-3xl md:border md:rounded-t-none md:rounded-r-none"
               />
             </div>
             <div className="market-reveal-item">
@@ -438,7 +438,7 @@ export default function MainTheMarket() {
                 unit="tn"
                 description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
                 descriptionMaxWidth="500px"
-                className="rounded-t-none rounded-l-none"
+                className="rounded-b-3xl border-t border-x border-b border-white/8 md:rounded-3xl md:border md:rounded-t-none md:rounded-l-none"
               />
             </div>
           </div>

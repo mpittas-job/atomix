@@ -11,6 +11,7 @@ import TestPyramidSection from "@/main/TestPyramidSection";
 import MainSolutionsAnimationLight from "@/main/MainSolutionsAnimationLight";
 import MainBenefitsLight from "@/main/MainBenefitsLight";
 import MainMissionVisionCards from "@/main/MainMissionVisionCards";
+import MainTheMarket from "@/main/MainTheMarket";
 
 /** TEMP: set true when done testing Mission/Vision responsiveness. */
 const SHOW_SECTIONS_BELOW_MISSION_VISION = false;
@@ -52,12 +53,15 @@ export default function LandingPage() {
 
       <MainBenefitsLight />
 
+      <div className="px-4 py-6 md:px-12 md:py-12">
+        <MainTheMarket />
+      </div>
+
       {SHOW_SECTIONS_BELOW_MISSION_VISION && (
         <div className="hidden lg:block">
           <div className="mt-6 mb-12 flex flex-col gap-6 px-12">
             <MainSolutionsAnimationLight />
             {/* TEMP: hidden for now
-            <MainTheMarket />
             <MainCurrentStatusLight />
             <SliderWhyWorkWithUs />
             */}
