@@ -14,13 +14,13 @@ const Footer: React.FC = () => {
         <div className="max-w-[1260px] w-full mx-auto px-4">
           <div className="flex flex-col lg:flex-row justify-between gap-12">
             {/* Left Column - Logo & Contact */}
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-6 max-lg:items-start">
               <Image
                 src="/logo/atomix-lending-reimagined-dark.svg"
                 alt="Atomix - Lending Reimagined"
                 width={140}
                 height={40}
-                className="h-10 w-auto"
+                className="h-10 w-auto max-lg:self-start max-lg:mb-3"
               />
               <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-3 text-gray-600 text-md">

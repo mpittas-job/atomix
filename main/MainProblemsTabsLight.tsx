@@ -1,6 +1,12 @@
 "use client";
 
-import { type ReactNode, useCallback, useRef, useState } from "react";
+import {
+  type ReactNode,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -27,7 +33,9 @@ import {
   FaUsersSlash,
   FaXmark,
 } from "react-icons/fa6";
+import AdvSliderTabToggle from "@/components/AdvSliderTabToggle";
 import IconBoxLight from "@/components/IconBoxLight";
+import IconBoxSimple from "@/components/IconBoxSimple";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -47,9 +55,10 @@ interface TabData {
 const getIconBoxGridClass = (tab: TabData) => {
   const columns = tab.iconBoxColumns ?? (tab.iconBoxes.length === 4 ? 4 : 3);
 
-  if (columns === 2) return "grid-cols-2";
-  if (columns === 4) return "grid-cols-4";
-  return "grid-cols-3";
+  // Mobile: 1 column · Tablet: 2 columns · Desktop: tab-specific layout
+  if (columns === 2) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-2";
+  if (columns === 4) return "grid-cols-1 md:grid-cols-2 lg:grid-cols-4";
+  return "grid-cols-1 md:grid-cols-2 lg:grid-cols-3";
 };
 
 const TAB_ANIMATION = {
@@ -61,8 +70,18 @@ const TAB_ANIMATION = {
   contentEase: "power2.out",
 };
 
-const getTabButtons = (ref: React.RefObject<HTMLDivElement | null>) =>
-  ref.current ? Array.from(ref.current.querySelectorAll("[data-tab]")) : [];
+const getTabButtons = (ref: React.RefObject<HTMLDivElement | null>) => {
+  if (!ref.current) return [];
+
+  const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+  if (isDesktop) {
+    return Array.from(ref.current.querySelectorAll<HTMLElement>("[data-tab]"));
+  }
+
+  return Array.from(
+    ref.current.querySelectorAll<HTMLElement>('button[role="tab"]'),
+  );
+};
 
 const getIconBoxes = (ref: React.RefObject<HTMLDivElement | null>) =>
   ref.current ? Array.from(ref.current.children) : [];
@@ -232,10 +251,16 @@ const tabsData: TabData[] = [
   },
 ];
 
+const problemTabs = tabsData.map((tab, index) => ({
+  id: String(index),
+  label: tab.title,
+}));
+
 export default function MainProblemsTabsLight() {
   const [activeIndex, setActiveIndex] = useState(0);
   const iconBoxContainerRef = useRef<HTMLDivElement>(null);
   const tabButtonsRef = useRef<HTMLDivElement>(null);
+  const tabScrollRef = useRef<HTMLDivElement>(null);
   const activePillRef = useRef<HTMLDivElement>(null);
   const initialAnimDone = useRef(false);
   const learnMoreRef = useRef<HTMLDivElement>(null);
@@ -299,7 +324,7 @@ export default function MainProblemsTabsLight() {
       });
     }
 
-    // 2. Active pill scales in
+    // 2. Active pill scales in (desktop only)
     if (activePillRef.current) {
       tl.to(
         activePillRef.current,
@@ -383,49 +408,110 @@ export default function MainProblemsTabsLight() {
     { dependencies: [startTabsEntrance] },
   );
 
+  // Keep the active tab visible inside the horizontal scroll area (mobile/tablet).
+  useLayoutEffect(() => {
+    if (window.matchMedia("(min-width: 1024px)").matches) return;
+
+    const scrollEl = tabScrollRef.current;
+    const root = tabButtonsRef.current;
+    if (!scrollEl || !root) return;
+
+    const activeBtn = root.querySelector<HTMLElement>(
+      'button[role="tab"][aria-selected="true"]',
+    );
+    if (!activeBtn) return;
+
+    const scrollRect = scrollEl.getBoundingClientRect();
+    const btnRect = activeBtn.getBoundingClientRect();
+    const padding = 16;
+    const targetLeft =
+      scrollEl.scrollLeft +
+      (btnRect.left - scrollRect.left) -
+      padding;
+    const maxScroll = scrollEl.scrollWidth - scrollEl.clientWidth;
+
+    scrollEl.scrollTo({
+      left: Math.max(0, Math.min(targetLeft, maxScroll)),
+      behavior: "smooth",
+    });
+  }, [activeIndex]);
+
   return (
-    <div className="min-h-[calc(100vh-126px)] rounded-3xl bg-[#EBEFF2] relative overflow-hidden flex flex-col justify-center items-center">
-      <div className="relative z-7 flex flex-col gap-y-12 max-w-[1400px] w-full px-6 py-32">
-        <DefHeading
-          theme="dark"
-          badgeText=""
-          title="The Existing Problems"
-          description="Property lending is manual, opaque and structurally exposed to fraud — not by intent, but by design. <br/>Legacy infrastructure was never built to handle the volume, complexity or transparency this market demands."
-          showBadge={false}
-          align="left"
-          onAnimationComplete={startTabsEntrance}
-        />
+    <div className="min-h-[calc(100vh-126px)] w-full rounded-[2rem] bg-[#EBEFF2] relative overflow-hidden flex flex-col justify-center items-center">
+      <div className="relative z-7 flex flex-col gap-y-12 max-w-[1400px] w-full px-6 py-14 lg:py-32">
+        {/* Mobile/tablet heading — matches MobileAboutAtomix typography */}
+        <div className="mx-0 max-w-[1800px] lg:hidden">
+          <h2 className="text-[2.25rem] leading-[1.1] font-semibold text-[#212329] md:text-5xl md:leading-[1.2em]">
+            The Existing Problems
+          </h2>
+          <p
+            className="mt-4 text-[1.05rem] leading-7 text-[#474D5D] md:text-xl md:leading-8"
+            dangerouslySetInnerHTML={{
+              __html:
+                "Property lending is manual, opaque and structurally exposed to fraud — not by intent, but by design. <br/>Legacy infrastructure was never built to handle the volume, complexity or transparency this market demands.",
+            }}
+          />
+        </div>
+
+        <div className="hidden lg:block">
+          <DefHeading
+            theme="dark"
+            badgeText=""
+            title="The Existing Problems"
+            description="Property lending is manual, opaque and structurally exposed to fraud — not by intent, but by design. <br/>Legacy infrastructure was never built to handle the volume, complexity or transparency this market demands."
+            showBadge={false}
+            align="left"
+            onAnimationComplete={startTabsEntrance}
+          />
+        </div>
 
         <div className="w-full flex flex-col gap-y-6">
-          {/* Tab Buttons - Horizontal */}
-          <div
-            ref={tabButtonsRef}
-            className="relative flex w-full bg-[#DFE4E8] rounded-2xl p-1.5"
-          >
-            {/* Sliding active pill */}
-            <div
-              ref={activePillRef}
-              className="absolute top-1.5 bottom-1.5 rounded-2xl bg-white shadow-sm transition-all duration-300 ease-out pointer-events-none"
-              style={{
-                width: `calc((100% - 0.75rem) / ${tabsData.length})`,
-                left: `calc(0.375rem + ${activeIndex} * (100% - 0.75rem) / ${tabsData.length})`,
-              }}
-            />
-
-            {tabsData.map((tab, index) => (
+          {/* Tab toggles */}
+          <div ref={tabButtonsRef} className="w-full">
+            {/* Mobile/tablet — AdvSlider style, horizontally scrollable */}
+            <div className="lg:hidden">
               <div
-                key={tab.title}
-                data-tab
-                onClick={() => setActiveIndex(index)}
-                className={`flex-1 flex items-center justify-center rounded-xl p-5 cursor-pointer transition-colors duration-300 relative z-10 ${
-                  index === activeIndex
-                    ? "text-[#011F27] font-semibold"
-                    : "text-[#5B6F75] font-medium hover:text-[#3a4a4e]"
-                }`}
+                ref={tabScrollRef}
+                className="-mx-6 overflow-x-auto overscroll-x-contain px-6 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
               >
-                <span className="text-base">{tab.title}</span>
+                <div className="inline-flex w-max min-w-full justify-start">
+                  <AdvSliderTabToggle
+                    tabs={problemTabs}
+                    activeTabId={String(activeIndex)}
+                    onTabChange={(tabId) => setActiveIndex(Number(tabId))}
+                    ariaLabel="Problem categories"
+                    className="!mx-0 mb-0 shrink-0"
+                  />
+                </div>
               </div>
-            ))}
+            </div>
+
+            {/* Desktop — original full-width segmented tabs */}
+            <div className="relative hidden w-full rounded-2xl bg-[#DFE4E8] p-1.5 lg:flex">
+              <div
+                ref={activePillRef}
+                className="pointer-events-none absolute top-1.5 bottom-1.5 rounded-2xl bg-white shadow-sm transition-all duration-300 ease-out"
+                style={{
+                  width: `calc((100% - 0.75rem) / ${tabsData.length})`,
+                  left: `calc(0.375rem + ${activeIndex} * (100% - 0.75rem) / ${tabsData.length})`,
+                }}
+              />
+
+              {tabsData.map((tab, index) => (
+                <div
+                  key={tab.title}
+                  data-tab
+                  onClick={() => setActiveIndex(index)}
+                  className={`relative z-10 flex flex-1 cursor-pointer items-center justify-center rounded-xl p-5 transition-colors duration-300 ${
+                    index === activeIndex
+                      ? "font-semibold text-[#011F27]"
+                      : "font-medium text-[#5B6F75] hover:text-[#3a4a4e]"
+                  }`}
+                >
+                  <span className="text-base">{tab.title}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* IconBox content with fade-in animation */}
@@ -437,31 +523,26 @@ export default function MainProblemsTabsLight() {
             {tabsData[activeIndex].iconBoxes.map((iconBox, index) => (
               <div
                 key={`${activeIndex}-${index}`}
-                className="relative h-full will-change-transform"
-                onMouseEnter={(e) => {
-                  gsap.to(e.currentTarget, {
-                    scale: 1.2,
-                    zIndex: 10,
-                    duration: 0.25,
-                    ease: "power2.out",
-                  });
-                }}
-                onMouseLeave={(e) => {
-                  gsap.to(e.currentTarget, {
-                    scale: 1,
-                    zIndex: 1,
-                    duration: 0.3,
-                    ease: "power2.out",
-                  });
-                }}
+                className="relative h-full"
               >
-                <IconBoxLight
-                  icon={iconBox.icon}
-                  title={iconBox.title}
-                  description={iconBox.description}
-                  titleMaxWidth={iconBox.titleMaxWidth}
-                  className="h-full"
-                />
+                <div className="hidden h-full lg:block">
+                  <IconBoxLight
+                    icon={iconBox.icon}
+                    title={iconBox.title}
+                    description={iconBox.description}
+                    titleMaxWidth={iconBox.titleMaxWidth}
+                    className="h-full"
+                  />
+                </div>
+                <div className="h-full lg:hidden">
+                  <IconBoxSimple
+                    icon={iconBox.icon}
+                    title={iconBox.title}
+                    description={iconBox.description}
+                    titleMaxWidth={iconBox.titleMaxWidth}
+                    className="h-full"
+                  />
+                </div>
               </div>
             ))}
           </div>
