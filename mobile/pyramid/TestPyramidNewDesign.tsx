@@ -1,0 +1,945 @@
+﻿import React, { CSSProperties, useEffect, useRef, useMemo } from "react";
+import * as THREE from "three";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Line2 } from "three/examples/jsm/lines/Line2.js";
+import { LineGeometry } from "three/examples/jsm/lines/LineGeometry.js";
+import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
+
+gsap.registerPlugin(ScrollTrigger);
+
+type DeepPartial<T> = {
+  [K in keyof T]?: T[K] extends object ? DeepPartial<T[K]> : T[K];
+};
+
+const DEFAULTS = {
+  canvasHeight: 680,
+  maxWidth: 1100,
+  padding: 20,
+  colors: {
+    background: 0x000000,
+    sideFace: 0x156d89,
+    sideSpecular: 0x49d0f4,
+    baseFace: 0x156d89,
+    baseSpecular: 0x2f94ad,
+    apexEdge: 0x2ab7de,
+    baseEdge: 0x1f89a7,
+    bar: 0xb48c50,
+    barSpecular: 0xddbb88,
+    leaderStroke: "#b48c50",
+    edgeLabelText: "#ffffff",
+    dotColor: "#5fd2f0",
+    sliderThumbA: "#1D9E75",
+    sliderThumbB: "#534AB7",
+    sliderTrack: "#2a2a3e",
+    sliderLabel: "#777",
+  },
+  pyramidScale: 2.2,
+  heightRatio: 1.6,
+  baseRatio: 1,
+  baseCentreY: 0.3,
+  verticalOffset: 0,
+  barCylRadius: 0.04,
+  barSphereRadius: 0.08,
+  lighting: {
+    ambientIntensity: 0.35,
+    keyIntensity: 0.85,
+    keyPosition: [4, 5, 6] as [number, number, number],
+    fillIntensity: 0.3,
+    fillPosition: [-5, 2, 4] as [number, number, number],
+    rimIntensity: 0.15,
+    rimPosition: [0, -3, -5] as [number, number, number],
+    sideShininess: 50,
+    baseShininess: 25,
+    barShininess: 60,
+  },
+  camera: { fov: 45, distance: 10.5 },
+  rotation: {
+    startX: -Math.PI * 0.5,
+    endX: 0.15,
+    startY: Math.PI / 3,
+    endY: 0.65 + Math.PI / 3,
+    sliderSmoothing: 0.1,
+    spinSpeed: 0.5,
+    spinThreshold: 0.9,
+    decayHalfLife: 0.3,
+  },
+  edgeLabels: {
+    texts: ["Fully\nautomated", "Cheap to\nbuild", "Complex\nLoan Logic"] as [
+      string,
+      string,
+      string,
+    ],
+    fontSize: 16,
+    fontWeight: 600,
+    worldHeight: 0.5,
+    edgeOffset: 0.15,
+  },
+  logo: {
+    svgBase64: null as string | null,
+    worldHeight: 0.55,
+    verticalOffset: 0.5,
+    canvasWidth: 1016,
+    canvasHeight: 264,
+  },
+  dashedEdges: {
+    dashSize: 0.1,
+    gapSize: 0.07,
+    fadeStart: 0.3,
+    fadeEnd: 0.6,
+    maxOpacity: 0,
+  },
+  slider: { leftLabel: "Legacy technology", rightLabel: "Atomix" },
+  callouts: {
+    fadeRange: 0.15,
+    offsets: {
+      b1: { dx: -110, dy: 0 },
+      b2: { dx: 0, dy: 60 },
+      b3: { dx: 110, dy: 0 },
+    },
+    b1: {
+      title: "Bespoke build",
+      textAlign: "left",
+      lines: [
+        { positive: true, text: "Automated" },
+        { positive: true, text: "Complex logic" },
+        { positive: false, text: "┬ú600k, slow to change" },
+      ],
+    },
+    b2: {
+      title: "Simple SaaS",
+      textAlign: "center",
+      lines: [
+        { positive: true, text: "Automated" },
+        { positive: true, text: "Cheap to build" },
+        { positive: false, text: "Simple products only" },
+      ],
+    },
+    b3: {
+      title: "Siloed modules",
+      textAlign: "right",
+      lines: [
+        { positive: true, text: "Complex logic" },
+        { positive: true, text: "Cheap to build" },
+        { positive: false, text: "Not automated" },
+      ],
+    },
+    style: {
+      background: "rgba(13,60,70,1)",
+      border: "2px solid rgba(100,200,220,0.6)",
+      borderRadius: "16px",
+      titleColor: "#ffffff",
+      titleSize: "18px",
+      lineColor: "#e0e0e0",
+      lineSize: "14px",
+      yesColor: "#6be0a0",
+      noColor: "#e06b6b",
+      minWidth: "220px",
+      maxWidth: "280px",
+      leaderWidth: 1.5,
+      leaderDash: "4,3",
+    },
+  },
+  apexCallout: {
+    fadeStart: 0.85,
+    fadeEnd: 1,
+    offset: { dx: 161, dy: -62 },
+    text: "Declarative policy specifications mean the business logic can be complex, changed cheaply and executed automatically.",
+    style: {
+      background: "rgba(15,25,40,0.92)",
+      border: "1px solid rgba(32,204,252,0.6)",
+      borderRadius: "8px",
+      textColor: "#c0dde8",
+      fontSize: "12px",
+      lineHeight: "1.55",
+      maxWidth: "260px",
+    },
+  },
+};
+
+type Cfg = typeof DEFAULTS;
+
+function deepMerge<T>(t: T, s?: DeepPartial<T>): T {
+  if (!s) return t;
+  const r: Record<string, unknown> = { ...(t as Record<string, unknown>) };
+  Object.keys(s).forEach((k) => {
+    const sv = (s as Record<string, unknown>)[k];
+    const tv = (t as Record<string, unknown>)[k];
+    if (
+      sv &&
+      typeof sv === "object" &&
+      !Array.isArray(sv) &&
+      tv &&
+      typeof tv === "object" &&
+      !Array.isArray(tv)
+    )
+      r[k] = deepMerge(
+        tv as Record<string, unknown>,
+        sv as Record<string, unknown>,
+      );
+    else if (sv !== undefined) r[k] = sv;
+  });
+  return r as T;
+}
+
+export interface TestPyramidNewDesignProps {
+  config?: DeepPartial<Cfg>;
+  className?: string;
+  style?: CSSProperties;
+  initialSliderValue?: number;
+  onReady?: (api: {
+    setSlider: (v: number, instant?: boolean) => void;
+    setFinalHighlightOnly: (locked: boolean) => void;
+  }) => void;
+  onInfiniteSpinStart?: () => void;
+  disableScrollTrigger?: boolean;
+  fillHeight?: boolean;
+}
+
+const clamp = (
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  ww: number,
+  wh: number,
+  p: number,
+) => ({
+  x: Math.max(p, Math.min(x, ww - w - p)),
+  y: Math.max(p, Math.min(y, wh - h - p)),
+});
+
+const clamp01 = (value: number) => Math.max(0, Math.min(1, value));
+
+const HIGHLIGHT_SEQUENCE_END = 0.66;
+const HIGHLIGHT_SEQUENCE_FADE = 0.24;
+const HIGHLIGHT_PHASE_1_END = 0.26;
+const HIGHLIGHT_PHASE_2_END = 0.52;
+const HIGHLIGHT_EDGE_BASE_WIDTH = 1.6;
+const HIGHLIGHT_EDGE_EXTRA_WIDTH = 2.2;
+const EDGE_LABEL_BASE_OPACITY = 0.16;
+const EDGE_LABEL_ACTIVE_BOOST = 0.84;
+const PYRAMID_SCROLL_DISTANCE_MULTIPLIER = 6;
+
+type V3 = THREE.Vector3;
+const Vec3 = THREE.Vector3;
+const v3 = (...a: [number, number, number]) => new Vec3(...a);
+
+const TestPyramidNewDesign: React.FC<TestPyramidNewDesignProps> = ({
+  config,
+  className = "",
+  style,
+  initialSliderValue = 0,
+  onReady,
+  onInfiniteSpinStart,
+  disableScrollTrigger = false,
+  fillHeight = false,
+}) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const scrollProgressRef = useRef(clamp01(initialSliderValue));
+  const initialDisableScrollTriggerRef = useRef(disableScrollTrigger);
+  const initialSliderValueRef = useRef(clamp01(initialSliderValue));
+  const finalHighlightOnlyRef = useRef(false);
+  const curTRef = useRef(0);
+  const spinRef = useRef(0);
+  const hasTriggeredInfiniteSpinRef = useRef(false);
+  const apexRef = useRef<HTMLDivElement>(null);
+  const cfg = useMemo(() => deepMerge(DEFAULTS, config), [config]);
+
+  const onReadyRef = useRef(onReady);
+  const onInfiniteSpinStartRef = useRef(onInfiniteSpinStart);
+
+  useEffect(() => {
+    onReadyRef.current = onReady;
+  }, [onReady]);
+
+  useEffect(() => {
+    onInfiniteSpinStartRef.current = onInfiniteSpinStart;
+  }, [onInfiniteSpinStart]);
+
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    if (!wrapper || initialDisableScrollTriggerRef.current) {
+      scrollProgressRef.current = initialSliderValueRef.current;
+      return;
+    }
+
+    const scrollTrigger = ScrollTrigger.create({
+      trigger: wrapper,
+      start: "top center",
+      end: () =>
+        `+=${wrapper.clientHeight * PYRAMID_SCROLL_DISTANCE_MULTIPLIER}`,
+      scrub: true,
+      onUpdate: (self) => {
+        scrollProgressRef.current = clamp01(self.progress);
+      },
+      onLeaveBack: () => {
+        scrollProgressRef.current = 0;
+        curTRef.current = 0;
+        spinRef.current = 0;
+        hasTriggeredInfiniteSpinRef.current = false;
+      },
+      onLeave: () => {
+        scrollProgressRef.current = 1;
+      },
+    });
+
+    return () => {
+      scrollTrigger.kill();
+    };
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current,
+      wrapper = wrapperRef.current;
+    if (!canvas || !wrapper) return;
+
+    const scene = new THREE.Scene();
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: true,
+      depth: true,
+      stencil: false,
+      powerPreference: "high-performance",
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(cfg.colors.background, 0);
+    renderer.sortObjects = false;
+    const camera = new THREE.PerspectiveCamera(cfg.camera.fov, 1, 0.1, 100);
+    camera.position.set(0, 0, cfg.camera.distance);
+    camera.lookAt(0, 0, 0);
+
+    const lt = cfg.lighting;
+    scene.add(new THREE.AmbientLight(0xffffff, lt.ambientIntensity));
+    [
+      [lt.keyIntensity, lt.keyPosition],
+      [lt.fillIntensity, lt.fillPosition],
+      [lt.rimIntensity, lt.rimPosition],
+    ].forEach(([i, p]) => {
+      const l = new THREE.DirectionalLight(0xffffff, i as number);
+      l.position.set(...(p as [number, number, number]));
+      scene.add(l);
+    });
+
+    const grp = new THREE.Group();
+    grp.position.y = cfg.verticalOffset;
+    scene.add(grp);
+
+    const S = cfg.pyramidScale,
+      H = S * cfg.heightRatio,
+      R = S * cfg.baseRatio;
+    const by = -H * cfg.baseCentreY,
+      ay = H + by;
+    const c30 = Math.cos(Math.PI / 6),
+      s30 = Math.sin(Math.PI / 6);
+    const rawA = v3(0, ay, 0),
+      rawB1 = v3(-R * c30, by, -R * s30),
+      rawB2 = v3(R * c30, by, -R * s30),
+      rawB3 = v3(0, by, R);
+    const pw = 0.4,
+      bw = (1 - pw) / 3;
+    const ctr = new Vec3()
+      .addScaledVector(rawA, pw)
+      .addScaledVector(rawB1, bw)
+      .addScaledVector(rawB2, bw)
+      .addScaledVector(rawB3, bw);
+    const apex = rawA.clone().sub(ctr),
+      b1 = rawB1.clone().sub(ctr),
+      b2 = rawB2.clone().sub(ctr),
+      b3 = rawB3.clone().sub(ctr);
+
+    const phong = (color: number, spec: number, shin: number) =>
+      new THREE.MeshPhongMaterial({
+        color,
+        side: THREE.DoubleSide,
+        shininess: shin,
+        specular: new THREE.Color(spec),
+      });
+    const makeSideMat = () =>
+      new THREE.MeshPhongMaterial({
+        color: cfg.colors.sideFace,
+        side: THREE.DoubleSide,
+        shininess: lt.sideShininess,
+        specular: new THREE.Color(cfg.colors.sideSpecular),
+        emissive: new THREE.Color(cfg.colors.dotColor),
+        emissiveIntensity: 0,
+      });
+    const bottomFaceMat = makeSideMat();
+    const rightFaceMat = makeSideMat();
+    const leftFaceMat = makeSideMat();
+    const baseFaceMat = phong(
+      cfg.colors.baseFace,
+      cfg.colors.baseSpecular,
+      lt.baseShininess,
+    );
+    const sideFaceBaseColor = new THREE.Color(cfg.colors.sideFace);
+    const sideFaceHighlightColor = new THREE.Color(cfg.colors.dotColor);
+    const perimeterEdgeBaseColor = new THREE.Color(cfg.colors.baseEdge);
+    const perimeterEdgeHighlightColor = new THREE.Color(cfg.colors.dotColor);
+    const applyFaceHighlight = (
+      material: THREE.MeshPhongMaterial,
+      weight: number,
+    ) => {
+      material.color
+        .copy(sideFaceBaseColor)
+        .lerp(sideFaceHighlightColor, 0.4 * weight);
+      material.emissiveIntensity = 0.08 + 0.45 * weight;
+    };
+    const applyEdgeHighlight = (material: LineMaterial, weight: number) => {
+      material.color
+        .copy(perimeterEdgeBaseColor)
+        .lerp(perimeterEdgeHighlightColor, weight);
+      material.opacity = 0.45 + 0.55 * weight;
+      material.transparent = true;
+      material.linewidth =
+        HIGHLIGHT_EDGE_BASE_WIDTH + HIGHLIGHT_EDGE_EXTRA_WIDTH * weight;
+    };
+
+    const tri = (a: V3, b: V3, c: V3, mat: THREE.Material) => {
+      const g = new THREE.BufferGeometry();
+      g.setAttribute(
+        "position",
+        new THREE.BufferAttribute(
+          new Float32Array([a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z]),
+          3,
+        ),
+      );
+      g.computeVertexNormals();
+      return new THREE.Mesh(g, mat);
+    };
+
+    const mkEdge = (a: V3, b: V3, material: THREE.LineBasicMaterial) => {
+      const g = new THREE.BufferGeometry().setFromPoints([a, b]);
+      const l = new THREE.Line(g, material);
+      return l;
+    };
+    const mkThickEdge = (a: V3, b: V3, material: LineMaterial) => {
+      const g = new LineGeometry();
+      g.setPositions([a.x, a.y, a.z, b.x, b.y, b.z]);
+      const l = new Line2(g, material);
+      l.computeLineDistances();
+      return l;
+    };
+
+    grp.add(
+      tri(apex, b1, b2, bottomFaceMat),
+      tri(apex, b2, b3, rightFaceMat),
+      tri(apex, b3, b1, leftFaceMat),
+      tri(b1, b3, b2, baseFaceMat),
+    );
+
+    const TC = new THREE.Color(cfg.colors.apexEdge),
+      PC = new THREE.Color(cfg.colors.baseEdge);
+    const apexEdgeMat = new THREE.LineBasicMaterial({ color: TC });
+    const bottomEdgeMat = new LineMaterial({
+      color: PC,
+      transparent: true,
+      opacity: 1,
+      linewidth: HIGHLIGHT_EDGE_BASE_WIDTH,
+      worldUnits: false,
+    });
+    const rightEdgeMat = new LineMaterial({
+      color: PC,
+      transparent: true,
+      opacity: 1,
+      linewidth: HIGHLIGHT_EDGE_BASE_WIDTH,
+      worldUnits: false,
+    });
+    const leftEdgeMat = new LineMaterial({
+      color: PC,
+      transparent: true,
+      opacity: 1,
+      linewidth: HIGHLIGHT_EDGE_BASE_WIDTH,
+      worldUnits: false,
+    });
+
+    grp.add(
+      mkEdge(apex, b1, apexEdgeMat),
+      mkEdge(apex, b2, apexEdgeMat),
+      mkEdge(apex, b3, apexEdgeMat),
+      mkThickEdge(b1, b2, bottomEdgeMat),
+      mkThickEdge(b2, b3, rightEdgeMat),
+      mkThickEdge(b3, b1, leftEdgeMat),
+    );
+
+    const dotMat = new THREE.MeshBasicMaterial({
+      color: cfg.colors.dotColor,
+    });
+    const dotGeom = new THREE.SphereGeometry(0.12, 16, 16);
+    const dotMesh = new THREE.InstancedMesh(dotGeom, dotMat, 4);
+    const dotMatrix = new THREE.Matrix4();
+    [apex, b1, b2, b3].forEach((v, i) => {
+      dotMatrix.makeTranslation(v.x, v.y, v.z);
+      dotMesh.setMatrixAt(i, dotMatrix);
+    });
+    dotMesh.instanceMatrix.needsUpdate = true;
+    grp.add(dotMesh);
+
+    const el = cfg.edgeLabels;
+    const mkText = (text: string) => {
+      const c2 = document.createElement("canvas"),
+        ctx = c2.getContext("2d");
+      if (!ctx) return new THREE.Mesh();
+      const dpr = 2,
+        font = `${el.fontWeight} ${el.fontSize * dpr}px -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif`;
+      ctx.font = font;
+      const tw = Math.ceil(ctx.measureText(text).width) + 24,
+        th = Math.ceil(el.fontSize * dpr * 1.5) + 16;
+      c2.width = tw;
+      c2.height = th;
+      ctx.clearRect(0, 0, tw, th);
+      ctx.font = font;
+      ctx.fillStyle = "#ffffff";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(text, tw / 2, th / 2);
+      const tex = new THREE.CanvasTexture(c2);
+      tex.minFilter = THREE.LinearFilter;
+      return new THREE.Mesh(
+        new THREE.PlaneGeometry((el.worldHeight * tw) / th, el.worldHeight),
+        new THREE.MeshBasicMaterial({
+          map: tex,
+          transparent: true,
+          opacity: EDGE_LABEL_BASE_OPACITY,
+          depthTest: true,
+          depthWrite: false,
+          side: THREE.DoubleSide,
+        }),
+      );
+    };
+
+    const eMeshes = el.texts.map(mkText);
+    const bCtr = new Vec3().add(b1).add(b2).add(b3).divideScalar(3);
+    const mid = (a: V3, b: V3) =>
+      new Vec3().addVectors(a, b).multiplyScalar(0.5);
+    const push = (pt: V3, c: V3, amt: number) =>
+      pt
+        .clone()
+        .add(new Vec3().subVectors(pt, c).normalize().multiplyScalar(amt));
+
+    const ePairs = [
+      { m: eMeshes[0], f: b1, t: b2 },
+      { m: eMeshes[1], f: b2, t: b3 },
+      { m: eMeshes[2], f: b3, t: b1 },
+    ];
+    const eld: { m: THREE.Mesh; x: V3; ys: V3; ye: V3 }[] = [];
+
+    ePairs.forEach((ep) => {
+      const mp = mid(ep.f, ep.t);
+      ep.m.position.copy(push(mp, bCtr, el.edgeOffset));
+      grp.add(ep.m);
+      const xA = new Vec3().subVectors(ep.t, ep.f).normalize();
+      const ro = new Vec3(mp.x, 0, mp.z).normalize();
+      const rp = ro
+        .clone()
+        .sub(xA.clone().multiplyScalar(ro.dot(xA)))
+        .normalize();
+      if (new Vec3().crossVectors(xA, rp).y > 0) xA.negate();
+      const ta = new Vec3().subVectors(apex, mp).normalize();
+      const ap = ta
+        .clone()
+        .sub(xA.clone().multiplyScalar(ta.dot(xA)))
+        .normalize();
+      eld.push({ m: ep.m, x: xA, ys: rp, ye: ap });
+    });
+
+    const spr = new THREE.Sprite(
+      new THREE.SpriteMaterial({
+        transparent: true,
+        depthTest: true,
+        depthWrite: false,
+        sizeAttenuation: true,
+      }),
+    );
+    spr.visible = false;
+    spr.scale.set(1.8, 0.45, 1);
+    const logoImg = new Image();
+    logoImg.crossOrigin = "anonymous";
+    logoImg.onload = () => {
+      const c2 = document.createElement("canvas");
+      c2.width = cfg.logo.canvasWidth;
+      c2.height = cfg.logo.canvasHeight;
+      const ctx = c2.getContext("2d");
+      if (!ctx) return;
+      ctx.drawImage(logoImg, 0, 0, c2.width, c2.height);
+      const tx = new THREE.CanvasTexture(c2);
+      tx.minFilter = THREE.LinearFilter;
+      const mat = spr.material as THREE.SpriteMaterial;
+      mat.map = tx;
+      mat.needsUpdate = true;
+      spr.scale.set(
+        (cfg.logo.worldHeight * c2.width) / c2.height,
+        cfg.logo.worldHeight,
+        1,
+      );
+      spr.visible = true;
+    };
+    logoImg.onerror = () => console.warn("Failed to load logo image");
+    logoImg.src = cfg.logo.svgBase64
+      ? `data:image/svg+xml;base64,${cfg.logo.svgBase64}`
+      : "/logo/atomix-logo-symbol.svg";
+    spr.position.copy(apex).add(v3(0, cfg.logo.verticalOffset, 0));
+    grp.add(spr);
+
+    let forceRender = true;
+    let resizeTimer = 0;
+    let cachedApexW = 0;
+    let cachedApexH = 0;
+    const resize = () => {
+      const w = wrapper.clientWidth,
+        h = wrapper.clientHeight;
+      if (w <= 0 || h <= 0) return;
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      bottomEdgeMat.resolution.set(w, h);
+      rightEdgeMat.resolution.set(w, h);
+      leftEdgeMat.resolution.set(w, h);
+      cachedApexW = 0;
+      cachedApexH = 0;
+      forceRender = true;
+    };
+    resize();
+    const resizeObserver = new ResizeObserver(() => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(resize, 120);
+    });
+    resizeObserver.observe(wrapper);
+
+    renderer.compile(scene, camera);
+
+    const rot = cfg.rotation;
+    const aOff = { ...cfg.apexCallout.offset };
+    let last = performance.now(),
+      afId = 0;
+
+    const tempYA = new THREE.Vector3();
+    const tempZA = new THREE.Vector3();
+    const tempXP = new THREE.Vector3();
+    const tempM4 = new THREE.Matrix4();
+    const tempProjV = new THREE.Vector3();
+
+    let isIntersecting = true;
+    let isPageVisible = !document.hidden;
+    let lastUpdatedT = -1;
+    let lastLeftWeight = -1;
+    let lastRightWeight = -1;
+    let lastBottomWeight = -1;
+    let lastFinalHighlightOnly = false;
+    let lastLabelOpacities = [-1, -1, -1];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isIntersecting = entry.isIntersecting;
+        });
+      },
+      { threshold: 0.01 },
+    );
+    observer.observe(wrapper);
+
+    const handleVisibilityChange = () => {
+      isPageVisible = !document.hidden;
+      if (isPageVisible) forceRender = true;
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    const requestRender = () => {
+      forceRender = true;
+    };
+
+    const animate = (now: number) => {
+      afId = requestAnimationFrame(animate);
+
+      if (!isIntersecting || !isPageVisible) {
+        last = now;
+        return;
+      }
+
+      const dt = (now - last) / 1000;
+      last = now;
+
+      const tgt = scrollProgressRef.current;
+      const rawT = curTRef.current;
+      const t =
+        rawT <= HIGHLIGHT_SEQUENCE_END
+          ? 0
+          : (rawT - HIGHLIGHT_SEQUENCE_END) / (1 - HIGHLIGHT_SEQUENCE_END);
+
+      const diff = Math.abs(tgt - rawT);
+      const isSpinning = t > rot.spinThreshold;
+      const isSettling = diff > 0.0001 || Math.abs(spinRef.current) > 0.001;
+      const highlightModeChanged =
+        finalHighlightOnlyRef.current !== lastFinalHighlightOnly;
+
+      if (!forceRender && !isSettling && !isSpinning && !highlightModeChanged) {
+        return;
+      }
+      forceRender = false;
+
+      curTRef.current += (tgt - curTRef.current) * rot.sliderSmoothing;
+      const updatedRawT = curTRef.current;
+      const updatedIntroT = Math.min(1, updatedRawT / HIGHLIGHT_SEQUENCE_END);
+      const updatedT =
+        updatedRawT <= HIGHLIGHT_SEQUENCE_END
+          ? 0
+          : (updatedRawT - HIGHLIGHT_SEQUENCE_END) /
+            (1 - HIGHLIGHT_SEQUENCE_END);
+
+      if (diff <= 0.0001 && Math.abs(spinRef.current) <= 0.001 && !isSpinning) {
+        curTRef.current = tgt;
+        spinRef.current = 0;
+      }
+
+      let leftWeight = 0;
+      let rightWeight = 0;
+      let bottomWeight = 0;
+
+      if (updatedIntroT <= HIGHLIGHT_PHASE_1_END) {
+        leftWeight = 1;
+        rightWeight = 1;
+      } else if (updatedIntroT <= HIGHLIGHT_PHASE_2_END) {
+        const blend =
+          (updatedIntroT - HIGHLIGHT_PHASE_1_END) /
+          (HIGHLIGHT_PHASE_2_END - HIGHLIGHT_PHASE_1_END);
+        leftWeight = 1 - blend;
+        rightWeight = 1;
+        bottomWeight = blend;
+      } else {
+        const blend =
+          (updatedIntroT - HIGHLIGHT_PHASE_2_END) /
+          (1 - HIGHLIGHT_PHASE_2_END);
+        leftWeight = blend;
+        rightWeight = 1 - blend;
+        bottomWeight = 1;
+      }
+
+      const highlightFade = 1 - Math.min(1, updatedT / HIGHLIGHT_SEQUENCE_FADE);
+      leftWeight *= highlightFade;
+      rightWeight *= highlightFade;
+      bottomWeight *= highlightFade;
+
+      if (finalHighlightOnlyRef.current) {
+        leftWeight = 0;
+        rightWeight = 0;
+        bottomWeight = 1;
+      }
+
+      const weightsChanged =
+        highlightModeChanged ||
+        Math.abs(leftWeight - lastLeftWeight) > 0.001 ||
+        Math.abs(rightWeight - lastRightWeight) > 0.001 ||
+        Math.abs(bottomWeight - lastBottomWeight) > 0.001;
+
+      if (weightsChanged) {
+        applyFaceHighlight(leftFaceMat, leftWeight);
+        applyFaceHighlight(rightFaceMat, rightWeight);
+        applyFaceHighlight(bottomFaceMat, bottomWeight);
+        applyEdgeHighlight(leftEdgeMat, leftWeight);
+        applyEdgeHighlight(rightEdgeMat, rightWeight);
+        applyEdgeHighlight(bottomEdgeMat, bottomWeight);
+
+        const shouldForceAllEdgeLabelsVisible =
+          !finalHighlightOnlyRef.current &&
+          updatedRawT >= HIGHLIGHT_SEQUENCE_END;
+        eMeshes.forEach((mesh, index) => {
+          const material = mesh.material;
+          const weightVal =
+            index === 0
+              ? bottomWeight
+              : index === 1
+                ? rightWeight
+                : leftWeight;
+          const opacity = shouldForceAllEdgeLabelsVisible
+            ? 1
+            : EDGE_LABEL_BASE_OPACITY + EDGE_LABEL_ACTIVE_BOOST * weightVal;
+
+          if (Math.abs(opacity - lastLabelOpacities[index]) <= 0.001) return;
+          lastLabelOpacities[index] = opacity;
+
+          if (Array.isArray(material)) {
+            material.forEach((mat) => {
+              if (mat instanceof THREE.MeshBasicMaterial) {
+                mat.opacity = opacity;
+              }
+            });
+          } else if (material instanceof THREE.MeshBasicMaterial) {
+            material.opacity = opacity;
+          }
+        });
+
+        lastLeftWeight = leftWeight;
+        lastRightWeight = rightWeight;
+        lastBottomWeight = bottomWeight;
+        lastFinalHighlightOnly = finalHighlightOnlyRef.current;
+      }
+
+      if (updatedT > rot.spinThreshold) {
+        if (!hasTriggeredInfiniteSpinRef.current) {
+          hasTriggeredInfiniteSpinRef.current = true;
+          onInfiniteSpinStartRef.current?.();
+        }
+        spinRef.current +=
+          rot.spinSpeed *
+          dt *
+          ((updatedT - rot.spinThreshold) / (1 - rot.spinThreshold));
+      } else {
+        let w = spinRef.current % (Math.PI * 2);
+        if (w > Math.PI) w -= Math.PI * 2;
+        if (w < -Math.PI) w += Math.PI * 2;
+        spinRef.current =
+          w *
+          Math.pow(
+            0.5,
+            dt /
+              (rot.decayHalfLife /
+                Math.max(0.001, 1 - updatedT / rot.spinThreshold)),
+          );
+        if (Math.abs(spinRef.current) < 0.001) spinRef.current = 0;
+      }
+
+      grp.rotation.x = rot.startX + (rot.endX - rot.startX) * updatedT;
+      grp.rotation.y =
+        rot.startY + (rot.endY - rot.startY) * updatedT + spinRef.current;
+
+      if (Math.abs(updatedT - lastUpdatedT) > 0.00001 || isSpinning) {
+        eld.forEach((d) => {
+          tempYA.lerpVectors(d.ys, d.ye, updatedT).normalize();
+          tempZA.crossVectors(d.x, tempYA).normalize();
+          tempXP.crossVectors(tempYA, tempZA).normalize();
+          tempM4.makeBasis(tempXP, tempYA, tempZA);
+          d.m.quaternion.setFromRotationMatrix(tempM4);
+        });
+        lastUpdatedT = updatedT;
+      }
+
+      grp.updateMatrixWorld();
+      renderer.render(scene, camera);
+
+      if (apexRef.current) {
+        const ac = cfg.apexCallout;
+        const aOp = Math.max(
+          0,
+          Math.min(1, (updatedT - ac.fadeStart) / (ac.fadeEnd - ac.fadeStart)),
+        );
+
+        if (aOp <= 0) {
+          if (apexRef.current.style.opacity !== "0") {
+            apexRef.current.style.opacity = "0";
+          }
+        } else {
+          const ww = wrapper.clientWidth;
+          const wh = wrapper.clientHeight;
+          tempProjV.copy(apex);
+          grp.localToWorld(tempProjV);
+          tempProjV.project(camera);
+          const pA = {
+            x: (tempProjV.x * 0.5 + 0.5) * ww,
+            y: (-tempProjV.y * 0.5 + 0.5) * wh,
+          };
+
+          if (cachedApexW === 0 || cachedApexH === 0) {
+            const ar = apexRef.current.getBoundingClientRect();
+            cachedApexW = ar.width;
+            cachedApexH = ar.height;
+          }
+
+          apexRef.current.style.opacity = String(aOp);
+          const a = clamp(
+            pA.x + aOff.dx,
+            pA.y + aOff.dy,
+            cachedApexW,
+            cachedApexH,
+            ww,
+            wh,
+            cfg.padding,
+          );
+          apexRef.current.style.transform = `translate(${a.x}px,${a.y}px)`;
+        }
+      }
+    };
+
+    afId = requestAnimationFrame(animate);
+    onReadyRef.current?.({
+      setSlider: (v: number, instant?: boolean) => {
+        const clamped = clamp01(v);
+        scrollProgressRef.current = clamped;
+        requestRender();
+        if (instant) {
+          curTRef.current = clamped;
+          spinRef.current = 0;
+          hasTriggeredInfiniteSpinRef.current = false;
+          lastUpdatedT = -1;
+          lastLeftWeight = -1;
+          lastRightWeight = -1;
+          lastBottomWeight = -1;
+          lastLabelOpacities = [-1, -1, -1];
+        }
+      },
+      setFinalHighlightOnly: (locked: boolean) => {
+        finalHighlightOnlyRef.current = locked;
+        requestRender();
+      },
+    });
+
+    return () => {
+      cancelAnimationFrame(afId);
+      window.clearTimeout(resizeTimer);
+      resizeObserver.disconnect();
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      observer.disconnect();
+      grp.traverse((o) => {
+        const m = o as THREE.Mesh;
+        if (m.geometry) m.geometry.dispose();
+        if (Array.isArray(m.material)) m.material.forEach((mt) => mt.dispose());
+        else if (m.material) m.material.dispose();
+      });
+      renderer.dispose();
+    };
+  }, [cfg]);
+
+  const grad = `linear-gradient(135deg,${cfg.colors.sliderThumbA},${cfg.colors.sliderThumbB})`;
+
+  return (
+    <div
+      className={className}
+      style={{
+        ...style,
+        position: "relative",
+        width: "100%",
+        maxWidth: `${cfg.maxWidth}px`,
+        ...(fillHeight ? { height: "100%" } : {}),
+        fontFamily:
+          "-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif",
+      }}
+    >
+      <div
+        ref={wrapperRef}
+        style={{
+          position: "relative",
+          width: "100%",
+          height: fillHeight ? "100%" : `${cfg.canvasHeight}px`,
+          overflow: "visible",
+          contain: "strict",
+        }}
+      >
+        <canvas
+          ref={canvasRef}
+          style={{
+            display: "block",
+            width: "100%",
+            height: "100%",
+            position: "relative",
+            zIndex: 1,
+            willChange: "transform",
+          }}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default React.memo(TestPyramidNewDesign);
+export { DEFAULTS as TEST_PYRAMID_DEFAULTS };

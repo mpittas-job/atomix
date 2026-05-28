@@ -7,7 +7,7 @@ import MobileAboutAtomix from "@/mobile/MobileAboutAtomix";
 import DefCta from "@/components/DefCta";
 import Footer from "@/components/Footer";
 import MainProblemsTabsLight from "@/main/MainProblemsTabsLight";
-import TestPyramidWrapper from "@/main/TestPyramidWrapper";
+import TestPyramidSection from "@/main/TestPyramidSection";
 import MainSolutionsAnimationLight from "@/main/MainSolutionsAnimationLight";
 import MainBenefitsLight from "@/main/MainBenefitsLight";
 import MainMissionVisionCards from "@/main/MainMissionVisionCards";
@@ -48,7 +48,7 @@ export default function LandingPage() {
 
       <MainProblemsTabsLight />
 
-      <TestPyramidWrapper />
+      <TestPyramidSection />
 
       {SHOW_SECTIONS_BELOW_MISSION_VISION && (
         <div className="hidden lg:block">

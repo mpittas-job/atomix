@@ -635,10 +635,11 @@ export default function TestPyramidWrapper() {
     highlightSequenceData[highlightIndex] ?? highlightSequenceData[0];
 
   return (
-    <div
-      ref={pyramidSectionRef}
-      className="h-[calc(100vh-130px)] rounded-3xl bg-gradient-to-b from-[#014355] to-[#247691] relative overflow-hidden flex flex-col justify-center items-center"
-    >
+    <div className="mx-auto w-full max-w-[1920px] lg:px-12">
+      <div
+        ref={pyramidSectionRef}
+        className="h-[calc(100vh-130px)] rounded-3xl bg-gradient-to-b from-[#014355] to-[#247691] relative overflow-hidden flex flex-col justify-center items-center"
+      >
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
         <LazySoftAurora
           ref={auroraRef}
@@ -809,6 +810,7 @@ export default function TestPyramidWrapper() {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }
