@@ -396,7 +396,7 @@ export default function MainTheMarket() {
                 value="£350"
                 unit="bn"
                 description="Total annual UK property loan originations"
-                className="rounded-t-3xl border-t border-x border-b-0 border-white/8 md:rounded-3xl md:border md:rounded-r-none md:rounded-b-none"
+                className="rounded-t-3xl border-t border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-r-none md:rounded-b-none md:border-white/8"
               />
             </div>
             <div className="market-reveal-item">
@@ -405,7 +405,7 @@ export default function MainTheMarket() {
                 value="£60"
                 unit="bn"
                 description="Across bridging, buy-to-let and SME CRE term loans — the core Atomix market"
-                className="rounded-none border-t border-x border-b-0 border-white/8 md:border"
+                className="rounded-none border-x border-b border-white/15 md:border md:border-white/8"
               />
             </div>
             <div className="market-reveal-item">
@@ -414,7 +414,7 @@ export default function MainTheMarket() {
                 value="£11.5"
                 unit="bn"
                 description="Annual UK bridging originations — majority processed manually, smaller loans structurally underserved"
-                className="rounded-none border-t border-x border-b-0 border-white/8 md:rounded-3xl md:border md:rounded-l-none md:rounded-b-none"
+                className="rounded-none border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-l-none md:rounded-b-none md:border-white/8"
               />
             </div>
           </div>
@@ -428,7 +428,7 @@ export default function MainTheMarket() {
                 unit="tn"
                 description="The US commercial real estate market opportunity, addressable on the same model"
                 descriptionMaxWidth="500px"
-                className="rounded-none border-t border-x border-b-0 border-white/8 md:rounded-3xl md:border md:rounded-t-none md:rounded-r-none"
+                className="rounded-none border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-t-none md:rounded-r-none md:border-white/8"
               />
             </div>
             <div className="market-reveal-item">
@@ -438,7 +438,7 @@ export default function MainTheMarket() {
                 unit="tn"
                 description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
                 descriptionMaxWidth="500px"
-                className="rounded-b-3xl border-t border-x border-b border-white/8 md:rounded-3xl md:border md:rounded-t-none md:rounded-l-none"
+                className="rounded-b-3xl border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-t-none md:rounded-l-none md:border-white/8"
               />
             </div>
           </div>
