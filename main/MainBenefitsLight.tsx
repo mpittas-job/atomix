@@ -701,7 +701,7 @@ export default function MainBenefitsLight() {
   }, [activeIndex]);
 
   return (
-    <div className="relative flex min-h-0 flex-col items-center justify-center overflow-hidden rounded-none bg-gradient-to-b from-[#ebeef1] to-[#f5f5f5] lg:min-h-[calc(100vh-126px)] lg:rounded-3xl">
+    <div className="relative flex min-h-0 w-full flex-col items-center justify-center overflow-hidden rounded-[2rem] bg-gradient-to-b from-[#ebeef1] to-[#f5f5f5] lg:min-h-[calc(100vh-126px)]">
       <div className="relative z-10 flex w-full max-w-[1200px] flex-col gap-y-8 px-6 py-14 lg:gap-y-12 lg:px-8 lg:py-32">
         <div className="lg:hidden">
           <h2 className="text-[2.25rem] leading-[1.1] font-semibold text-[#212329] md:text-5xl md:leading-[1.2em]">

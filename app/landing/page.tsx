@@ -14,6 +14,7 @@ import MainMissionVisionCards from "@/main/MainMissionVisionCards";
 import MainTheMarket from "@/main/MainTheMarket";
 import MobileCurrentStatus from "@/mobile/MobileCurrentStatus";
 import MobileTeamOpportunities from "@/mobile/MobileTeamOpportunities";
+import SliderWhyWorkWithUs from "@/components/SliderWhyWorkWithUs";
 import MainCurrentStatusLight from "@/main/MainCurrentStatusLight";
 
 /** TEMP: set true when done testing Mission/Vision responsiveness. */
@@ -50,13 +51,21 @@ export default function LandingPage() {
 
       <MainMissionVisionCards />
 
-      <MainProblemsTabsLight />
+      <div className="px-4 py-6 md:px-12">
+        <MainProblemsTabsLight />
+      </div>
 
       <TestPyramidSection />
 
-      <MainBenefitsLight />
+      <div className="hidden lg:block px-4 py-6 md:px-12">
+        <MainSolutionsAnimationLight />
+      </div>
 
-      <div className="px-4 py-6 md:px-12 md:py-12">
+      <div className="px-4 py-6 md:px-12">
+        <MainBenefitsLight />
+      </div>
+
+      <div className="px-4 py-6 md:px-12">
         <MainTheMarket />
       </div>
 
@@ -64,24 +73,19 @@ export default function LandingPage() {
         <MobileCurrentStatus />
       </div>
 
-      <div className="lg:hidden py-6">
+      <div className="md:hidden py-0 md:py-6">
         <MobileTeamOpportunities />
       </div>
 
-      <div className="hidden lg:block px-4 py-6 md:px-12 md:py-12">
+      <div className="hidden lg:block px-4 py-6 md:px-12">
         <MainCurrentStatusLight />
       </div>
 
-      {SHOW_SECTIONS_BELOW_MISSION_VISION && (
-        <div className="hidden lg:block">
-          <div className="mt-6 mb-12 flex flex-col gap-6 px-12">
-            <MainSolutionsAnimationLight />
-            {/* TEMP: hidden for now
-            <SliderWhyWorkWithUs />
-            */}
-          </div>
-        </div>
-      )}
+      <div className="hidden md:block px-4 py-6 md:px-12">
+        <SliderWhyWorkWithUs />
+      </div>
+
+
 
       <DefCta title="Build the Future of Asset-Backed Lending" />
       <Footer />
