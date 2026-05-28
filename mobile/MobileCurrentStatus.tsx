@@ -1,0 +1,317 @@
+"use client";
+
+import { useRef } from "react";
+import { FaHouse, FaGavel } from "react-icons/fa6";
+import { PiTargetBold } from "react-icons/pi";
+import IconBoxSimple from "@/components/IconBoxSimple";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+
+export default function MobileCurrentStatus() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      if (!trackRef.current) return;
+
+      const items = trackRef.current.querySelectorAll(
+        ".snap-start, .snap-center, .snap-end, svg"
+      );
+
+      gsap.fromTo(
+        items,
+        { opacity: 0, x: 50 },
+        {
+          opacity: 1,
+          x: 0,
+          duration: 1.2,
+          stagger: 0.1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: trackRef.current,
+            start: "top 85%",
+            once: true,
+          },
+        }
+      );
+    },
+    { scope: trackRef }
+  );
+
+  return (
+    <div
+      ref={trackRef}
+      className="w-full bg-[#EBEFF2] rounded-3xl py-12 px-6 overflow-hidden flex flex-col"
+    >
+      {/* Mobile heading — matches The Existing Problems typography */}
+      <div className="mx-0 mb-6 max-w-[1800px]">
+        <h2 className="text-[2.25rem] leading-[1.1] font-semibold text-[#212329]">
+          Current Status
+        </h2>
+      </div>
+
+      {/* Horizontal Scroll Track */}
+      <div
+        ref={containerRef}
+        className="flex items-center gap-x-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-4"
+        style={{
+          scrollbarWidth: "none",
+          msOverflowStyle: "none",
+          WebkitOverflowScrolling: "touch",
+        }}
+      >
+        {/* Column 1: Staggered Q2/Q3 cards */}
+        <div className="snap-start shrink-0 w-[340px] flex flex-col gap-y-4 h-[516px] justify-between">
+          <div className="h-[250px]">
+            <IconBoxSimple className="h-full !p-5">
+              <div className="relative flex flex-col justify-between h-full">
+                <div>
+                  <div className="mb-2 flex items-center">
+                    <span className="rounded-full px-3 py-0.5 text-xs font-semibold uppercase text-[#0B97BE] bg-linear-to-r from-[#D4E7EE] to-[#ECF1F5]">
+                      Q2 2026
+                    </span>
+                  </div>
+
+                  <h3 className="text-xl leading-6 font-semibold text-[#011F27]">
+                    Quick Home Sale MVP
+                  </h3>
+
+                  <p className="mt-2 text-sm leading-5 text-[#4B6066]">
+                    Quick home sale providers depend on speed and certainty of
+                    funding. Atomix is built for this model — repeat, high-volume
+                    bridging with a pre-approved offer generated instantly.
+                  </p>
+                </div>
+
+                <div className="mt-3 rounded-lg bg-gradient-to-r from-[#d6e8ef] to-[#eceeee] p-2 text-xs text-[#011F27] flex items-center gap-2">
+                  <span className="shrink-0 text-[#011F27]">
+                    <FaHouse className="h-4 w-4" />
+                  </span>
+                  <span className="leading-tight text-sm">
+                    Part of the £350bn UK annual property loan market
+                  </span>
+                </div>
+              </div>
+            </IconBoxSimple>
+          </div>
+
+          <div className="h-[250px]">
+            <IconBoxSimple className="h-full !p-5">
+              <div className="relative flex flex-col justify-between h-full">
+                <div>
+                  <div className="mb-2 flex items-center">
+                    <span className="rounded-full px-3 py-0.5 text-xs font-semibold uppercase text-[#0B97BE] bg-linear-to-r from-[#D4E7EE] to-[#ECF1F5]">
+                      Q3 2026
+                    </span>
+                  </div>
+
+                  <h3 className="text-xl leading-6 font-semibold text-[#011F27]">
+                    Auction Finance MVP
+                  </h3>
+
+                  <p className="mt-2 text-sm leading-5 text-[#4B6066]">
+                    Pre-approved finance embedded into the auction experience —
+                    certainty of funding before the hammer falls, within the
+                    28-day window.
+                  </p>
+                </div>
+
+                <div className="mt-3 rounded-lg bg-gradient-to-r from-[#d6e8ef] to-[#eceeee] p-2 text-xs text-[#011F27] flex items-center gap-2">
+                  <span className="shrink-0 text-[#011F27]">
+                    <FaGavel className="h-4 w-4" />
+                  </span>
+                  <span className="leading-tight text-sm">
+                    Unlocking £5.5bn stalled by completion requirements
+                  </span>
+                </div>
+              </div>
+            </IconBoxSimple>
+          </div>
+        </div>
+
+        {/* Connector SVG 1: Columns 1 to 2 */}
+        <div className="shrink-0 w-[50px] h-[516px] flex items-center justify-center">
+          <svg
+            width="50"
+            height="516"
+            viewBox="0 0 50 516"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M 0 125 L 15 125 Q 30 125 30 145 L 30 238 Q 30 258 50 258"
+              stroke="#CDD2D7"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            <path
+              d="M 0 391 L 15 391 Q 30 391 30 371 L 30 278 Q 30 258 50 258"
+              stroke="#CDD2D7"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+
+        {/* Column 2: First central statement */}
+        <div className="snap-center shrink-0 w-[340px] h-[516px] flex items-center justify-center px-2">
+          <p className="text-[21px] font-semibold text-[#011F27] text-center leading-snug">
+            Atomix is live and building — two product launches confirmed for
+            2026. <br />
+            Quick Home Sale MVP (Q2) and Auction Finance MVP (Q3).
+          </p>
+        </div>
+
+        {/* Connector SVG 2: Columns 2 to 3 */}
+        <div className="shrink-0 w-[35px] h-[516px] flex items-center justify-center">
+          <svg
+            width="35"
+            height="20"
+            viewBox="0 0 35 20"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <line
+              x1="0"
+              y1="10"
+              x2="35"
+              y2="10"
+              stroke="#CDD2D7"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+
+        {/* Column 3: Second central statement */}
+        <div className="snap-center shrink-0 w-[340px] h-[516px] flex items-center justify-center px-2">
+          <p className="text-[21px] font-semibold text-[#011F27] text-center leading-snug">
+            Atomix is built on the following platform modules, available
+            across all products.
+          </p>
+        </div>
+
+        {/* Connector SVG 3: Columns 3 to 4 */}
+        <div className="shrink-0 w-[50px] h-[516px] flex items-center justify-center">
+          <svg
+            width="50"
+            height="428"
+            viewBox="0 0 50 428"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M 0 214 L 12 214 Q 25 214 25 194 L 25 66 Q 25 46 50 46"
+              stroke="#CDD2D7"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            <path
+              d="M 0 214 L 12 214 Q 25 214 25 204 L 25 178 Q 25 158 50 158"
+              stroke="#CDD2D7"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            <path
+              d="M 0 214 L 12 214 Q 25 214 25 224 L 25 250 Q 25 270 50 270"
+              stroke="#CDD2D7"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+            <path
+              d="M 0 214 L 12 214 Q 25 214 25 234 L 25 362 Q 25 382 50 382"
+              stroke="#CDD2D7"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+
+        {/* Column 4: Platform Modules */}
+        <div className="snap-end shrink-0 w-[340px] h-[516px] flex flex-col justify-center">
+          <div className="flex flex-col h-[428px] justify-between">
+            <div className="h-[92px] w-full flex">
+              <IconBoxSimple className="h-full w-full !py-3 !px-4">
+                <div className="flex items-start gap-x-3 text-left">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#D8E9EE]">
+                    <PiTargetBold className="h-5 w-5 text-[#0B97BE]" />
+                  </div>
+                  <div>
+                    <h3 className="text-[18px] font-semibold text-[#011F27] leading-tight mb-0.5">
+                      Loan origination
+                    </h3>
+                    <p className="text-[14px] text-[#4B6066] leading-snug">
+                      Instant eligibility & offers — no dev needed.
+                    </p>
+                  </div>
+                </div>
+              </IconBoxSimple>
+            </div>
+            <div className="h-[92px] w-full flex">
+              <IconBoxSimple className="h-full w-full !py-3 !px-4">
+                <div className="flex items-start gap-x-3 text-left">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#D8E9EE]">
+                    <PiTargetBold className="h-5 w-5 text-[#0B97BE]" />
+                  </div>
+                  <div>
+                    <h3 className="text-[18px] font-semibold text-[#011F27] leading-tight mb-0.5">
+                      Lawyer workflow
+                    </h3>
+                    <p className="text-[14px] text-[#4B6066] leading-snug">
+                      End-to-end legal, no chasing.
+                    </p>
+                  </div>
+                </div>
+              </IconBoxSimple>
+            </div>
+            <div className="h-[92px] w-full flex">
+              <IconBoxSimple className="h-full w-full !py-3 !px-4">
+                <div className="flex items-start gap-x-3 text-left">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#D8E9EE]">
+                    <PiTargetBold className="h-5 w-5 text-[#0B97BE]" />
+                  </div>
+                  <div>
+                    <h3 className="text-[18px] font-semibold text-[#011F27] leading-tight mb-0.5">
+                      Loan management
+                    </h3>
+                    <p className="text-[14px] text-[#4B6066] leading-snug">
+                      Automated lifecycle, start to finish.
+                    </p>
+                  </div>
+                </div>
+              </IconBoxSimple>
+            </div>
+            <div className="h-[92px] w-full flex">
+              <IconBoxSimple className="h-full w-full !py-3 !px-4">
+                <div className="flex items-start gap-x-3 text-left">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#D8E9EE]">
+                    <PiTargetBold className="h-5 w-5 text-[#0B97BE]" />
+                  </div>
+                  <div>
+                    <h3 className="text-[18px] font-semibold text-[#011F27] leading-tight mb-0.5">
+                      Capital provider dashboards
+                    </h3>
+                    <p className="text-[14px] text-[#4B6066] leading-snug">
+                      Real-time loan insights, all in one place.
+                    </p>
+                  </div>
+                </div>
+              </IconBoxSimple>
+            </div>
+          </div>
+        </div>
+
+        {/* Spacer at the end of horizontal track for right padding safety */}
+        <div className="shrink-0 w-6 h-1" />
+      </div>
+
+      {/* Swipe Indicator for Mobile */}
+      <div className="flex justify-center gap-x-2 mt-4">
+        <span className="text-[11px] text-[#4B6066]/80 font-medium tracking-wide flex items-center gap-1 animate-pulse uppercase">
+          Swipe right to view full status flow →
+        </span>
+      </div>
+    </div>
+  );
+}

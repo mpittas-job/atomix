@@ -38,7 +38,7 @@ export default function CurrentStatusConnectorsV2() {
         </svg>
       </div>
 
-      <div className="w-[167px] absolute left-[calc(50%+11px)] -translate-x-1/1 top-0 bottom-0">
+      <div className="w-[167px] absolute left-[calc(50%+9px)] -translate-x-1/1 top-0 bottom-0">
         <svg
           viewBox="0 0 111 80"
           xmlns="http://www.w3.org/2000/svg"
@@ -90,7 +90,7 @@ export default function CurrentStatusConnectorsV2() {
         </svg>
       </div>
 
-      <div className="w-[167px] absolute right-[calc(50%+11px)] translate-x-1/1 top-0 bottom-0">
+      <div className="w-[167px] absolute right-[calc(50%+13px)] translate-x-1/1 top-0 bottom-0">
         <svg
           viewBox="0 0 111 80"
           xmlns="http://www.w3.org/2000/svg"
