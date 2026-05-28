@@ -817,10 +817,9 @@ export default function MainBenefitsLight() {
                 {/* Images — bottom on mobile, right on desktop */}
                 <div
                   ref={rightColumnRef}
-                  className="relative h-[var(--benefits-image-panel-h)] overflow-hidden rounded-2xl bg-[#499DB8] lg:h-[var(--benefits-image-panel-h-lg)]"
+                  className="relative h-[var(--benefits-image-panel-h)] overflow-hidden rounded-2xl bg-[#499DB8] lg:h-full"
                   style={{
                     ["--benefits-image-panel-h" as string]: `${IMAGE_PANEL_HEIGHT.mobile}px`,
-                    ["--benefits-image-panel-h-lg" as string]: `${IMAGE_PANEL_HEIGHT.desktop}px`,
                   }}
                 >
                   <div
