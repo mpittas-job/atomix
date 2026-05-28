@@ -10,9 +10,6 @@ import MainProblemsTabsLight from "@/main/MainProblemsTabsLight";
 import TestPyramidWrapper from "@/main/TestPyramidWrapper";
 import MainSolutionsAnimationLight from "@/main/MainSolutionsAnimationLight";
 import MainBenefitsLight from "@/main/MainBenefitsLight";
-import MainTheMarket from "@/main/MainTheMarket";
-import MainCurrentStatusLight from "@/main/MainCurrentStatusLight";
-import SliderWhyWorkWithUs from "@/components/SliderWhyWorkWithUs";
 import MainMissionVisionCards from "@/main/MainMissionVisionCards";
 
 /** TEMP: set true when done testing Mission/Vision responsiveness. */
@@ -58,15 +55,17 @@ export default function LandingPage() {
           <div className="mt-6 mb-12 flex flex-col gap-6 px-12">
             <MainSolutionsAnimationLight />
             <MainBenefitsLight />
+            {/* TEMP: hidden for now
             <MainTheMarket />
             <MainCurrentStatusLight />
             <SliderWhyWorkWithUs />
+            */}
           </div>
-
-          <DefCta title="Build the Future of Asset-Backed Lending" />
-          <Footer />
         </div>
       )}
+
+      <DefCta title="Build the Future of Asset-Backed Lending" />
+      <Footer />
     </div>
   );
 }
