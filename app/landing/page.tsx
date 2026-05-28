@@ -59,7 +59,7 @@ export default function LandingPage() {
         <MainTheMarket />
       </div>
 
-      <div className="lg:hidden px-4 py-6">
+      <div className="lg:hidden py-6">
         <MobileCurrentStatus />
       </div>
 

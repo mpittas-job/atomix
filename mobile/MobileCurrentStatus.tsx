@@ -6,6 +6,7 @@ import { PiTargetBold } from "react-icons/pi";
 import IconBoxSimple from "@/components/IconBoxSimple";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { Button as DefButton } from "@/components/ui";
 
 export default function MobileCurrentStatus() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -42,7 +43,7 @@ export default function MobileCurrentStatus() {
   return (
     <div
       ref={trackRef}
-      className="w-full bg-[#EBEFF2] rounded-3xl py-12 px-6 overflow-hidden flex flex-col"
+      className="w-full bg-gradient-to-b from-white via-[#EBEFF2] via-[10%] to-[#EBEFF2] rounded-none py-12 px-6 overflow-hidden flex flex-col"
     >
       {/* Mobile heading — matches The Existing Problems typography */}
       <div className="mx-0 mb-6 max-w-[1800px]">
@@ -304,6 +305,11 @@ export default function MobileCurrentStatus() {
 
         {/* Spacer at the end of horizontal track for right padding safety */}
         <div className="shrink-0 w-6 h-1" />
+      </div>
+
+      {/* Learn More Button */}
+      <div className="flex justify-center mt-6">
+        <DefButton href="/about-us">Learn more</DefButton>
       </div>
 
       {/* Swipe Indicator for Mobile */}
