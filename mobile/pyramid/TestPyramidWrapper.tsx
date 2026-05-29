@@ -1053,7 +1053,6 @@ export default function TestPyramidWrapper() {
           {/* Mobile: list slot at top (phase 2). Desktop: right column. */}
           <div
             ref={iconListColRef}
-            data-lenis-prevent
             className="z-10 mx-auto flex w-full max-w-[430px] flex-col gap-3 overflow-y-auto overscroll-contain sm:gap-4 lg:relative lg:order-3 lg:mx-0 lg:flex lg:h-full lg:w-1/2 lg:max-w-[550px] lg:justify-center lg:gap-8 lg:overflow-visible lg:-left-10"
           >
             {iconBoxesData.map((box, index) => {
@@ -1123,7 +1122,6 @@ export default function TestPyramidWrapper() {
           {/* Mobile: highlight list below pyramid (phase 1). Desktop: left overlay. */}
           <div
             ref={highlightBoxRef}
-            data-lenis-prevent
             className="z-10 w-full overflow-y-auto px-1 lg:absolute lg:left-34 lg:top-1/2 lg:w-[520px] lg:max-w-none lg:-translate-y-1/2 lg:overflow-visible lg:px-0"
           >
             <div
