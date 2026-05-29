@@ -432,13 +432,14 @@ export default function TestPyramidWrapper() {
     };
 
     window.addEventListener("resize", syncAfterLayout);
+    // NOTE: intentionally NOT listening to visualViewport "scroll" here —
+    // that fires constantly during iOS inertial scrolling and would
+    // trigger ScrollTrigger.refresh() on every frame, causing jank.
     window.visualViewport?.addEventListener("resize", syncAfterLayout);
-    window.visualViewport?.addEventListener("scroll", syncAfterLayout);
 
     return () => {
       window.removeEventListener("resize", syncAfterLayout);
       window.visualViewport?.removeEventListener("resize", syncAfterLayout);
-      window.visualViewport?.removeEventListener("scroll", syncAfterLayout);
     };
   }, []);
 
@@ -637,6 +638,30 @@ export default function TestPyramidWrapper() {
 
               if (self.scroll() >= bespokeThresholdScrollY) return;
 
+              // On mobile we never programmatically hijack the scroll —
+              // fighting native touch momentum causes severe scroll issues.
+              // Instead, simply reset state immediately and let the user
+              // continue scrolling naturally. The pinned section will still
+              // animate correctly as scrub drives the timeline backward.
+              if (!isDesktop) {
+                hasReachedIconBoxRef.current = false;
+                isExitSnappingRef.current = false;
+                pyramidApiRef.current?.setSlider(0, true);
+                pyramidApiRef.current?.setFinalHighlightOnly(false);
+                const firstSide = PYRAMID_SIDES[0];
+                if (lastHighlightIndexRef.current !== firstSide.highlightIndex) {
+                  lastHighlightIndexRef.current = firstSide.highlightIndex;
+                  setHighlightIndex(firstSide.highlightIndex);
+                }
+                if (lastIsPastPyramidSequenceRef.current) {
+                  lastIsPastPyramidSequenceRef.current = false;
+                  setIsPastPyramidSequence(false);
+                }
+                return;
+              }
+
+              // Desktop-only: snap scroll back to before the section so the
+              // user doesn't have to traverse all highlight slides in reverse.
               hasReachedIconBoxRef.current = false;
               isExitSnappingRef.current = true;
               pyramidApiRef.current?.setFinalHighlightOnly(true);
