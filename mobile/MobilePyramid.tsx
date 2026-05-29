@@ -30,7 +30,7 @@ const PHASE_2_END = 0.66;
 
 /* ── Pyramid visual config ── */
 const PYRAMID_SCALE = 2.75;
-const PYRAMID_VERTICAL_OFFSET = -0.18;
+const PYRAMID_VERTICAL_OFFSET = 0.22;
 
 type PyramidApi = {
   setSlider: (v: number, instant?: boolean) => void;
@@ -368,7 +368,7 @@ export default function MobilePyramid() {
           {/* Pyramid — always on top */}
           <div
             ref={pyramidColRef}
-            className="w-full flex items-center justify-center shrink-0"
+            className="w-full flex items-center justify-center shrink-0 -mt-10 relative z-0"
             style={{
               maxWidth: `${pyramidConfig.maxWidth}px`,
               height: `${pyramidConfig.canvasHeight}px`,
