@@ -171,26 +171,28 @@ export default function MobilePyramid() {
         ease: "power2.out",
         duration: 0.15,
       })
-        // 0.15–1.15: drive pyramid slider 0 → 0.78 (all 3 sides)
+        // 0.15–1.15: drive pyramid slider 0 → 1.0 (highlights + full 3D rotation)
         .to(
           pyramidProgress,
           {
-            value: 0.78,
+            value: 1.0,
             ease: "none",
             duration: 1,
             onUpdate: () => {
               const progress = pyramidProgress.value;
               pyramidApiRef.current?.setSlider(progress);
 
-              // Map progress into which highlight panel to show
-              const normalizedProgress = Math.min(1, progress / 0.78);
-              let newIndex = 0;
-              if (normalizedProgress <= PHASE_1_END) {
-                newIndex = 1; // Simple SaaS
-              } else if (normalizedProgress <= PHASE_2_END) {
-                newIndex = 0; // Bespoke builds
-              } else {
-                newIndex = 2; // Disconnected stacks
+              // Map progress into which highlight panel to show (only during the first 0.78 range)
+              let newIndex = 2;
+              if (progress < 0.78) {
+                const normalizedProgress = progress / 0.78;
+                if (normalizedProgress <= PHASE_1_END) {
+                  newIndex = 1; // Simple SaaS
+                } else if (normalizedProgress <= PHASE_2_END) {
+                  newIndex = 0; // Bespoke builds
+                } else {
+                  newIndex = 2; // Disconnected stacks
+                }
               }
 
               if (newIndex !== lastHighlightRef.current) {
@@ -201,7 +203,7 @@ export default function MobilePyramid() {
           },
           0.15
         )
-        // 1.15–1.55: hold — animation is done, user can now scroll away naturally.
+        // 1.15–1.55: hold — animation is done and fully loaded, user can now scroll away naturally.
         // This dwell window gives the scrub lag time to finish catching up before
         // the pin releases, so scrolling feels clean and intentional.
         .to({}, { duration: 0.4 });
