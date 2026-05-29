@@ -29,8 +29,8 @@ const PHASE_1_END = 0.33;
 const PHASE_2_END = 0.66;
 
 /* ── Pyramid visual config ── */
-const PYRAMID_SCALE = 2.35;
-const PYRAMID_VERTICAL_OFFSET = -0.25;
+const PYRAMID_SCALE = 2.75;
+const PYRAMID_VERTICAL_OFFSET = -0.18;
 
 type PyramidApi = {
   setSlider: (v: number, instant?: boolean) => void;
@@ -48,6 +48,41 @@ type HighlightInfo = {
   description: string;
   items: HighlightItem[];
 };
+
+type IconBoxSubItem = {
+  text: string;
+  positive: boolean;
+};
+
+type IconBoxData = {
+  icon: string;
+  title: string;
+  description: string;
+  items?: IconBoxSubItem[];
+};
+
+const iconBoxesData: IconBoxData[] = [
+  {
+    icon: "/icons/gradient/shield-blue-gradient.png",
+    title: "Lorem ipsum",
+    description: "dolor sit amet consectetur adipiscing elit sed do eiusmod",
+  },
+  {
+    icon: "/icons/gradient/target-blue-gradient.png",
+    title: "Ut labore",
+    description: "ut labore et dolore magna aliqua ut enim ad minim",
+    items: [
+      { text: "Quis", positive: true },
+      { text: "Nostrud exercitation", positive: true },
+      { text: "Ullamco laboris nisi ut", positive: false },
+    ],
+  },
+  {
+    icon: "/icons/gradient/links-blue-gradient.png",
+    title: "Aliquip commodo",
+    description: "consequat duis aute irure dolor in reprehenderit voluptate velit esse",
+  },
+];
 
 const highlightData: HighlightInfo[] = [
   {
@@ -89,13 +124,16 @@ export default function MobilePyramid() {
   const highlightTitleRef = useRef<HTMLHeadingElement>(null);
   const highlightDescRef = useRef<HTMLParagraphElement>(null);
   const highlightItemsRef = useRef<Array<HTMLLIElement | null>>([]);
+  const newListBoxRef = useRef<HTMLDivElement>(null);
   const pyramidApiRef = useRef<PyramidApi | null>(null);
   const auroraRef = useRef<SoftAuroraHandle>(null);
   const lastHighlightRef = useRef(0);
   const isFirstRenderRef = useRef(true);
+  const lastIsPastPyramidSequenceRef = useRef(false);
 
   const [windowWidth, setWindowWidth] = useState(375);
   const [highlightIndex, setHighlightIndex] = useState(0);
+  const [isPastPyramidSequence, setIsPastPyramidSequence] = useState(false);
 
   useEffect(() => {
     setWindowWidth(window.innerWidth);
@@ -105,8 +143,8 @@ export default function MobilePyramid() {
   }, []);
 
   const pyramidConfig = useMemo(() => {
-    const maxWidth = Math.max(280, Math.min(420, windowWidth - 40));
-    const canvasHeight = Math.max(240, Math.min(360, (windowWidth - 40) * 0.8));
+    const maxWidth = Math.max(280, Math.min(460, windowWidth - 24));
+    const canvasHeight = Math.max(265, Math.min(390, (windowWidth - 24) * 0.9));
     const scaleRatio = PYRAMID_SCALE / 2.2;
 
     return {
@@ -115,7 +153,7 @@ export default function MobilePyramid() {
       pyramidScale: PYRAMID_SCALE,
       verticalOffset: PYRAMID_VERTICAL_OFFSET,
       edgeLabels: {
-        fontSize: Math.round(12 * scaleRatio),
+        fontSize: Math.round(11 * scaleRatio), // slightly tighter labels for mobile layout
         worldHeight: 0.44 * scaleRatio,
         edgeOffset: 0.14 * scaleRatio,
       },
@@ -199,6 +237,12 @@ export default function MobilePyramid() {
                 lastHighlightRef.current = newIndex;
                 setHighlightIndex(newIndex);
               }
+
+              const past = progress >= 0.78;
+              if (past !== lastIsPastPyramidSequenceRef.current) {
+                lastIsPastPyramidSequenceRef.current = past;
+                setIsPastPyramidSequence(past);
+              }
             },
           },
           0.15
@@ -254,6 +298,20 @@ export default function MobilePyramid() {
     return () => ctx.revert();
   }, [highlightIndex]);
 
+  /* ── New list box enter animation when transitioning past highlight phase ── */
+  useEffect(() => {
+    if (isPastPyramidSequence) {
+      const boxes = newListBoxRef.current?.children;
+      if (boxes && boxes.length > 0) {
+        gsap.fromTo(
+          boxes,
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.45, stagger: 0.1, ease: "power2.out" }
+        );
+      }
+    }
+  }, [isPastPyramidSequence]);
+
   const highlightInfo = highlightData[highlightIndex] ?? highlightData[0];
 
   return (
@@ -294,10 +352,10 @@ export default function MobilePyramid() {
         {/* Content wrapper */}
         <div
           ref={contentRef}
-          className="relative z-10 flex h-full w-full flex-col items-center px-4 pt-5 pb-4"
+          className="relative z-10 flex h-full w-full flex-col items-center px-4 pt-3 pb-3"
         >
           {/* Small DefHeading */}
-          <div className="w-full mb-3 [&_h2]:text-lg [&_h2]:sm:text-xl [&_h2]:leading-snug [&_[data-description]]:text-xs [&_[data-description]]:sm:text-sm [&_[data-description]]:leading-relaxed [&_[data-description]]:mt-1 [&_div]:gap-y-1">
+          <div className="w-full mb-1.5 [&_h2]:text-lg [&_h2]:sm:text-xl [&_h2]:leading-snug [&_[data-description]]:text-xs [&_[data-description]]:sm:text-sm [&_[data-description]]:leading-relaxed [&_[data-description]]:mt-1 [&_div]:gap-y-1">
             <DefHeading
               theme="light"
               badgeText=""
@@ -325,28 +383,28 @@ export default function MobilePyramid() {
             />
           </div>
 
-          {/* Highlight content — below pyramid */}
+          {/* Highlight content — below pyramid (Triangle Phase) */}
           {/* No overflow-y-auto here — inner scrollable areas consume touch events
               and prevent the outer ScrollTrigger from advancing, making it feel
               impossible to scroll past the section. */}
           <div
             ref={highlightBoxRef}
-            className="w-full flex-1 min-h-0 overflow-hidden mt-3 px-1"
+            className={`w-full flex-1 min-h-0 overflow-hidden mt-1.5 px-1 ${isPastPyramidSequence ? "hidden pointer-events-none" : "block"}`}
             style={{ maxWidth: 430 }}
           >
             <h3
               ref={highlightTitleRef}
-              className="text-white font-semibold text-lg sm:text-xl leading-tight mb-1.5"
+              className="text-white font-semibold text-lg sm:text-xl leading-tight mb-1"
             >
               {highlightInfo.title}
             </h3>
             <p
               ref={highlightDescRef}
-              className="text-white/80 text-xs sm:text-sm leading-relaxed mb-3 max-w-[380px]"
+              className="text-white/80 text-xs sm:text-sm leading-relaxed mb-2.5 max-w-[380px]"
             >
               {highlightInfo.description}
             </p>
-            <ul className="space-y-2.5">
+            <ul className="space-y-2">
               {highlightInfo.items.map((item, idx) => (
                 <li
                   key={idx}
@@ -379,6 +437,46 @@ export default function MobilePyramid() {
                 </li>
               ))}
             </ul>
+          </div>
+
+          {/* New List content — below pyramid (Pyramid Phase) */}
+          <div
+            ref={newListBoxRef}
+            className={`w-full flex-1 min-h-0 overflow-y-auto mt-1.5 px-1 space-y-3.5 pb-2 ${isPastPyramidSequence ? "block" : "hidden pointer-events-none"}`}
+            style={{ maxWidth: 430 }}
+          >
+            {iconBoxesData.map((box, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <div className="w-8 h-8 shrink-0 flex justify-center items-center rounded-lg bg-[#015167]">
+                  <img src={box.icon} alt={box.title} className="w-5 h-5" />
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <h4 className="text-white font-semibold text-sm sm:text-base leading-tight">
+                    {box.title}
+                  </h4>
+                  <p className="text-white/70 text-[11px] sm:text-xs leading-relaxed mt-0.5 max-w-[360px]">
+                    {box.description}
+                  </p>
+                  {box.items && (
+                    <ul className="mt-1.5 space-y-1.5 pl-1">
+                      {box.items.map((item, itemIdx) => (
+                        <li
+                          key={itemIdx}
+                          className="flex items-center gap-2 text-white/75 text-[11px] sm:text-xs"
+                        >
+                          {item.positive ? (
+                            <FiCheck className="text-[#39C6ED] w-3 h-3 shrink-0" />
+                          ) : (
+                            <FiX className="text-white/40 w-3 h-3 shrink-0" />
+                          )}
+                          <span>{item.text}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
