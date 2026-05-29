@@ -354,8 +354,8 @@ export default function MobilePyramid() {
           ref={contentRef}
           className="relative z-10 flex h-full w-full flex-col items-center px-4 pt-3 pb-3"
         >
-          {/* Small DefHeading */}
-          <div className="w-full mb-1.5 [&_h2]:text-lg [&_h2]:sm:text-xl [&_h2]:leading-snug [&_[data-description]]:text-xs [&_[data-description]]:sm:text-sm [&_[data-description]]:leading-relaxed [&_[data-description]]:mt-1 [&_div]:gap-y-1">
+          {/* DefHeading — compact title for pinned mobile layout */}
+          <div className="w-full mb-1.5 [&_div]:gap-y-0 [&_h2]:text-2xl [&_h2]:leading-tight [&_h2]:sm:text-2xl [&_h2]:md:text-3xl [&_h2]:md:leading-[1.2em] [&_[data-description]]:mt-2 [&_[data-description]]:text-[1.05rem] [&_[data-description]]:leading-7 [&_[data-description]]:md:text-xl [&_[data-description]]:md:leading-8">
             <DefHeading
               theme="light"
               badgeText=""
@@ -414,11 +414,10 @@ export default function MobilePyramid() {
                   className="flex items-start gap-2.5"
                 >
                   <div
-                    className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center shrink-0 border-2 ${
-                      item.positive
-                        ? "border-white/0 bg-[#015167]"
-                        : "border-white/30 bg-transparent"
-                    }`}
+                    className={`w-6 h-6 sm:w-7 sm:h-7 rounded-lg flex items-center justify-center shrink-0 border-2 ${item.positive
+                      ? "border-white/0 bg-[#015167]"
+                      : "border-white/30 bg-transparent"
+                      }`}
                   >
                     {item.positive ? (
                       <FiCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#39C6ED]" />
