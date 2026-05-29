@@ -49,8 +49,6 @@ interface TabData {
     src?: string;
     icon?: ReactNode;
     title: string;
-    description: string;
-    titleMaxWidth?: string;
   }[];
 }
 
@@ -127,41 +125,32 @@ const tabsData: TabData[] = [
       {
         icon: icons.noVisibility,
         title:
-          "No real-time visibility into loan performance, policy adherence or portfolio analytics",
-        description:
-          "Lenders cannot be held to account in real time; oversight only after the fact",
+          "No visibility into loan performance, policy adherence or portfolio analytics — oversight only after the fact, lenders unaccountable in real time",
       },
       {
         icon: icons.noCompliance,
-        title: "Must trust lenders to follow stated policies",
-        titleMaxWidth: "240px",
-        description:
-          "With no mechanism to verify compliance until it is too late",
+        title:
+          "Must trust lenders to follow stated policies — no mechanism to verify compliance until it is too late",
       },
       {
         icon: icons.fraud,
-        title: "Lending rules can be broken with no mechanism for detection",
-        description:
-          "Fraud and misrepresentation risks are structural, not incidental",
+        title:
+          "Lending rules can be broken with no detection mechanism — fraud and misrepresentation risks are structural, not incidental",
       },
       {
         icon: icons.scattered,
-        title: "Capital locked for the full term",
-        description:
-          "Incumbents lack the blockchain layer and regulatory architecture needed to unlock secondary liquidity; no early exit mechanism exists",
+        title:
+          "Capital locked for the full term — no secondary liquidity, no early exit; incumbents lack the blockchain layer needed to unlock it",
       },
       {
         icon: icons.fragmented,
         title:
-          "Diversified small-loan portfolios are administratively punishing",
-        description:
-          "Pushing capital toward larger, more concentrated positions",
+          "Diversified small-loan portfolios are administratively punishing — pushing capital toward larger, more concentrated positions",
       },
       {
         icon: icons.costly,
-        title: "Bolt-on compliance controls have become a permanent overhead",
-        description:
-          "Costs that exist because the underlying infrastructure cannot be trusted",
+        title:
+          "Bolt-on compliance controls have become a permanent overhead — costs that exist because the underlying infrastructure cannot be trusted",
       },
     ],
   },
@@ -176,52 +165,38 @@ const tabsData: TabData[] = [
     iconBoxes: [
       {
         icon: icons.touchpoints,
-        title: "100+ manual touchpoints per loan",
-        titleMaxWidth: "240px",
-        description:
-          "Task-level automation leaves underwriters reviewing everything; costs stay high, scaling still requires hiring",
+        title:
+          "100+ manual touchpoints per loan — task-level automation changes nothing; underwriters still review everything, costs stay high",
       },
       {
         icon: icons.noAccess,
-        title: "Smaller lenders shut out of institutional capital",
-        titleMaxWidth: "300px",
-        description:
-          "No existing platform enforces capital provider criteria end-to-end; lenders cannot demonstrate compliance, due diligence costs are prohibitive, and institutional funding remains out of reach regardless of loan book quality",
+        title:
+          "Smaller lenders shut out of institutional capital — no platform enforces capital provider criteria end-to-end; compliance undemonstrable, funding out of reach",
       },
       {
         icon: icons.uneconomic,
         title:
-          "High fixed processing costs make smaller, most in-demand loans uneconomic",
-        description:
-          "Legacy systems were never designed to handle volume at near-zero marginal cost",
+          "High fixed processing costs make smaller loans uneconomic — legacy systems were never designed for near-zero marginal cost",
       },
       {
         icon: icons.costly,
-        title: "Existing systems rigid and expensive to adapt",
-        titleMaxWidth: "280px",
-        description:
-          "New products, rule changes and workflow modifications require developers, long lead times and significant cost; no legacy platform simultaneously delivers complex logic, self-serve changes and full automation",
+        title:
+          "Existing systems rigid and expensive to adapt — new products and rule changes require developers, long lead times and significant cost",
       },
       {
         icon: icons.slow,
-        title: "40-60% of applications never complete",
-        titleMaxWidth: "240px",
-        description:
-          "Full processing costs absorbed by completed loans, further eroding margins",
+        title:
+          "Manual processes don't scale — they require headcount, and headcount has a ceiling; 40–60% of applications never complete, absorbing full processing costs on every aborted deal",
       },
       {
         icon: icons.opaque,
         title:
-          "AI cannot guarantee compliance, meaning a 1% error rate produces thousands of non-compliant loans with no audit trail. Black-box reasoning fails audit requirements",
-        titleMaxWidth: "320px",
-        description:
-          "No traceable logic, no decision trail, no accountability; existing systems cannot demonstrate how or why a lending decision was made",
+          "AI cannot guarantee compliance — a 1% error rate means thousands of non-compliant loans; black-box reasoning leaves no audit trail",
       },
     ],
   },
   {
     title: "Borrowers",
-    iconBoxColumns: 2,
     items: [
       "Faster loan approvals",
       "Transparent process tracking",
@@ -232,27 +207,32 @@ const tabsData: TabData[] = [
       {
         icon: icons.chasing,
         title:
-          "Re-enter the same data for every lender and every service provider",
-        description:
-          "No shared infrastructure; data cannot follow the borrower across the market",
+          "Re-enter the same data for every lender and service provider — no shared infrastructure; data cannot follow the borrower across the market",
       },
       {
         icon: icons.opaque,
-        title: "No certainty of outcome until the final moment",
-        description:
-          "No process orchestration means the right parties cannot be guaranteed to verify the right documents at the right time; process lacks transparency, consistency and certainty",
+        title:
+          "No certainty of outcome — no process orchestration; the right parties cannot be guaranteed to verify the right documents at the right time",
       },
       {
         icon: icons.delays,
-        title: "Opaque, slow process",
-        description:
-          "Completions exceed 35 days, initial underwriting alone takes up to a week; fragmented systems leave legal, valuation and compliance steps entirely disconnected",
+        title:
+          "Opaque, slow process — completions exceed 35 days, initial underwriting alone takes up to a week",
       },
       {
         icon: icons.noVisibility,
-        title: "No visibility into status or next steps",
-        description:
-          "Entirely dependent on manual updates; no existing system provides live, automated tracking throughout the process",
+        title:
+          "No visibility into status or next steps — entirely dependent on manual updates; no system provides live automated tracking",
+      },
+      {
+        icon: icons.fragmented,
+        title:
+          "Fragmented systems leave legal, valuation and compliance steps entirely disconnected — no single platform coordinates them end-to-end",
+      },
+      {
+        icon: icons.noData,
+        title:
+          "No portfolio visibility — no single view of financing positions or options across a property portfolio",
       },
     ],
   },
@@ -496,7 +476,7 @@ export default function MainProblemsTabsLight() {
             className="mt-4 text-[1.05rem] leading-7 text-[#474D5D] md:text-xl md:leading-8"
             dangerouslySetInnerHTML={{
               __html:
-                "Property lending is manual, opaque and structurally exposed to fraud — not by intent, but by design. <br/>Legacy infrastructure was never built to handle the volume, complexity or transparency this market demands.",
+                "Property lending is manual, opaque and structurally exposed to fraud — not by intent, but by design. <br/>Legacy infrastructure was never built for this market.",
             }}
           />
         </div>
@@ -506,7 +486,7 @@ export default function MainProblemsTabsLight() {
             theme="dark"
             badgeText=""
             title="The Existing Problems"
-            description="Property lending is manual, opaque and structurally exposed to fraud — not by intent, but by design. <br/>Legacy infrastructure was never built to handle the volume, complexity or transparency this market demands."
+            description="Property lending is manual, opaque and structurally exposed to fraud — not by intent, but by design. <br/>Legacy infrastructure was never built for this market."
             showBadge={false}
             align="left"
             onAnimationComplete={startTabsEntrance}
@@ -576,8 +556,6 @@ export default function MainProblemsTabsLight() {
                 <IconBoxLight
                   icon={iconBox.icon}
                   title={iconBox.title}
-                  description={iconBox.description}
-                  titleMaxWidth={iconBox.titleMaxWidth}
                   className="h-full"
                 />
               </div>
@@ -599,8 +577,6 @@ export default function MainProblemsTabsLight() {
                   <IconBoxSimple
                     icon={iconBox.icon}
                     title={iconBox.title}
-                    description={iconBox.description}
-                    titleMaxWidth={iconBox.titleMaxWidth}
                     className="h-full"
                   />
                 </div>

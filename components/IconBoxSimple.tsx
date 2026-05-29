@@ -81,7 +81,9 @@ export default function IconBoxSimple({
               {title}
             </h3>
 
-            <p className="text-md leading-relaxed text-[#4B6066]">{description}</p>
+            {description ? (
+              <p className="text-md leading-relaxed text-[#4B6066]">{description}</p>
+            ) : null}
           </>
         )}
       </div>
