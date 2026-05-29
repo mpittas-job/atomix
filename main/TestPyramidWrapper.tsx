@@ -317,6 +317,7 @@ export default function TestPyramidWrapper() {
         onLeave: () => auroraRef.current?.setActive(false),
         onLeaveBack: () => auroraRef.current?.setActive(false),
         onUpdate: (self) => {
+          if ((ScrollTrigger as any).isRefreshing) return;
           // Skip our own snap tweens so onUpdate only reacts to genuine
           // user-driven scrolling.
           if (isProgrammaticScrollRef.current) return;
@@ -435,6 +436,7 @@ export default function TestPyramidWrapper() {
           ease: "none",
           duration: 1,
           onUpdate: () => {
+            if ((ScrollTrigger as any).isRefreshing) return;
             const progress = pyramidProgress.value;
             pyramidApiRef.current?.setSlider(progress);
 

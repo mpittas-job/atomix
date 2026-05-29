@@ -13,7 +13,16 @@ import DefHeading from "@/components/typo/DefHeading";
 gsap.registerPlugin(ScrollTrigger);
 
 /* ── Scroll distance multiplier (how much scroll the pinned section needs) ── */
-const SCROLL_DISTANCE_MULTIPLIER = 4;
+// 3.5× the section height — enough for all 3 sides + a natural exit window
+const SCROLL_DISTANCE_MULTIPLIER = 3.5;
+
+const FALLBACK_HEADER_PX = 88;
+
+function getHeaderOffset() {
+  if (typeof window === "undefined") return FALLBACK_HEADER_PX;
+  const header = document.querySelector("header");
+  return header ? Math.ceil(header.getBoundingClientRect().bottom) : FALLBACK_HEADER_PX;
+}
 
 /* ── Highlight phases in 0–1 progress range ── */
 const PHASE_1_END = 0.33;
@@ -138,11 +147,15 @@ export default function MobilePyramid() {
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: section,
-          start: "top top+=88",
+          // Use the actual rendered header bottom so pinning starts at exactly
+          // the right scroll position regardless of header height changes.
+          start: () => `top top+=${getHeaderOffset()}px`,
           end: () => `+=${section.offsetHeight * SCROLL_DISTANCE_MULTIPLIER}`,
           pin: true,
           pinSpacing: true,
-          scrub: true,
+          // scrub:1 → playhead takes ~1 s to catch up; prevents the pin from
+          // feeling sticky and lets natural touch momentum carry past the end.
+          scrub: 1,
           invalidateOnRefresh: true,
           onEnter: () => auroraRef.current?.setActive(true),
           onEnterBack: () => auroraRef.current?.setActive(true),
@@ -151,14 +164,14 @@ export default function MobilePyramid() {
         },
       });
 
-      // Fade in content
+      // 0.0–0.15: fade in
       tl.to(content, {
         autoAlpha: 1,
         y: 0,
         ease: "power2.out",
-        duration: 0.2,
+        duration: 0.15,
       })
-        // Drive pyramid slider from 0 → highlight sequence end (~0.78)
+        // 0.15–1.15: drive pyramid slider 0 → 0.78 (all 3 sides)
         .to(
           pyramidProgress,
           {
@@ -169,7 +182,7 @@ export default function MobilePyramid() {
               const progress = pyramidProgress.value;
               pyramidApiRef.current?.setSlider(progress);
 
-              // Determine which highlight to show based on progress
+              // Map progress into which highlight panel to show
               const normalizedProgress = Math.min(1, progress / 0.78);
               let newIndex = 0;
               if (normalizedProgress <= PHASE_1_END) {
@@ -186,8 +199,12 @@ export default function MobilePyramid() {
               }
             },
           },
-          0.2
-        );
+          0.15
+        )
+        // 1.15–1.55: hold — animation is done, user can now scroll away naturally.
+        // This dwell window gives the scrub lag time to finish catching up before
+        // the pin releases, so scrolling feels clean and intentional.
+        .to({}, { duration: 0.4 });
     },
     { scope: sectionRef }
   );
@@ -307,9 +324,12 @@ export default function MobilePyramid() {
           </div>
 
           {/* Highlight content — below pyramid */}
+          {/* No overflow-y-auto here — inner scrollable areas consume touch events
+              and prevent the outer ScrollTrigger from advancing, making it feel
+              impossible to scroll past the section. */}
           <div
             ref={highlightBoxRef}
-            className="w-full flex-1 min-h-0 overflow-y-auto overscroll-contain mt-3 px-1"
+            className="w-full flex-1 min-h-0 overflow-hidden mt-3 px-1"
             style={{ maxWidth: 430 }}
           >
             <h3
