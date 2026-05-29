@@ -451,7 +451,7 @@ const SoftAurora = forwardRef<SoftAuroraHandle, SoftAuroraProps>(
     return (
       <div
         ref={containerRef}
-        className="absolute inset-0 h-full w-full min-h-full min-w-full [contain:strict]"
+        className="absolute inset-0 h-full w-full min-h-full min-w-full overflow-hidden"
       />
     );
   },

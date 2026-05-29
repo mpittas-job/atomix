@@ -272,7 +272,7 @@ export default function MainMissionVisionCards() {
   return (
     <section
       ref={sectionRef}
-      className="h-[calc(100svh-var(--header-height,110px))] bg-white flex flex-col justify-center py-0 px-0 md:py-14 md:px-0 lg:min-h-[calc(100svh-var(--header-height,110px))]"
+      className="h-[calc(100svh-var(--header-height,110px))] bg-white flex flex-col justify-center px-0 pt-16 pb-26 md:px-0 lg:min-h-[calc(100svh-var(--header-height,110px))]"
     >
       <div className="relative flex w-full min-h-0 flex-1 flex-col justify-center overflow-hidden rounded-none bg-linear-to-b from-[#004152] via-[#01485C] to-[#004152] text-white">
         <LazySoftAurora

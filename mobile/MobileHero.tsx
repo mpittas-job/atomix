@@ -36,7 +36,7 @@ export default function MobileHero() {
             alt="Atomix Logo"
             width={200}
             height={60}
-            className="h-auto w-[130px]"
+            className="h-auto w-[130px] mb-5"
             priority
           />
 
@@ -45,7 +45,7 @@ export default function MobileHero() {
             <span className="text-[#5BC7E4]">Automating Lending End-to-End</span>
           </h1>
 
-          <DefButton size="large" onClick={openBookDemoModal}>
+          <DefButton onClick={openBookDemoModal} className="mb-7">
             Contact Us
           </DefButton>
         </div>
