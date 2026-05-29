@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import DesktopTestPyramidWrapper from "@/main/TestPyramidWrapper";
-import MobileTestPyramidWrapper from "@/mobile/pyramid/TestPyramidWrapper";
+import MobilePyramid from "@/mobile/MobilePyramid";
 
 export default function TestPyramidSection() {
   const [isDesktop, setIsDesktop] = useState<boolean | null>(null);
@@ -20,6 +20,7 @@ export default function TestPyramidSection() {
   return isDesktop ? (
     <DesktopTestPyramidWrapper />
   ) : (
-    <MobileTestPyramidWrapper />
+    <MobilePyramid />
   );
 }
+
