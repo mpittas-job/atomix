@@ -52,7 +52,7 @@ const DefCta: React.FC<DefCtaProps> = ({ title }) => {
   }, []);
 
   return (
-    <div className="p-4 lg:p-6">
+    <div className="p-4 lg:p-0">
       <div
         ref={sectionRef}
         className="flex flex-col items-center bg-gradient-to-r from-[#004151] to-[#06677E] pt-12 pb-0 lg:flex-row lg:items-center lg:gap-2 lg:py-30 lg:pb-30 relative overflow-hidden rounded-2xl lg:rounded-4xl"

@@ -51,43 +51,47 @@ export default function LandingPage() {
 
       <MainMissionVisionCards />
 
-      <div className="px-4 py-6 md:px-12">
+      <div className="px-0 md:px-12 pb-6">
         <MainProblemsTabsLight />
       </div>
 
-      <TestPyramidSection />
+      <div className="pb-6">
+        <TestPyramidSection />
+      </div>
 
-      <div className="hidden lg:block px-4 py-6 md:px-12">
+      <div className="hidden lg:block px-0 md:px-12 pb-6">
         <MainSolutionsAnimationLight />
       </div>
 
-      <div className="px-4 py-6 md:px-12">
+      <div className="px-0 md:px-12 pb-6">
         <MainBenefitsLight />
       </div>
 
-      <div className="px-4 py-6 md:px-12">
+      <div className="px-0 md:px-12 pb-6">
         <MainTheMarket />
       </div>
 
-      <div className="lg:hidden py-6">
+      <div className="lg:hidden">
         <MobileCurrentStatus />
       </div>
 
-      <div className="md:hidden py-0 md:py-6">
+      <div className="md:hidden pb-6 md:py-6">
         <MobileTeamOpportunities />
       </div>
 
-      <div className="hidden lg:block px-4 py-6 md:px-12">
+      <div className="hidden lg:block px-0 md:px-12 pb-6">
         <MainCurrentStatusLight />
       </div>
 
-      <div className="hidden md:block px-4 py-6 md:px-12">
+      <div className="hidden md:block px-0 md:px-12 pb-6">
         <SliderWhyWorkWithUs />
       </div>
 
 
 
-      <DefCta title="Build the Future of Asset-Backed Lending" />
+      <div className="px-0 md:px-12">
+        <DefCta title="Build the Future of Asset-Backed Lending" />
+      </div>
       <Footer />
     </div>
   );

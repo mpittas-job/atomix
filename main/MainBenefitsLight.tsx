@@ -746,15 +746,15 @@ export default function MainBenefitsLight() {
   }, [activeIndex]);
 
   return (
-    <div className="relative flex min-h-0 w-full flex-col items-center justify-center overflow-hidden rounded-[2rem] bg-gradient-to-b from-[#ebeef1] to-[#f5f5f5] lg:min-h-[calc(100vh-126px)]">
+    <div className="relative flex min-h-0 w-full flex-col items-center justify-center overflow-hidden rounded-none md:rounded-[2rem] bg-gradient-to-b from-[#ebeef1] to-[#f5f5f5] lg:min-h-[calc(100vh-126px)]">
       <div className="relative z-10 flex w-full max-w-[1200px] flex-col gap-y-8 px-6 py-14 lg:gap-y-12 lg:px-8 lg:py-32">
-        <div className="lg:hidden">
+        <div className="lg:hidden mb-8">
           <h2 className="text-[2.25rem] leading-[1.1] font-semibold text-[#212329] md:text-5xl md:leading-[1.2em]">
             Benefits
           </h2>
         </div>
 
-        <div className="hidden lg:block">
+        <div className="hidden lg:block lg:mb-12">
           <DefHeading
             theme="dark"
             badgeText=""
@@ -803,8 +803,8 @@ export default function MainBenefitsLight() {
                   data-tab
                   onClick={() => setActiveIndex(index)}
                   className={`relative z-10 flex flex-1 cursor-pointer items-center justify-center rounded-xl p-5 transition-colors duration-300 ${index === activeIndex
-                      ? "font-semibold text-[#011F27]"
-                      : "font-medium text-[#5B6F75] hover:text-[#3a4a4e]"
+                    ? "font-semibold text-[#011F27]"
+                    : "font-medium text-[#5B6F75] hover:text-[#3a4a4e]"
                     }`}
                 >
                   <span className="text-base">{tab.title}</span>
@@ -817,15 +817,14 @@ export default function MainBenefitsLight() {
           <div ref={contentRef} key={activeIndex} className="">
             <div
               ref={cardBgRef}
-              className="group relative rounded-3xl border border-white/60 bg-white/40 backdrop-blur-md p-2 overflow-hidden transition-all duration-300"
+              className="group relative rounded-none lg:rounded-3xl border-0 lg:border lg:border-white/60 bg-transparent lg:bg-white/40 lg:backdrop-blur-md p-0 lg:p-2 overflow-hidden transition-all duration-300 [--card-shadow:none] lg:[--card-shadow:inset_0_1px_2px_rgba(255,255,255,0.6),_inset_5px_5px_20px_rgba(10, 21, 44, 0.06)]"
               style={{
-                boxShadow:
-                  "inset 0 1px 2px rgba(255,255,255,0.6), inset 5px 5px 20px rgba(10, 21, 44, 0.06)",
+                boxShadow: "var(--card-shadow)",
               }}
             >
               <div
                 ref={cardBlursRef}
-                className="pointer-events-none absolute inset-0 rounded-2xl overflow-hidden"
+                className="pointer-events-none absolute inset-0 rounded-2xl overflow-hidden hidden lg:block"
               >
                 <div className="absolute -top-5 -right-5 w-[45%] h-[45%] rounded-full bg-white/60  blur-xl" />
                 <div className="absolute -bottom-5 -left-5 w-[45%] h-[45%] rounded-full bg-white/60  blur-xl" />
@@ -833,7 +832,7 @@ export default function MainBenefitsLight() {
 
               <div className="relative grid grid-cols-1 lg:grid-cols-2">
                 {/* Content — top on mobile, left on desktop */}
-                <div className="p-6 lg:p-8">
+                <div className="p-0 pb-8 lg:p-8">
                   <h2
                     ref={titleRef}
                     className="mb-3 text-[1.75rem] leading-tight font-semibold text-[#011F27] lg:mb-4 lg:text-4xl"
@@ -850,7 +849,7 @@ export default function MainBenefitsLight() {
                     {tabsData[activeIndex].items.map((item, idx) => (
                       <li key={idx} className="flex items-start gap-3">
                         <IoShieldCheckmark className="mt-0.5 h-5 w-5 shrink-0 text-[#39C6ED] lg:h-6 lg:w-6" />
-                        <span className="text-[0.9rem] leading-6 text-[#495F64] lg:text-base lg:leading-normal">
+                        <span className="text-md leading-6.5 text-[#495F64] lg:text-base lg:leading-normal">
                           {formatListItemText(item.text)}
                         </span>
                       </li>
@@ -872,7 +871,7 @@ export default function MainBenefitsLight() {
                           <IconBoxSimple className="h-full min-h-[140px] flex flex-col justify-center bg-white/60">
                             <div className="flex flex-col items-start gap-3">
                               <IoShieldCheckmark className="h-8 w-8 shrink-0 text-[#39C6ED]" />
-                              <span className="text-[0.9rem] leading-6 text-[#495F64]">
+                              <span className="text-md leading-6.5 text-[#495F64]">
                                 {formatListItemText(item.text)}
                               </span>
                             </div>
@@ -887,8 +886,8 @@ export default function MainBenefitsLight() {
                         onClick={handlePrevBenefitSlide}
                         disabled={activeBenefitSlide === 0}
                         className={`flex h-9 w-9 items-center justify-center rounded-full border border-[#DCE1E4] bg-white text-[#011F27] shadow-sm transition-all active:scale-95 ${activeBenefitSlide === 0
-                            ? "opacity-40 cursor-not-allowed"
-                            : "opacity-100 cursor-pointer"
+                          ? "opacity-40 cursor-not-allowed"
+                          : "opacity-100 cursor-pointer"
                           }`}
                         aria-label="Previous slide"
                       >
@@ -901,8 +900,8 @@ export default function MainBenefitsLight() {
                             key={idx}
                             onClick={() => goToBenefitSlide(idx)}
                             className={`h-1.5 rounded-full transition-all duration-300 ${idx === activeBenefitSlide
-                                ? "w-5 bg-[#011F27]"
-                                : "w-1.5 bg-[#A0AEB2]"
+                              ? "w-5 bg-[#011F27]"
+                              : "w-1.5 bg-[#A0AEB2]"
                               }`}
                             aria-label={`Go to slide ${idx + 1}`}
                           />
@@ -915,8 +914,8 @@ export default function MainBenefitsLight() {
                           activeBenefitSlide === tabsData[activeIndex].items.length - 1
                         }
                         className={`flex h-9 w-9 items-center justify-center rounded-full border border-[#DCE1E4] bg-white text-[#011F27] shadow-sm transition-all active:scale-95 ${activeBenefitSlide === tabsData[activeIndex].items.length - 1
-                            ? "opacity-40 cursor-not-allowed"
-                            : "opacity-100 cursor-pointer"
+                          ? "opacity-40 cursor-not-allowed"
+                          : "opacity-100 cursor-pointer"
                           }`}
                         aria-label="Next slide"
                       >

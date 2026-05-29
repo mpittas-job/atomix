@@ -986,11 +986,11 @@ export default function TestPyramidWrapper() {
   return (
     <div
       ref={outerContainerRef}
-      className="mx-auto w-full max-w-[1920px] p-4 md:p-12"
+      className="mx-auto w-full max-w-[1920px] p-0 md:p-12"
     >
       <div
         ref={pyramidSectionRef}
-        className="rounded-3xl bg-gradient-to-b from-[#014355] to-[#247691] relative overflow-hidden flex flex-col justify-start items-center box-border shrink-0"
+        className="rounded-none md:rounded-3xl bg-gradient-to-b from-[#014355] to-[#247691] relative overflow-hidden flex flex-col justify-start items-center box-border shrink-0"
         style={{
           height:
             sectionHeightPx ??

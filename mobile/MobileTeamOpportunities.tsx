@@ -112,10 +112,10 @@ export default function MobileTeamOpportunities() {
   return (
     <div
       ref={containerRef}
-      className="mx-auto w-full max-w-[1920px] px-4 md:px-12 py-6 flex flex-col gap-y-8 overflow-hidden"
+      className="mx-auto w-full max-w-[1920px] px-0 md:px-12 flex flex-col overflow-hidden"
     >
       {/* 1. TEAM SECTION */}
-      <div className="col-container team-col w-full bg-[#3E99B7] rounded-[2rem] px-5 py-10 flex flex-col items-center text-center border border-white/10">
+      <div className="col-container team-col w-full bg-[#3E99B7] rounded-none md:rounded-[2rem] px-5 py-10 flex flex-col items-center text-center border border-white/10">
         <h2 className="col-title text-3xl font-semibold text-white uppercase mb-4">
           Team
         </h2>
@@ -193,7 +193,7 @@ export default function MobileTeamOpportunities() {
       </div>
 
       {/* 2. OPPORTUNITIES SECTION */}
-      <div className="col-container opp-col w-full bg-[#F1F4F6] rounded-[2rem] px-5 py-10 flex flex-col items-center text-center border border-gray-200/50">
+      <div className="col-container opp-col w-full bg-[#F1F4F6] rounded-none md:rounded-[2rem] px-5 py-10 flex flex-col items-center text-center">
         <h2 className="col-title text-3xl font-semibold text-[#011F27] uppercase mb-4">
           Opportunities
         </h2>

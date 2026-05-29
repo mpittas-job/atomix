@@ -485,7 +485,7 @@ export default function MainProblemsTabsLight() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-126px)] w-full rounded-[2rem] bg-[#EBEFF2] relative overflow-hidden flex flex-col justify-center items-center">
+    <div className="min-h-[calc(100vh-126px)] w-full rounded-none md:rounded-[2rem] bg-[#EBEFF2] relative overflow-hidden flex flex-col justify-center items-center">
       <div className="relative z-7 flex flex-col gap-y-12 max-w-[1400px] w-full px-6 py-14 lg:py-32">
         {/* Mobile/tablet heading — matches MobileAboutAtomix typography */}
         <div className="mx-0 max-w-[1800px] lg:hidden">

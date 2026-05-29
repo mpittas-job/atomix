@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -99,6 +100,7 @@ interface MainStatCardProps {
   description: string;
   descriptionMaxWidth?: string | number;
   className?: string;
+  isActive?: boolean;
 }
 
 function MainStatCard({
@@ -108,8 +110,28 @@ function MainStatCard({
   description,
   descriptionMaxWidth,
   className,
+  isActive,
 }: MainStatCardProps) {
   const countParts = getCountParts(value);
+  const valueRef = useRef<HTMLSpanElement>(null);
+
+  useGSAP(() => {
+    if (isActive === undefined || !isActive || !valueRef.current) return;
+
+    const counter = { value: 0 };
+    gsap.killTweensOf(counter);
+
+    gsap.to(counter, {
+      value: countParts.target,
+      duration: 1.8,
+      ease: "power2.out",
+      onUpdate: () => {
+        if (valueRef.current) {
+          valueRef.current.textContent = formatCount(counter.value, countParts.decimals);
+        }
+      },
+    });
+  }, [isActive, countParts.target, countParts.decimals]);
 
   return (
     <div
@@ -132,6 +154,7 @@ function MainStatCard({
               </span>
             )}
             <span
+              ref={valueRef}
               className="text-5xl md:text-7xl font-semibold text-white market-count-value"
               data-count-target={countParts.target}
               data-count-decimals={countParts.decimals}
@@ -167,6 +190,7 @@ interface SimpleStatBoxProps {
   title?: string;
   description: string;
   descriptionMaxWidth?: string | number;
+  isActive?: boolean;
 }
 
 function SimpleStatBox({
@@ -175,37 +199,76 @@ function SimpleStatBox({
   title,
   description,
   descriptionMaxWidth,
+  isActive,
 }: SimpleStatBoxProps) {
   const countParts = getCountParts(value);
   const boxRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<SVGCircleElement>(null);
+  const valueRef = useRef<HTMLSpanElement>(null);
   const circleRadius = 56;
   const circleCircumference = 2 * Math.PI * circleRadius;
 
   useGSAP(
     () => {
-      if (!progressRef.current) return;
+      if (isActive !== undefined) {
+        if (!isActive) return;
 
-      const targetProgress = countParts.target / 100;
-      const circumference = circleCircumference;
+        // Carousel active state animation (mobile)
+        if (progressRef.current) {
+          const targetProgress = countParts.target / 100;
+          const circumference = circleCircumference;
 
-      gsap.set(progressRef.current, {
-        strokeDasharray: circumference,
-        strokeDashoffset: circumference,
-      });
+          gsap.set(progressRef.current, {
+            strokeDasharray: circumference,
+            strokeDashoffset: circumference,
+          });
 
-      gsap.to(progressRef.current, {
-        strokeDashoffset: circumference * (1 - targetProgress),
-        duration: 2.3,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: boxRef.current,
-          start: "top 80%",
-          once: true,
-        },
-      });
+          gsap.to(progressRef.current, {
+            strokeDashoffset: circumference * (1 - targetProgress),
+            duration: 1.8,
+            ease: "power2.out",
+          });
+        }
+
+        if (valueRef.current) {
+          const counter = { value: 0 };
+          gsap.killTweensOf(counter);
+          gsap.to(counter, {
+            value: countParts.target,
+            duration: 1.8,
+            ease: "power2.out",
+            onUpdate: () => {
+              if (valueRef.current) {
+                valueRef.current.textContent = formatCount(counter.value, countParts.decimals);
+              }
+            },
+          });
+        }
+      } else {
+        // Original ScrollTrigger animation (desktop)
+        if (progressRef.current) {
+          const targetProgress = countParts.target / 100;
+          const circumference = circleCircumference;
+
+          gsap.set(progressRef.current, {
+            strokeDasharray: circumference,
+            strokeDashoffset: circumference,
+          });
+
+          gsap.to(progressRef.current, {
+            strokeDashoffset: circumference * (1 - targetProgress),
+            duration: 2.3,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: boxRef.current,
+              start: "top 80%",
+              once: true,
+            },
+          });
+        }
+      }
     },
-    { scope: boxRef },
+    { dependencies: [isActive, countParts.target, countParts.decimals], scope: boxRef },
   );
 
   return (
@@ -260,6 +323,7 @@ function SimpleStatBox({
                 </span>
               )}
               <span
+                ref={valueRef}
                 className="text-3xl font-semibold text-white market-count-value"
                 data-count-target={countParts.target}
                 data-count-decimals={countParts.decimals}
@@ -294,9 +358,131 @@ function SimpleStatBox({
   );
 }
 
+const mainStats = [
+  {
+    badge: "Total Market",
+    value: "£350",
+    unit: "bn",
+    description: "Total annual UK property loan originations",
+  },
+  {
+    badge: "Core Atomix Market",
+    value: "£60",
+    unit: "bn",
+    description: "Across bridging, buy-to-let and SME CRE term loans — the core Atomix market",
+  },
+  {
+    badge: "Immediate Opportunity",
+    value: "£11.5",
+    unit: "bn",
+    description: "Annual UK bridging originations — majority processed manually, smaller loans structurally underserved",
+  },
+  {
+    badge: "US Market",
+    value: "£2",
+    unit: "tn",
+    description: "The US commercial real estate market opportunity, addressable on the same model",
+  },
+  {
+    badge: "Global Market",
+    value: "£4",
+    unit: "tn",
+    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
+  },
+];
+
+const simpleStats = [
+  {
+    value: "70",
+    unit: "%",
+    title: "Broker-led Loan Origination",
+    description: "70% of bridging loans originate through brokers — smaller loans unprofitable to service; automation changes this",
+  },
+  {
+    value: "30",
+    unit: "%",
+    title: "Direct-to-Customer Growth",
+    description: "30% of commercial lending already direct-to-customer — a growing channel Atomix supports natively  ",
+  },
+  {
+    value: "70",
+    unit: "%",
+    title: "Rising Tech Adoption",
+    description: "70% of lenders actively considering technology investment — Atomix pay-as-you-go model removes the barrier to entry",
+  },
+  {
+    value: "64",
+    unit: "%",
+    title: "Refinancing Pressure",
+    description: "64% of leading non-bank lenders need to raise or refinance within 12 months — compliance and transparency is the unlock",
+  },
+];
+
 export default function MainTheMarket() {
   const contentRef = useRef<HTMLDivElement>(null);
   const revealStartedRef = useRef(false);
+
+  // Carousel states for mobile
+  const mainCarouselRef = useRef<HTMLDivElement>(null);
+  const simpleCarouselRef = useRef<HTMLDivElement>(null);
+  const [activeMainSlide, setActiveMainSlide] = useState(0);
+  const [activeSimpleSlide, setActiveSimpleSlide] = useState(0);
+
+  const handleMainCarouselScroll = () => {
+    const el = mainCarouselRef.current;
+    if (!el) return;
+    const width = el.getBoundingClientRect().width;
+    if (width <= 0) return;
+    const index = Math.round(el.scrollLeft / width);
+    setActiveMainSlide(index);
+  };
+
+  const handleSimpleCarouselScroll = () => {
+    const el = simpleCarouselRef.current;
+    if (!el) return;
+    const width = el.getBoundingClientRect().width;
+    if (width <= 0) return;
+    const index = Math.round(el.scrollLeft / width);
+    setActiveSimpleSlide(index);
+  };
+
+  const goToMainSlide = (index: number) => {
+    const el = mainCarouselRef.current;
+    if (!el) return;
+    const width = el.getBoundingClientRect().width;
+    gsap.to(el, {
+      scrollLeft: index * width,
+      duration: 0.5,
+      ease: "power2.out",
+    });
+  };
+
+  const goToSimpleSlide = (index: number) => {
+    const el = simpleCarouselRef.current;
+    if (!el) return;
+    const width = el.getBoundingClientRect().width;
+    gsap.to(el, {
+      scrollLeft: index * width,
+      duration: 0.5,
+      ease: "power2.out",
+    });
+  };
+
+  const handlePrevMainSlide = () => {
+    if (activeMainSlide > 0) goToMainSlide(activeMainSlide - 1);
+  };
+
+  const handleNextMainSlide = () => {
+    if (activeMainSlide < mainStats.length - 1) goToMainSlide(activeMainSlide + 1);
+  };
+
+  const handlePrevSimpleSlide = () => {
+    if (activeSimpleSlide > 0) goToSimpleSlide(activeSimpleSlide - 1);
+  };
+
+  const handleNextSimpleSlide = () => {
+    if (activeSimpleSlide < simpleStats.length - 1) goToSimpleSlide(activeSimpleSlide + 1);
+  };
 
   // Set initial hidden state for each reveal item
   useGSAP(() => {
@@ -358,7 +544,7 @@ export default function MainTheMarket() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-126px)] rounded-3xl bg-linear-to-b from-[#004152] via-[#01485C] to-[#004152] relative overflow-hidden flex flex-col justify-center items-center">
+    <div className="min-h-[calc(100vh-126px)] rounded-none md:rounded-3xl bg-linear-to-b from-[#004152] via-[#01485C] to-[#004152] relative overflow-hidden flex flex-col justify-center items-center">
       <LazySoftAurora
         className="absolute top-0 left-0 w-full h-[500px]"
         speed={1.3}
@@ -387,95 +573,223 @@ export default function MainTheMarket() {
           onAnimationComplete={handleHeadingComplete}
         />
 
-        <div ref={contentRef} className="w-full space-y-0 md:space-y-2">
-          {/* Top row - 3 main stat cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-0 md:gap-2">
-            <div className="market-reveal-item">
-              <MainStatCard
-                badge="Total Market"
-                value="£350"
-                unit="bn"
-                description="Total annual UK property loan originations"
-                className="rounded-t-3xl border-t border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-r-none md:rounded-b-none md:border-white/8"
-              />
+        <div ref={contentRef} className="w-full space-y-0">
+          {/* Desktop — Grid structure */}
+          <div className="hidden md:flex md:flex-col md:gap-2 w-full">
+            {/* Top row - 3 main stat cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-0 md:gap-2">
+              <div className="market-reveal-item">
+                <MainStatCard
+                  badge="Total Market"
+                  value="£350"
+                  unit="bn"
+                  description="Total annual UK property loan originations"
+                  className="rounded-t-3xl border-t border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-r-none md:rounded-b-none md:border-white/8"
+                />
+              </div>
+              <div className="market-reveal-item">
+                <MainStatCard
+                  badge="Core Atomix Market"
+                  value="£60"
+                  unit="bn"
+                  description="Across bridging, buy-to-let and SME CRE term loans — the core Atomix market"
+                  className="rounded-none border-x border-b border-white/15 md:border md:border-white/8"
+                />
+              </div>
+              <div className="market-reveal-item">
+                <MainStatCard
+                  badge="Immediate Opportunity"
+                  value="£11.5"
+                  unit="bn"
+                  description="Annual UK bridging originations — majority processed manually, smaller loans structurally underserved"
+                  className="rounded-none border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-l-none md:rounded-b-none md:border-white/8"
+                />
+              </div>
             </div>
-            <div className="market-reveal-item">
-              <MainStatCard
-                badge="Core Atomix Market"
-                value="£60"
-                unit="bn"
-                description="Across bridging, buy-to-let and SME CRE term loans — the core Atomix market"
-                className="rounded-none border-x border-b border-white/15 md:border md:border-white/8"
-              />
+
+            {/* Second row - 2 stat cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-2">
+              <div className="market-reveal-item">
+                <MainStatCard
+                  badge="US Market"
+                  value="£2"
+                  unit="tn"
+                  description="The US commercial real estate market opportunity, addressable on the same model"
+                  descriptionMaxWidth="500px"
+                  className="rounded-none border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-t-none md:rounded-r-none md:border-white/8"
+                />
+              </div>
+              <div className="market-reveal-item">
+                <MainStatCard
+                  badge="Global Market"
+                  value="£4"
+                  unit="tn"
+                  description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
+                  descriptionMaxWidth="500px"
+                  className="rounded-b-3xl border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-t-none md:rounded-l-none md:border-white/8"
+                />
+              </div>
             </div>
-            <div className="market-reveal-item">
-              <MainStatCard
-                badge="Immediate Opportunity"
-                value="£11.5"
-                unit="bn"
-                description="Annual UK bridging originations — majority processed manually, smaller loans structurally underserved"
-                className="rounded-none border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-l-none md:rounded-b-none md:border-white/8"
-              />
+
+            {/* Bottom section - 6 simple stat boxes in 3x2 grid */}
+            <div className="pt-14 grid grid-cols-1 md:grid-cols-2 gap-x-14 gap-y-14">
+              <div className="market-reveal-item">
+                <SimpleStatBox
+                  value="70"
+                  unit="%"
+                  title="Broker-led Loan Origination"
+                  description="70% of bridging loans originate through brokers — smaller loans unprofitable to service; automation changes this"
+                />
+              </div>
+              <div className="market-reveal-item">
+                <SimpleStatBox
+                  value="30"
+                  unit="%"
+                  title="Direct-to-Customer Growth"
+                  description="30% of commercial lending already direct-to-customer — a growing channel Atomix supports natively  "
+                />
+              </div>
+              <div className="market-reveal-item">
+                <SimpleStatBox
+                  value="70"
+                  unit="%"
+                  title="Rising Tech Adoption"
+                  description="70% of lenders actively considering technology investment — Atomix pay-as-you-go model removes the barrier to entry"
+                />
+              </div>
+              <div className="market-reveal-item">
+                <SimpleStatBox
+                  value="64"
+                  unit="%"
+                  title="Refinancing Pressure"
+                  description="64% of leading non-bank lenders need to raise or refinance within 12 months — compliance and transparency is the unlock"
+                />
+              </div>
             </div>
           </div>
 
-          {/* Second row - 2 stat cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-2">
-            <div className="market-reveal-item">
-              <MainStatCard
-                badge="US Market"
-                value="£2"
-                unit="tn"
-                description="The US commercial real estate market opportunity, addressable on the same model"
-                descriptionMaxWidth="500px"
-                className="rounded-none border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-t-none md:rounded-r-none md:border-white/8"
-              />
+          {/* Mobile — MainStatCards Carousel */}
+          <div className="block md:hidden w-full">
+            <div
+              ref={mainCarouselRef}
+              onScroll={handleMainCarouselScroll}
+              className="flex w-full overflow-x-auto snap-x snap-mandatory scroll-smooth overscroll-x-contain gap-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {mainStats.map((stat, idx) => (
+                <div
+                  key={idx}
+                  className="w-full shrink-0 snap-center snap-always"
+                >
+                  <MainStatCard
+                    badge={stat.badge}
+                    value={stat.value}
+                    unit={stat.unit}
+                    description={stat.description}
+                    className="rounded-3xl border border-white/15 min-h-[220px]"
+                    isActive={idx === activeMainSlide}
+                  />
+                </div>
+              ))}
             </div>
-            <div className="market-reveal-item">
-              <MainStatCard
-                badge="Global Market"
-                value="£4"
-                unit="tn"
-                description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
-                descriptionMaxWidth="500px"
-                className="rounded-b-3xl border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-t-none md:rounded-l-none md:border-white/8"
-              />
+
+            {/* Carousel navigation controls (arrows + indicators) */}
+            <div className="flex items-center justify-center gap-4 mt-6">
+              <button
+                onClick={handlePrevMainSlide}
+                disabled={activeMainSlide === 0}
+                className={`flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white shadow-sm transition-all active:scale-95 ${
+                  activeMainSlide === 0 ? "opacity-35 cursor-not-allowed" : "opacity-100 cursor-pointer hover:bg-white/10"
+                }`}
+                aria-label="Previous slide"
+              >
+                <FaChevronLeft className="h-4 w-4" />
+              </button>
+
+              <div className="flex gap-2">
+                {mainStats.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => goToMainSlide(idx)}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      idx === activeMainSlide ? "w-5 bg-white" : "w-1.5 bg-white/40"
+                    }`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+
+              <button
+                onClick={handleNextMainSlide}
+                disabled={activeMainSlide === mainStats.length - 1}
+                className={`flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white shadow-sm transition-all active:scale-95 ${
+                  activeMainSlide === mainStats.length - 1 ? "opacity-35 cursor-not-allowed" : "opacity-100 cursor-pointer hover:bg-white/10"
+                }`}
+                aria-label="Next slide"
+              >
+                <FaChevronRight className="h-4 w-4" />
+              </button>
             </div>
           </div>
 
-          {/* Bottom section - 6 simple stat boxes in 3x2 grid */}
-          <div className="pt-14 grid grid-cols-1 md:grid-cols-2 gap-x-14 gap-y-14">
-            <div className="market-reveal-item">
-              <SimpleStatBox
-                value="70"
-                unit="%"
-                title="Broker-led Loan Origination"
-                description="70% of bridging loans originate through brokers — smaller loans unprofitable to service; automation changes this"
-              />
+          {/* Mobile — SimpleStatBoxes Carousel */}
+          <div className="block md:hidden w-full pt-14">
+            <div
+              ref={simpleCarouselRef}
+              onScroll={handleSimpleCarouselScroll}
+              className="flex w-full overflow-x-auto snap-x snap-mandatory scroll-smooth overscroll-x-contain gap-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {simpleStats.map((stat, idx) => (
+                <div
+                  key={idx}
+                  className="w-full shrink-0 snap-center snap-always px-4"
+                >
+                  <SimpleStatBox
+                    value={stat.value}
+                    unit={stat.unit}
+                    title={stat.title}
+                    description={stat.description}
+                    isActive={idx === activeSimpleSlide}
+                  />
+                </div>
+              ))}
             </div>
-            <div className="market-reveal-item">
-              <SimpleStatBox
-                value="30"
-                unit="%"
-                title="Direct-to-Customer Growth"
-                description="30% of commercial lending already direct-to-customer — a growing channel Atomix supports natively  "
-              />
-            </div>
-            <div className="market-reveal-item">
-              <SimpleStatBox
-                value="70"
-                unit="%"
-                title="Rising Tech Adoption"
-                description="70% of lenders actively considering technology investment — Atomix pay-as-you-go model removes the barrier to entry"
-              />
-            </div>
-            <div className="market-reveal-item">
-              <SimpleStatBox
-                value="64"
-                unit="%"
-                title="Refinancing Pressure"
-                description="64% of leading non-bank lenders need to raise or refinance within 12 months — compliance and transparency is the unlock"
-              />
+
+            {/* Carousel navigation controls (arrows + indicators) */}
+            <div className="flex items-center justify-center gap-4 mt-6">
+              <button
+                onClick={handlePrevSimpleSlide}
+                disabled={activeSimpleSlide === 0}
+                className={`flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white shadow-sm transition-all active:scale-95 ${
+                  activeSimpleSlide === 0 ? "opacity-35 cursor-not-allowed" : "opacity-100 cursor-pointer hover:bg-white/10"
+                }`}
+                aria-label="Previous slide"
+              >
+                <FaChevronLeft className="h-4 w-4" />
+              </button>
+
+              <div className="flex gap-2">
+                {simpleStats.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => goToSimpleSlide(idx)}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      idx === activeSimpleSlide ? "w-5 bg-white" : "w-1.5 bg-white/40"
+                    }`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+
+              <button
+                onClick={handleNextSimpleSlide}
+                disabled={activeSimpleSlide === simpleStats.length - 1}
+                className={`flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white shadow-sm transition-all active:scale-95 ${
+                  activeSimpleSlide === simpleStats.length - 1 ? "opacity-35 cursor-not-allowed" : "opacity-100 cursor-pointer hover:bg-white/10"
+                }`}
+                aria-label="Next slide"
+              >
+                <FaChevronRight className="h-4 w-4" />
+              </button>
             </div>
           </div>
         </div>
