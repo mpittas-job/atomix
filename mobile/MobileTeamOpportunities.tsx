@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef } from "react";
-import { FaUsers, FaGlobe } from "react-icons/fa6";
+import { useRef, useState } from "react";
+import { FaUsers, FaGlobe, FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import IconBoxSimple from "@/components/IconBoxSimple";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
@@ -60,6 +60,68 @@ const AiCpuIcon = ({ className = "h-6 w-6" }: { className?: string }) => (
 export default function MobileTeamOpportunities() {
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Carousel refs & states
+  const teamCarouselRef = useRef<HTMLDivElement>(null);
+  const oppCarouselRef = useRef<HTMLDivElement>(null);
+  const [teamActiveSlide, setTeamActiveSlide] = useState(0);
+  const [oppActiveSlide, setOppActiveSlide] = useState(0);
+
+  const handleTeamCarouselScroll = () => {
+    const el = teamCarouselRef.current;
+    if (!el) return;
+    const width = el.getBoundingClientRect().width;
+    if (width <= 0) return;
+    const index = Math.round(el.scrollLeft / width);
+    setTeamActiveSlide(index);
+  };
+
+  const handleOppCarouselScroll = () => {
+    const el = oppCarouselRef.current;
+    if (!el) return;
+    const width = el.getBoundingClientRect().width;
+    if (width <= 0) return;
+    const index = Math.round(el.scrollLeft / width);
+    setOppActiveSlide(index);
+  };
+
+  const goToTeamSlide = (index: number) => {
+    const el = teamCarouselRef.current;
+    if (!el) return;
+    const width = el.getBoundingClientRect().width;
+    gsap.to(el, {
+      scrollLeft: index * width,
+      duration: 0.5,
+      ease: "power2.out",
+    });
+  };
+
+  const goToOppSlide = (index: number) => {
+    const el = oppCarouselRef.current;
+    if (!el) return;
+    const width = el.getBoundingClientRect().width;
+    gsap.to(el, {
+      scrollLeft: index * width,
+      duration: 0.5,
+      ease: "power2.out",
+    });
+  };
+
+  const handlePrevTeamSlide = () => {
+    if (teamActiveSlide > 0) goToTeamSlide(teamActiveSlide - 1);
+  };
+
+  const handleNextTeamSlide = () => {
+    if (teamActiveSlide < 2) goToTeamSlide(teamActiveSlide + 1);
+  };
+
+  const handlePrevOppSlide = () => {
+    if (oppActiveSlide > 0) goToOppSlide(oppActiveSlide - 1);
+  };
+
+  const handleNextOppSlide = () => {
+    if (oppActiveSlide < 2) goToOppSlide(oppActiveSlide + 1);
+  };
+
   useGSAP(
     () => {
       if (!containerRef.current) return;
@@ -115,7 +177,7 @@ export default function MobileTeamOpportunities() {
       className="mx-auto w-full max-w-[1920px] px-0 md:px-12 flex flex-col overflow-hidden"
     >
       {/* 1. TEAM SECTION */}
-      <div className="col-container team-col w-full bg-[#3E99B7] rounded-none md:rounded-[2rem] px-5 py-10 flex flex-col items-center text-center border border-white/10">
+      <div className="col-container team-col w-full bg-[#3E99B7] rounded-none md:rounded-[2rem] px-5 py-14 flex flex-col items-center text-center border border-white/10">
         <h2 className="col-title text-3xl font-semibold text-white uppercase mb-4">
           Team
         </h2>
@@ -123,66 +185,107 @@ export default function MobileTeamOpportunities() {
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius lorem eget leo vehicula consectetur.
         </p>
 
-        {/* Staggered Cards List */}
-        <div className="w-full flex flex-col gap-y-4 mb-8">
-          {/* Card 1: Small Team, Big Impact */}
-          <div className="col-card">
-            <IconBoxSimple
-              bgCircleClassName="bg-white/10"
-              className="!bg-white/10 !border-white/20 !shadow-none !backdrop-blur-none text-white w-full !p-5"
-            >
-              <div className="flex flex-col gap-3 text-left">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-white">
-                  <FaUsers className="h-6 w-6" />
+        {/* Swipeable Carousel Layout */}
+        <div className="w-full mb-8">
+          <div
+            ref={teamCarouselRef}
+            onScroll={handleTeamCarouselScroll}
+            className="flex w-full overflow-x-auto snap-x snap-mandatory scroll-smooth overscroll-x-contain gap-5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {/* Card 1: Small Team, Big Impact */}
+            <div className="col-card w-full shrink-0 snap-center snap-always">
+              <IconBoxSimple
+                bgCircleClassName="bg-white/10"
+                className="!bg-white/10 !border-white/20 !shadow-none !backdrop-blur-none text-white w-full !p-5"
+              >
+                <div className="flex flex-col gap-3 text-left">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-white">
+                    <FaUsers className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg leading-6 font-semibold text-white">
+                    Small Team, Big Impact
+                  </h3>
+                  <p className="text-md leading-relaxed text-white/75">
+                    Join a focused team where every contribution directly shapes the product, technology, and company.
+                  </p>
                 </div>
-                <h3 className="text-lg leading-6 font-semibold text-white">
-                  Small Team, Big Impact
-                </h3>
-                <p className="text-md leading-relaxed text-white/75">
-                  Join a focused team where every contribution directly shapes the product, technology, and company.
-                </p>
-              </div>
-            </IconBoxSimple>
+              </IconBoxSimple>
+            </div>
+
+            {/* Card 2: Cutting-Edge Technology */}
+            <div className="col-card w-full shrink-0 snap-center snap-always">
+              <IconBoxSimple
+                bgCircleClassName="bg-white/10"
+                className="!bg-white/10 !border-white/20 !shadow-none !backdrop-blur-none text-white w-full !p-5"
+              >
+                <div className="flex flex-col gap-3 text-left">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-white">
+                    <AiCpuIcon className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg leading-6 font-semibold text-white">
+                    Cutting-Edge Technology
+                  </h3>
+                  <p className="text-md leading-relaxed text-white/75">
+                    Work across AI, automation, data systems, and blockchain-backed infrastructure.
+                  </p>
+                </div>
+              </IconBoxSimple>
+            </div>
+
+            {/* Card 3: Real-World Financial Infrastructure */}
+            <div className="col-card w-full shrink-0 snap-center snap-always">
+              <IconBoxSimple
+                bgCircleClassName="bg-white/10"
+                className="!bg-white/10 !border-white/20 !shadow-none !backdrop-blur-none text-white w-full !p-5"
+              >
+                <div className="flex flex-col gap-3 text-left">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-white">
+                    <FaGlobe className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg leading-6 font-semibold text-white">
+                    Real-World Financial Infrastructure
+                  </h3>
+                  <p className="text-md leading-relaxed text-white/75">
+                    Build technology that powers real lending markets and impacts billions in asset-backed finance.
+                  </p>
+                </div>
+              </IconBoxSimple>
+            </div>
           </div>
 
-          {/* Card 2: Cutting-Edge Technology */}
-          <div className="col-card">
-            <IconBoxSimple
-              bgCircleClassName="bg-white/10"
-              className="!bg-white/10 !border-white/20 !shadow-none !backdrop-blur-none text-white w-full !p-5"
+          {/* Carousel navigation controls (arrows + indicators) */}
+          <div className="flex items-center justify-center gap-6 mt-6">
+            <button
+              onClick={handlePrevTeamSlide}
+              disabled={teamActiveSlide === 0}
+              className={`flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white shadow-sm transition-all active:scale-95 ${teamActiveSlide === 0 ? "opacity-40 cursor-not-allowed" : "opacity-100 cursor-pointer"
+                }`}
+              aria-label="Previous team slide"
             >
-              <div className="flex flex-col gap-3 text-left">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-white">
-                  <AiCpuIcon className="h-6 w-6" />
-                </div>
-                <h3 className="text-lg leading-6 font-semibold text-white">
-                  Cutting-Edge Technology
-                </h3>
-                <p className="text-md leading-relaxed text-white/75">
-                  Work across AI, automation, data systems, and blockchain-backed infrastructure.
-                </p>
-              </div>
-            </IconBoxSimple>
-          </div>
+              <FaChevronLeft className="h-4 w-4" />
+            </button>
 
-          {/* Card 3: Real-World Financial Infrastructure */}
-          <div className="col-card">
-            <IconBoxSimple
-              bgCircleClassName="bg-white/10"
-              className="!bg-white/10 !border-white/20 !shadow-none !backdrop-blur-none text-white w-full !p-5"
+            <div className="flex gap-2">
+              {[0, 1, 2].map((idx) => (
+                <button
+                  key={idx}
+                  onClick={() => goToTeamSlide(idx)}
+                  className={`h-2 rounded-full transition-all duration-300 ${idx === teamActiveSlide ? "w-6 bg-white" : "w-2 bg-white/40"
+                    }`}
+                  aria-label={`Go to team slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={handleNextTeamSlide}
+              disabled={teamActiveSlide === 2}
+              className={`flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white shadow-sm transition-all active:scale-95 ${teamActiveSlide === 2 ? "opacity-40 cursor-not-allowed" : "opacity-100 cursor-pointer"
+                }`}
+              aria-label="Next team slide"
             >
-              <div className="flex flex-col gap-3 text-left">
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/15 text-white">
-                  <FaGlobe className="h-6 w-6" />
-                </div>
-                <h3 className="text-lg leading-6 font-semibold text-white">
-                  Real-World Financial Infrastructure
-                </h3>
-                <p className="text-md leading-relaxed text-white/75">
-                  Build technology that powers real lending markets and impacts billions in asset-backed finance.
-                </p>
-              </div>
-            </IconBoxSimple>
+              <FaChevronRight className="h-4 w-4" />
+            </button>
           </div>
         </div>
 
@@ -193,7 +296,7 @@ export default function MobileTeamOpportunities() {
       </div>
 
       {/* 2. OPPORTUNITIES SECTION */}
-      <div className="col-container opp-col w-full bg-[#F1F4F6] rounded-none md:rounded-[2rem] px-5 py-10 flex flex-col items-center text-center">
+      <div className="col-container opp-col w-full bg-[#F1F4F6] rounded-none md:rounded-[2rem] px-5 py-14 flex flex-col items-center text-center">
         <h2 className="col-title text-3xl font-semibold text-[#011F27] uppercase mb-4">
           Opportunities
         </h2>
@@ -201,36 +304,77 @@ export default function MobileTeamOpportunities() {
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius lorem eget leo vehicula consectetur.
         </p>
 
-        {/* Staggered Cards List */}
-        <div className="w-full flex flex-col gap-y-4 mb-8">
-          {/* Card 1: Small Team, Big Impact */}
-          <div className="col-card">
-            <IconBoxSimple
-              icon={<FaUsers className="h-6 w-6" />}
-              title="Small Team, Big Impact"
-              description="Join a focused team where every contribution directly shapes the product, technology, and company."
-              className="w-full !p-5"
-            />
+        {/* Swipeable Carousel Layout */}
+        <div className="w-full mb-8">
+          <div
+            ref={oppCarouselRef}
+            onScroll={handleOppCarouselScroll}
+            className="flex w-full overflow-x-auto snap-x snap-mandatory scroll-smooth overscroll-x-contain gap-5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {/* Card 1: Small Team, Big Impact */}
+            <div className="col-card w-full shrink-0 snap-center snap-always">
+              <IconBoxSimple
+                icon={<FaUsers className="h-6 w-6" />}
+                title="Small Team, Big Impact"
+                description="Join a focused team where every contribution directly shapes the product, technology, and company."
+                className="w-full !p-5"
+              />
+            </div>
+
+            {/* Card 2: Cutting-Edge Technology */}
+            <div className="col-card w-full shrink-0 snap-center snap-always">
+              <IconBoxSimple
+                icon={<AiCpuIcon className="h-6 w-6" />}
+                title="Cutting-Edge Technology"
+                description="Work across AI, automation, data systems, and blockchain-backed infrastructure."
+                className="w-full !p-5"
+              />
+            </div>
+
+            {/* Card 3: Real-World Financial Infrastructure */}
+            <div className="col-card w-full shrink-0 snap-center snap-always">
+              <IconBoxSimple
+                icon={<FaGlobe className="h-6 w-6" />}
+                title="Real-World Financial Infrastructure"
+                description="Build technology that powers real lending markets and impacts billions in asset-backed finance."
+                className="w-full !p-5"
+              />
+            </div>
           </div>
 
-          {/* Card 2: Cutting-Edge Technology */}
-          <div className="col-card">
-            <IconBoxSimple
-              icon={<AiCpuIcon className="h-6 w-6" />}
-              title="Cutting-Edge Technology"
-              description="Work across AI, automation, data systems, and blockchain-backed infrastructure."
-              className="w-full !p-5"
-            />
-          </div>
+          {/* Carousel navigation controls (arrows + indicators) */}
+          <div className="flex items-center justify-center gap-6 mt-6">
+            <button
+              onClick={handlePrevOppSlide}
+              disabled={oppActiveSlide === 0}
+              className={`flex h-10 w-10 items-center justify-center rounded-full border border-[#DCE1E4] bg-white text-[#011F27] shadow-sm transition-all active:scale-95 ${oppActiveSlide === 0 ? "opacity-40 cursor-not-allowed" : "opacity-100 cursor-pointer"
+                }`}
+              aria-label="Previous opportunities slide"
+            >
+              <FaChevronLeft className="h-4 w-4" />
+            </button>
 
-          {/* Card 3: Real-World Financial Infrastructure */}
-          <div className="col-card">
-            <IconBoxSimple
-              icon={<FaGlobe className="h-6 w-6" />}
-              title="Real-World Financial Infrastructure"
-              description="Build technology that powers real lending markets and impacts billions in asset-backed finance."
-              className="w-full !p-5"
-            />
+            <div className="flex gap-2">
+              {[0, 1, 2].map((idx) => (
+                <button
+                  key={idx}
+                  onClick={() => goToOppSlide(idx)}
+                  className={`h-2 rounded-full transition-all duration-300 ${idx === oppActiveSlide ? "w-6 bg-[#011F27]" : "w-2 bg-[#A0AEB2]"
+                    }`}
+                  aria-label={`Go to opportunities slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+
+            <button
+              onClick={handleNextOppSlide}
+              disabled={oppActiveSlide === 2}
+              className={`flex h-10 w-10 items-center justify-center rounded-full border border-[#DCE1E4] bg-white text-[#011F27] shadow-sm transition-all active:scale-95 ${oppActiveSlide === 2 ? "opacity-40 cursor-not-allowed" : "opacity-100 cursor-pointer"
+                }`}
+              aria-label="Next opportunities slide"
+            >
+              <FaChevronRight className="h-4 w-4" />
+            </button>
           </div>
         </div>
 
