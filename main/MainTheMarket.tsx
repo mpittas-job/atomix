@@ -98,6 +98,7 @@ interface MainStatCardProps {
   value: string;
   unit: string;
   description: string;
+  valuePrefixLabel?: string;
   descriptionMaxWidth?: string | number;
   className?: string;
   isActive?: boolean;
@@ -108,6 +109,7 @@ function MainStatCard({
   value,
   unit,
   description,
+  valuePrefixLabel,
   descriptionMaxWidth,
   className,
   isActive,
@@ -147,21 +149,28 @@ function MainStatCard({
       <div className="relative z-10">
         <BadgeHeadingPill color="dark">{badge}</BadgeHeadingPill>
         <div className="mt-4 flex items-baseline gap-1 market-count-glow-group">
-          <span className="market-count-glow-target inline-flex items-baseline gap-1">
-            {countParts.prefix && (
-              <span className="text-5xl md:text-7xl font-semibold text-white">
-                {countParts.prefix}
+          <span className="inline-flex items-start gap-0.5">
+            {valuePrefixLabel && (
+              <span className="mt-2 md:mt-3 text-[11px] md:text-xs font-semibold text-white/75 leading-none shrink-0">
+                {valuePrefixLabel}
               </span>
             )}
-            <span
-              ref={valueRef}
-              className="text-5xl md:text-7xl font-semibold text-white market-count-value"
-              data-count-target={countParts.target}
-              data-count-decimals={countParts.decimals}
-            >
-              {formatCount(0, countParts.decimals)}
+            <span className="market-count-glow-target inline-flex items-baseline gap-1">
+              {countParts.prefix && (
+                <span className="text-5xl md:text-7xl font-semibold text-white">
+                  {countParts.prefix}
+                </span>
+              )}
+              <span
+                ref={valueRef}
+                className="text-5xl md:text-7xl font-semibold text-white market-count-value"
+                data-count-target={countParts.target}
+                data-count-decimals={countParts.decimals}
+              >
+                {formatCount(0, countParts.decimals)}
+              </span>
+              <span className="text-xl md:text-2xl font-medium text-white">{unit}</span>
             </span>
-            <span className="text-xl md:text-2xl font-medium text-white">{unit}</span>
           </span>
         </div>
         <p
@@ -205,7 +214,9 @@ function SimpleStatBox({
   const boxRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<SVGCircleElement>(null);
   const valueRef = useRef<HTMLSpanElement>(null);
-  const circleRadius = 56;
+  const circleSize = 165;
+  const circleRadius = circleSize / 2 - 18;
+  const circleCenter = circleSize / 2;
   const circleCircumference = 2 * Math.PI * circleRadius;
 
   useGSAP(
@@ -275,15 +286,15 @@ function SimpleStatBox({
     <div ref={boxRef} className="flex flex-col items-center text-center">
       <div className="relative mb-4">
         <svg
-          width="140"
-          height="140"
-          viewBox="0 0 140 140"
+          width={circleSize}
+          height={circleSize}
+          viewBox={`0 0 ${circleSize} ${circleSize}`}
           className="-rotate-90"
         >
           {/* Background circle */}
           <circle
-            cx="70"
-            cy="70"
+            cx={circleCenter}
+            cy={circleCenter}
             r={circleRadius}
             fill="none"
             stroke="rgba(88, 255, 252, 0.15)"
@@ -305,8 +316,8 @@ function SimpleStatBox({
           </defs>
           <circle
             ref={progressRef}
-            cx="70"
-            cy="70"
+            cx={circleCenter}
+            cy={circleCenter}
             r={circleRadius}
             fill="none"
             stroke={`url(#progressGradient-${value})`}
@@ -318,20 +329,20 @@ function SimpleStatBox({
           <div className="flex items-baseline gap-0.5">
             <span className="inline-flex items-baseline gap-0.5">
               {countParts.prefix && (
-                <span className="text-3xl font-semibold text-white">
+                <span className="text-2xl font-semibold text-white">
                   {countParts.prefix}
                 </span>
               )}
               <span
                 ref={valueRef}
-                className="text-3xl font-semibold text-white market-count-value"
+                className="text-2xl font-semibold text-white market-count-value"
                 data-count-target={countParts.target}
                 data-count-decimals={countParts.decimals}
               >
                 {formatCount(0, countParts.decimals)}
               </span>
               {unit && (
-                <span className="text-xl font-medium text-white">{unit}</span>
+                <span className="text-lg font-medium text-white">{unit}</span>
               )}
             </span>
           </div>
@@ -358,63 +369,95 @@ function SimpleStatBox({
   );
 }
 
-const mainStats = [
-  {
-    badge: "Total Market",
-    value: "£350",
-    unit: "bn",
-    description: "Total annual UK property loan originations",
-  },
+const mainStats: {
+  badge: string;
+  value: string;
+  unit: string;
+  description: string;
+  valuePrefixLabel?: string;
+}[] = [
   {
     badge: "Core Atomix Market",
-    value: "£60",
-    unit: "bn",
-    description: "Across bridging, buy-to-let and SME CRE term loans — the core Atomix market",
+    value: "£65",
+    unit: "bn+",
+    description:
+      "in annual non-bank and specialist property lending — bridging and term loans, the core Atomix market",
   },
   {
-    badge: "Immediate Opportunity",
-    value: "£11.5",
-    unit: "bn",
-    description: "Annual UK bridging originations — majority processed manually, smaller loans structurally underserved",
+    badge: "UK Bridging",
+    value: "£13",
+    unit: "bn+",
+    description:
+      "in annual UK bridging originations — majority processed manually, smaller loans structurally underserved",
   },
   {
-    badge: "US Market",
-    value: "£2",
-    unit: "tn",
-    description: "The US commercial real estate market opportunity, addressable on the same model",
+    badge: "Growth Segment",
+    value: "£300",
+    unit: "k",
+    valuePrefixLabel: "Sub",
+    description:
+      "bridging accounts for £2.6bn+ annually — the largest underleveraged growth segment; uneconomical under manual models, viable on Atomix",
   },
   {
-    badge: "Global Market",
-    value: "£4",
-    unit: "tn",
-    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor",
+    badge: "Broker-led",
+    value: "70",
+    unit: "%",
+    description:
+      "of bridging originates through brokers — smaller loans unprofitable to service manually; automation changes this",
   },
+  {
+    badge: "Direct-to-Customer",
+    value: "30",
+    unit: "%",
+    description:
+      "of commercial lending already direct-to-customer — a growing channel Atomix supports natively",
+  },
+  {
+    badge: "Collapsed Transactions",
+    value: "£818",
+    unit: "million",
+    description:
+      "lost annually to collapsed property transactions — quick home sale providers are the alternative, competing on speed and certainty of funding",
+  },
+];
+
+const mainStatBorderClasses = [
+  "rounded-t-3xl border-t border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-r-none md:rounded-b-none md:border-white/8",
+  "rounded-none border-x border-b border-white/15 md:border md:border-white/8",
+  "rounded-none border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-l-none md:rounded-b-none md:border-white/8",
+  "rounded-none border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-t-none md:rounded-r-none md:border-white/8",
+  "rounded-none border-x border-b border-white/15 md:border md:rounded-none md:rounded-t-none md:border-white/8",
+  "rounded-b-3xl border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-t-none md:rounded-l-none md:border-white/8",
 ];
 
 const simpleStats = [
   {
-    value: "70",
-    unit: "%",
-    title: "Broker-led Loan Origination",
-    description: "70% of bridging loans originate through brokers — smaller loans unprofitable to service; automation changes this",
-  },
-  {
-    value: "30",
-    unit: "%",
-    title: "Direct-to-Customer Growth",
-    description: "30% of commercial lending already direct-to-customer — a growing channel Atomix supports natively  ",
+    value: "£5.5",
+    unit: "bn",
+    title: "Auction Sales",
+    description:
+      "in auction sales chronically underserved — most completions are cash-funded because traditional lenders cannot meet the 28-day window; Atomix enables bridging finance to access this market",
   },
   {
     value: "70",
     unit: "%",
-    title: "Rising Tech Adoption",
-    description: "70% of lenders actively considering technology investment — Atomix pay-as-you-go model removes the barrier to entry",
+    title: "Technology Investment",
+    description:
+      "of lenders considering technology investment — Atomix pay-as-you-go removes the barrier to entry",
   },
   {
     value: "64",
     unit: "%",
     title: "Refinancing Pressure",
-    description: "64% of leading non-bank lenders need to raise or refinance within 12 months — compliance and transparency is the unlock",
+    description:
+      "of leading non-bank lenders need to raise or refinance within 12 months — compliance and transparency is the unlock",
+  },
+  {
+    value: "$400",
+    unit: "bn+",
+    title: "US Market",
+    description:
+      "the US non-bank and specialist lending market across bridging and term loans; same platform, same model",
   },
 ];
 
@@ -578,93 +621,48 @@ export default function MainTheMarket() {
           <div className="hidden md:flex md:flex-col md:gap-2 w-full">
             {/* Top row - 3 main stat cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-0 md:gap-2">
-              <div className="market-reveal-item">
-                <MainStatCard
-                  badge="Total Market"
-                  value="£350"
-                  unit="bn"
-                  description="Total annual UK property loan originations"
-                  className="rounded-t-3xl border-t border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-r-none md:rounded-b-none md:border-white/8"
-                />
-              </div>
-              <div className="market-reveal-item">
-                <MainStatCard
-                  badge="Core Atomix Market"
-                  value="£60"
-                  unit="bn"
-                  description="Across bridging, buy-to-let and SME CRE term loans — the core Atomix market"
-                  className="rounded-none border-x border-b border-white/15 md:border md:border-white/8"
-                />
-              </div>
-              <div className="market-reveal-item">
-                <MainStatCard
-                  badge="Immediate Opportunity"
-                  value="£11.5"
-                  unit="bn"
-                  description="Annual UK bridging originations — majority processed manually, smaller loans structurally underserved"
-                  className="rounded-none border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-l-none md:rounded-b-none md:border-white/8"
-                />
-              </div>
+              {mainStats.slice(0, 3).map((stat, idx) => (
+                <div key={stat.badge} className="market-reveal-item">
+                  <MainStatCard
+                    badge={stat.badge}
+                    value={stat.value}
+                    unit={stat.unit}
+                    description={stat.description}
+                    valuePrefixLabel={stat.valuePrefixLabel}
+                    className={mainStatBorderClasses[idx]}
+                  />
+                </div>
+              ))}
             </div>
 
-            {/* Second row - 2 stat cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-0 md:gap-2">
-              <div className="market-reveal-item">
-                <MainStatCard
-                  badge="US Market"
-                  value="£2"
-                  unit="tn"
-                  description="The US commercial real estate market opportunity, addressable on the same model"
-                  descriptionMaxWidth="500px"
-                  className="rounded-none border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-t-none md:rounded-r-none md:border-white/8"
-                />
-              </div>
-              <div className="market-reveal-item">
-                <MainStatCard
-                  badge="Global Market"
-                  value="£4"
-                  unit="tn"
-                  description="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor"
-                  descriptionMaxWidth="500px"
-                  className="rounded-b-3xl border-x border-b border-white/15 md:rounded-3xl md:border md:rounded-t-none md:rounded-l-none md:border-white/8"
-                />
-              </div>
+            {/* Second row - 3 main stat cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-0 md:gap-2">
+              {mainStats.slice(3, 6).map((stat, idx) => (
+                <div key={stat.badge} className="market-reveal-item">
+                  <MainStatCard
+                    badge={stat.badge}
+                    value={stat.value}
+                    unit={stat.unit}
+                    description={stat.description}
+                    valuePrefixLabel={stat.valuePrefixLabel}
+                    className={mainStatBorderClasses[idx + 3]}
+                  />
+                </div>
+              ))}
             </div>
 
-            {/* Bottom section - 6 simple stat boxes in 3x2 grid */}
+            {/* Bottom section - 4 simple stat boxes in 2x2 grid */}
             <div className="pt-14 grid grid-cols-1 md:grid-cols-2 gap-x-14 gap-y-14">
-              <div className="market-reveal-item">
-                <SimpleStatBox
-                  value="70"
-                  unit="%"
-                  title="Broker-led Loan Origination"
-                  description="70% of bridging loans originate through brokers — smaller loans unprofitable to service; automation changes this"
-                />
-              </div>
-              <div className="market-reveal-item">
-                <SimpleStatBox
-                  value="30"
-                  unit="%"
-                  title="Direct-to-Customer Growth"
-                  description="30% of commercial lending already direct-to-customer — a growing channel Atomix supports natively  "
-                />
-              </div>
-              <div className="market-reveal-item">
-                <SimpleStatBox
-                  value="70"
-                  unit="%"
-                  title="Rising Tech Adoption"
-                  description="70% of lenders actively considering technology investment — Atomix pay-as-you-go model removes the barrier to entry"
-                />
-              </div>
-              <div className="market-reveal-item">
-                <SimpleStatBox
-                  value="64"
-                  unit="%"
-                  title="Refinancing Pressure"
-                  description="64% of leading non-bank lenders need to raise or refinance within 12 months — compliance and transparency is the unlock"
-                />
-              </div>
+              {simpleStats.map((stat) => (
+                <div key={stat.title} className="market-reveal-item">
+                  <SimpleStatBox
+                    value={stat.value}
+                    unit={stat.unit}
+                    title={stat.title}
+                    description={stat.description}
+                  />
+                </div>
+              ))}
             </div>
           </div>
 
@@ -685,6 +683,7 @@ export default function MainTheMarket() {
                     value={stat.value}
                     unit={stat.unit}
                     description={stat.description}
+                    valuePrefixLabel={stat.valuePrefixLabel}
                     className="rounded-3xl border border-white/15 min-h-[220px]"
                     isActive={idx === activeMainSlide}
                   />
