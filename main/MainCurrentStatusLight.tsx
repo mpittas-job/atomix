@@ -77,14 +77,15 @@ export default function MainCurrentStatusLight() {
       if (!sectionRef.current) return;
 
       const section = sectionRef.current;
-      const topCards =
-        section.querySelectorAll<HTMLElement>("[data-cs-top-card]");
-      const topCardsRow = topCards[0]?.parentElement ?? null;
-      const topCardDescriptions = section.querySelectorAll<HTMLElement>(
-        "[data-cs-top-card-desc]",
+      const topCards = Array.from(
+        section.querySelectorAll<HTMLElement>("[data-cs-top-card]")
       );
-      const topCardMarketInfo = section.querySelectorAll<HTMLElement>(
-        "[data-cs-top-card-market]",
+      const topCardsRow = topCards[0]?.parentElement ?? null;
+      const topCardDescriptions = Array.from(
+        section.querySelectorAll<HTMLElement>("[data-cs-top-card-desc]")
+      );
+      const topCardMarketInfo = Array.from(
+        section.querySelectorAll<HTMLElement>("[data-cs-top-card-market]")
       );
       const inlineConnector1 = section.querySelector<SVGPathElement>(
         "[data-cs-inline-connector-1]",
@@ -317,7 +318,7 @@ export default function MainCurrentStatusLight() {
         scaleY: 0,
         transformOrigin: "top center",
       });
-      gsap.set([topCardDescriptions, topCardMarketInfo], {
+      gsap.set([...topCardDescriptions, ...topCardMarketInfo], {
         overflow: "hidden",
       });
       gsap.set(featureCards, {
@@ -519,8 +520,8 @@ export default function MainCurrentStatusLight() {
           },
         });
 
-        topCardsCollapseTl
-          .to(
+        if (topCardDescriptions.length > 0) {
+          topCardsCollapseTl.to(
             topCardDescriptions,
             {
               autoAlpha: 0,
@@ -531,8 +532,11 @@ export default function MainCurrentStatusLight() {
               ease: "power2.out",
             },
             0,
-          )
-          .to(
+          );
+        }
+
+        if (topCardMarketInfo.length > 0) {
+          topCardsCollapseTl.to(
             topCardMarketInfo,
             {
               autoAlpha: 0,
@@ -546,6 +550,7 @@ export default function MainCurrentStatusLight() {
             },
             "<",
           );
+        }
       }
 
       return () => {
@@ -612,7 +617,7 @@ export default function MainCurrentStatusLight() {
             }}
           >
             <IconBoxLight className="h-full">
-              <div className="relative flex flex-col justify-between h-full">
+              <div className="relative flex flex-col justify-center h-full">
                 <div data-cs-top-card-content>
                   <div className="mb-6 flex items-center justify-between">
                     <span className="rounded-full px-4 py-1 text-sm font-semibold uppercase text-[#0B97BE] bg-linear-to-r from-[#D4E7EE] to-[#ECF1F5]">
@@ -630,16 +635,6 @@ export default function MainCurrentStatusLight() {
                     high-volume bridging with a pre-approved offer generated
                     instantly and a process that removes friction at every step.
                   </p>
-                </div>
-
-                <div
-                  data-cs-top-card-market
-                  className="mt-4 rounded-xl bg-gradient-to-r from-[#d6e8ef] to-[#eceeee] p-2.5 text-lg leading-6 text-[#011F27] flex items-center gap-2"
-                >
-                  <span className="shrink-0 text-[#011F27] mr-1">
-                    <FaHouse className="h-6 w-6" />
-                  </span>
-                  <span>Part of the £350bn UK annual property loan market</span>
                 </div>
               </div>
             </IconBoxLight>
@@ -666,7 +661,7 @@ export default function MainCurrentStatusLight() {
             }}
           >
             <IconBoxLight className="h-full">
-              <div className="relative flex flex-col justify-between h-full">
+              <div className="relative flex flex-col justify-center h-full">
                 <div data-cs-top-card-content>
                   <div className="mb-6 flex items-center justify-between">
                     <span className="rounded-full px-4 py-1 text-sm font-semibold uppercase text-[#0B97BE] bg-linear-to-r from-[#D4E7EE] to-[#ECF1F5]">
@@ -683,18 +678,6 @@ export default function MainCurrentStatusLight() {
                     certainty of funding before the hammer falls, within the
                     28-day completion window.
                   </p>
-                </div>
-
-                <div
-                  data-cs-top-card-market
-                  className="mt-4 rounded-xl bg-gradient-to-r from-[#d6e8ef] to-[#eceeee] p-2.5 text-lg leading-6 text-[#011F27] flex items-center gap-2"
-                >
-                  <span className="shrink-0 text-[#011F27] mr-1">
-                    <FaGavel className="h-6 w-6" />
-                  </span>
-                  <span>
-                    Unlocking £5.5bn stalled by 30-day completion requirements
-                  </span>
                 </div>
               </div>
             </IconBoxLight>

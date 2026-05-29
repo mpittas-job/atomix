@@ -55,7 +55,7 @@ export default function MobileCurrentStatus() {
       {/* Horizontal Scroll Track */}
       <div
         ref={containerRef}
-        className="flex items-center gap-x-4 overflow-x-auto snap-x snap-mandatory scrollbar-none pb-4"
+        className="flex items-center gap-x-4 overflow-x-auto snap-x snap-mandatory scrollbar-none"
         style={{
           scrollbarWidth: "none",
           msOverflowStyle: "none",
@@ -63,71 +63,55 @@ export default function MobileCurrentStatus() {
         }}
       >
         {/* Column 1: Staggered Q2/Q3 cards */}
-        <div className="snap-start shrink-0 w-[340px] flex flex-col gap-y-4 h-[516px] justify-between">
-          <div className="h-[250px]">
-            <IconBoxSimple className="h-full !p-5">
-              <div className="relative flex flex-col justify-between h-full">
-                <div>
-                  <div className="mb-2 flex items-center">
-                    <span className="rounded-full px-3 py-0.5 text-xs font-semibold uppercase text-[#0B97BE] bg-linear-to-r from-[#D4E7EE] to-[#ECF1F5]">
-                      Q2 2026
-                    </span>
+        <div className="snap-start shrink-0 w-[340px] h-[516px] flex flex-col justify-center">
+          <div className="flex flex-col h-[428px] justify-between gap-y-4">
+            <div className="h-[206px]">
+              <IconBoxSimple className="h-full !p-5">
+                <div className="relative flex flex-col justify-center h-full">
+                  <div>
+                    <div className="mb-2 flex items-center">
+                      <span className="rounded-full px-3 py-0.5 text-xs font-semibold uppercase text-[#0B97BE] bg-linear-to-r from-[#D4E7EE] to-[#ECF1F5]">
+                        Q2 2026
+                      </span>
+                    </div>
+
+                    <h3 className="text-xl leading-6 font-semibold text-[#011F27]">
+                      Quick Home Sale MVP
+                    </h3>
+
+                    <p className="mt-2 text-sm leading-5 text-[#4B6066]">
+                      Quick home sale providers depend on speed and certainty of
+                      funding. Atomix is built for this model — repeat, high-volume
+                      bridging with a pre-approved offer generated instantly.
+                    </p>
                   </div>
-
-                  <h3 className="text-xl leading-6 font-semibold text-[#011F27]">
-                    Quick Home Sale MVP
-                  </h3>
-
-                  <p className="mt-2 text-sm leading-5 text-[#4B6066]">
-                    Quick home sale providers depend on speed and certainty of
-                    funding. Atomix is built for this model — repeat, high-volume
-                    bridging with a pre-approved offer generated instantly.
-                  </p>
                 </div>
+              </IconBoxSimple>
+            </div>
 
-                <div className="mt-3 rounded-lg bg-gradient-to-r from-[#d6e8ef] to-[#eceeee] p-2 text-xs text-[#011F27] flex items-center gap-2">
-                  <span className="shrink-0 text-[#011F27]">
-                    <FaHouse className="h-4 w-4" />
-                  </span>
-                  <span className="leading-tight text-sm">
-                    Part of the £350bn UK annual property loan market
-                  </span>
-                </div>
-              </div>
-            </IconBoxSimple>
-          </div>
+            <div className="h-[206px]">
+              <IconBoxSimple className="h-full !p-5">
+                <div className="relative flex flex-col justify-center h-full">
+                  <div>
+                    <div className="mb-2 flex items-center">
+                      <span className="rounded-full px-3 py-0.5 text-xs font-semibold uppercase text-[#0B97BE] bg-linear-to-r from-[#D4E7EE] to-[#ECF1F5]">
+                        Q3 2026
+                      </span>
+                    </div>
 
-          <div className="h-[250px]">
-            <IconBoxSimple className="h-full !p-5">
-              <div className="relative flex flex-col justify-between h-full">
-                <div>
-                  <div className="mb-2 flex items-center">
-                    <span className="rounded-full px-3 py-0.5 text-xs font-semibold uppercase text-[#0B97BE] bg-linear-to-r from-[#D4E7EE] to-[#ECF1F5]">
-                      Q3 2026
-                    </span>
+                    <h3 className="text-xl leading-6 font-semibold text-[#011F27]">
+                      Auction Finance MVP
+                    </h3>
+
+                    <p className="mt-2 text-sm leading-5 text-[#4B6066]">
+                      Pre-approved finance embedded into the auction experience —
+                      certainty of funding before the hammer falls, within the
+                      28-day window.
+                    </p>
                   </div>
-
-                  <h3 className="text-xl leading-6 font-semibold text-[#011F27]">
-                    Auction Finance MVP
-                  </h3>
-
-                  <p className="mt-2 text-sm leading-5 text-[#4B6066]">
-                    Pre-approved finance embedded into the auction experience —
-                    certainty of funding before the hammer falls, within the
-                    28-day window.
-                  </p>
                 </div>
-
-                <div className="mt-3 rounded-lg bg-gradient-to-r from-[#d6e8ef] to-[#eceeee] p-2 text-xs text-[#011F27] flex items-center gap-2">
-                  <span className="shrink-0 text-[#011F27]">
-                    <FaGavel className="h-4 w-4" />
-                  </span>
-                  <span className="leading-tight text-sm">
-                    Unlocking £5.5bn stalled by completion requirements
-                  </span>
-                </div>
-              </div>
-            </IconBoxSimple>
+              </IconBoxSimple>
+            </div>
           </div>
         </div>
 
@@ -141,13 +125,13 @@ export default function MobileCurrentStatus() {
             xmlns="http://www.w3.org/2000/svg"
           >
             <path
-              d="M 0 125 L 15 125 Q 30 125 30 145 L 30 238 Q 30 258 50 258"
+              d="M 0 147 L 15 147 Q 30 147 30 167 L 30 238 Q 30 258 50 258"
               stroke="#CDD2D7"
               strokeWidth="2"
               strokeLinecap="round"
             />
             <path
-              d="M 0 391 L 15 391 Q 30 391 30 371 L 30 278 Q 30 258 50 258"
+              d="M 0 369 L 15 369 Q 30 369 30 349 L 30 278 Q 30 258 50 258"
               stroke="#CDD2D7"
               strokeWidth="2"
               strokeLinecap="round"
@@ -157,11 +141,15 @@ export default function MobileCurrentStatus() {
 
         {/* Column 2: First central statement */}
         <div className="snap-center shrink-0 w-[340px] h-[516px] flex items-center justify-center px-2">
-          <p className="text-[21px] font-semibold text-[#011F27] text-center leading-snug">
-            Atomix is live and building — two product launches confirmed for
-            2026. <br />
-            Quick Home Sale MVP (Q2) and Auction Finance MVP (Q3).
-          </p>
+          <IconBoxSimple className="w-full h-[428px] !p-8 flex flex-col justify-center">
+            <div className="flex items-center justify-center h-full w-full">
+              <p className="text-[21px] font-semibold text-[#011F27] text-center leading-snug">
+                Atomix is live and building — two product launches confirmed for
+                2026. <br />
+                Quick Home Sale MVP (Q2) and Auction Finance MVP (Q3).
+              </p>
+            </div>
+          </IconBoxSimple>
         </div>
 
         {/* Connector SVG 2: Columns 2 to 3 */}
@@ -187,10 +175,14 @@ export default function MobileCurrentStatus() {
 
         {/* Column 3: Second central statement */}
         <div className="snap-center shrink-0 w-[340px] h-[516px] flex items-center justify-center px-2">
-          <p className="text-[21px] font-semibold text-[#011F27] text-center leading-snug">
-            Atomix is built on the following platform modules, available
-            across all products.
-          </p>
+          <IconBoxSimple className="w-full h-[428px] !p-8 flex flex-col justify-center">
+            <div className="flex items-center justify-center h-full w-full">
+              <p className="text-[21px] font-semibold text-[#011F27] text-center leading-snug">
+                Atomix is built on the following platform modules, available
+                across all products.
+              </p>
+            </div>
+          </IconBoxSimple>
         </div>
 
         {/* Connector SVG 3: Columns 3 to 4 */}
@@ -234,7 +226,7 @@ export default function MobileCurrentStatus() {
           <div className="flex flex-col h-[428px] justify-between">
             <div className="h-[92px] w-full flex">
               <IconBoxSimple className="h-full w-full !py-3 !px-4">
-                <div className="flex items-start gap-x-3 text-left">
+                <div className="flex items-center gap-x-3 text-left h-full">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#D8E9EE]">
                     <PiTargetBold className="h-5 w-5 text-[#0B97BE]" />
                   </div>
@@ -251,7 +243,7 @@ export default function MobileCurrentStatus() {
             </div>
             <div className="h-[92px] w-full flex">
               <IconBoxSimple className="h-full w-full !py-3 !px-4">
-                <div className="flex items-start gap-x-3 text-left">
+                <div className="flex items-center gap-x-3 text-left h-full">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#D8E9EE]">
                     <PiTargetBold className="h-5 w-5 text-[#0B97BE]" />
                   </div>
@@ -268,7 +260,7 @@ export default function MobileCurrentStatus() {
             </div>
             <div className="h-[92px] w-full flex">
               <IconBoxSimple className="h-full w-full !py-3 !px-4">
-                <div className="flex items-start gap-x-3 text-left">
+                <div className="flex items-center gap-x-3 text-left h-full">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#D8E9EE]">
                     <PiTargetBold className="h-5 w-5 text-[#0B97BE]" />
                   </div>
@@ -285,7 +277,7 @@ export default function MobileCurrentStatus() {
             </div>
             <div className="h-[92px] w-full flex">
               <IconBoxSimple className="h-full w-full !py-3 !px-4">
-                <div className="flex items-start gap-x-3 text-left">
+                <div className="flex items-center gap-x-3 text-left h-full">
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#D8E9EE]">
                     <PiTargetBold className="h-5 w-5 text-[#0B97BE]" />
                   </div>
@@ -307,16 +299,16 @@ export default function MobileCurrentStatus() {
         <div className="shrink-0 w-6 h-1" />
       </div>
 
-      {/* Learn More Button */}
-      <div className="flex justify-center mt-6">
-        <DefButton href="/about-us">Learn more</DefButton>
-      </div>
-
       {/* Swipe Indicator for Mobile */}
-      <div className="flex justify-center gap-x-2 mt-4">
+      <div className="flex justify-center gap-x-2 mt-2">
         <span className="text-[11px] text-[#4B6066]/80 font-medium tracking-wide flex items-center gap-1 animate-pulse uppercase">
           Swipe right to view full status flow →
         </span>
+      </div>
+
+      {/* Learn More Button */}
+      <div className="flex justify-center mt-4">
+        <DefButton href="/about-us">Learn more</DefButton>
       </div>
     </div>
   );
