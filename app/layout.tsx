@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { BookDemoModalProvider } from "@/components/BookDemoModalProvider";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -28,9 +29,12 @@ export default function RootLayout({
       </head>
       <body className={`${inter.className} min-h-full flex flex-col`}>
         <BookDemoModalProvider>
-          <main className="flex-1">{children}</main>
+          <SmoothScroll>
+            <main className="flex-1">{children}</main>
+          </SmoothScroll>
         </BookDemoModalProvider>
       </body>
     </html>
   );
 }
+
