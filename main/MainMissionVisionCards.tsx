@@ -92,7 +92,7 @@ function MissionVisionCard({
       <div data-mission-vision-item className="w-full h-px bg-white/16 mb-3" />
       <div
         data-mission-vision-item
-        className="text-2xl leading-9 mb-6 md:text-3xl md:leading-10"
+        className="text-xl leading-8 mb-6 md:text-3xl md:leading-10"
       >
         {descriptionLines.map((line, index) => (
           <span
@@ -272,7 +272,7 @@ export default function MainMissionVisionCards() {
   return (
     <section
       ref={sectionRef}
-      className="h-[calc(100svh-var(--header-height,110px))] bg-white flex flex-col justify-center px-0 pt-16 pb-26 md:px-0 lg:min-h-[calc(100svh-var(--header-height,110px))]"
+      className="h-[calc(100svh-var(--header-height,110px))] bg-white flex flex-col justify-center px-0 pt-12 pb-22 md:px-0 lg:min-h-[calc(100svh-var(--header-height,110px))]"
     >
       <div className="relative flex w-full min-h-0 flex-1 flex-col justify-center overflow-hidden rounded-none bg-linear-to-b from-[#004152] via-[#01485C] to-[#004152] text-white">
         <LazySoftAurora
