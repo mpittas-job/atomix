@@ -3,7 +3,6 @@
 import { useRef } from "react";
 import CurrentStatusConnectorsV2 from "@/main/CurrentStatusConnectorsV2";
 import DefHeading from "@/components/typo/DefHeading";
-import { FaHouse, FaGavel } from "react-icons/fa6";
 import { PiTargetBold } from "react-icons/pi";
 
 import { Button as DefButton } from "@/components/ui";
@@ -79,13 +78,6 @@ export default function MainCurrentStatusLight() {
       const section = sectionRef.current;
       const topCards = Array.from(
         section.querySelectorAll<HTMLElement>("[data-cs-top-card]")
-      );
-      const topCardsRow = topCards[0]?.parentElement ?? null;
-      const topCardDescriptions = Array.from(
-        section.querySelectorAll<HTMLElement>("[data-cs-top-card-desc]")
-      );
-      const topCardMarketInfo = Array.from(
-        section.querySelectorAll<HTMLElement>("[data-cs-top-card-market]")
       );
       const inlineConnector1 = section.querySelector<SVGPathElement>(
         "[data-cs-inline-connector-1]",
@@ -309,107 +301,110 @@ export default function MainCurrentStatusLight() {
         return pathTl;
       };
 
-      gsap.set(topCards, { autoAlpha: 0, y: 60 });
-      gsap.set([statement1, statement2], {
-        autoAlpha: 0,
-        y: 60,
-      });
-      gsap.set(verticalLine, {
-        scaleY: 0,
-        transformOrigin: "top center",
-      });
-      gsap.set([...topCardDescriptions, ...topCardMarketInfo], {
-        overflow: "hidden",
-      });
-      gsap.set(featureCards, {
-        autoAlpha: 0,
-        y: 0,
-        scale: 0.9,
-        transformOrigin: "center center",
-      });
-      gsap.set(buttons, { autoAlpha: 0, y: 20 });
+      const mm = gsap.matchMedia();
 
-      if (inlineConnector1) {
-        const length = inlineConnector1.getTotalLength();
-        gsap.set(inlineConnector1, {
-          strokeDasharray: `${length}`,
-          strokeDashoffset: length,
+      mm.add("(min-width: 1024px)", () => {
+        gsap.set(topCards, { autoAlpha: 0, y: 60 });
+        gsap.set([statement1, statement2], {
+          autoAlpha: 0,
+          y: 60,
         });
-      }
-      if (inlineConnector2) {
-        const length = inlineConnector2.getTotalLength();
-        gsap.set(inlineConnector2, {
-          strokeDasharray: `${length}`,
-          strokeDashoffset: length,
+        if (verticalLine) {
+          gsap.set(verticalLine, {
+            scaleY: 0,
+            transformOrigin: "top center",
+          });
+        }
+        gsap.set(featureCards, {
+          autoAlpha: 0,
+          y: 0,
+          scale: 0.9,
+          transformOrigin: "center center",
         });
-      }
-      const inlineConnectorSequence = [inlineConnector1, inlineConnector2];
-      const inlineConnectorGlowSequence = [
-        inlineConnectorGlow1,
-        inlineConnectorGlow2,
-      ];
-      inlineConnectorGlowSequence.forEach((glow, index) => {
-        const path = inlineConnectorSequence[index];
-        if (!glow || !path) return;
-        const length = path.getTotalLength();
-        gsap.set(glow, {
-          attr: {
-            "stroke-dasharray": `${Math.min(CURRENT_STATUS_GLOW_CONFIG.maxLength, length / 2)} ${length + 50}`,
-            "stroke-dashoffset": `${Math.min(CURRENT_STATUS_GLOW_CONFIG.maxLength, length / 2)}`,
-          },
-          opacity: 0,
-        });
-      });
-      if (verticalLineGlow && verticalLine) {
-        const length = verticalLine.getTotalLength();
-        gsap.set(verticalLineGlow, {
-          attr: {
-            "stroke-dasharray": `${Math.min(CURRENT_STATUS_GLOW_CONFIG.maxLength, length / 2)} ${length + 50}`,
-            "stroke-dashoffset": `${Math.min(CURRENT_STATUS_GLOW_CONFIG.maxLength, length / 2)}`,
-          },
-          opacity: 0,
-        });
-      }
+        gsap.set(buttons, { autoAlpha: 0, y: 20 });
 
-      bottomConnectorSequence.forEach((path) => {
-        if (!path) return;
-        const length = path.getTotalLength();
-        gsap.set(path, {
-          strokeDasharray: `${length}`,
-          strokeDashoffset: length,
+        if (inlineConnector1) {
+          const length = inlineConnector1.getTotalLength();
+          gsap.set(inlineConnector1, {
+            strokeDasharray: `${length}`,
+            strokeDashoffset: length,
+          });
+        }
+        if (inlineConnector2) {
+          const length = inlineConnector2.getTotalLength();
+          gsap.set(inlineConnector2, {
+            strokeDasharray: `${length}`,
+            strokeDashoffset: length,
+          });
+        }
+        const inlineConnectorSequence = [inlineConnector1, inlineConnector2];
+        const inlineConnectorGlowSequence = [
+          inlineConnectorGlow1,
+          inlineConnectorGlow2,
+        ];
+        inlineConnectorGlowSequence.forEach((glow, index) => {
+          const path = inlineConnectorSequence[index];
+          if (!glow || !path) return;
+          const length = path.getTotalLength();
+          gsap.set(glow, {
+            attr: {
+              "stroke-dasharray": `${Math.min(CURRENT_STATUS_GLOW_CONFIG.maxLength, length / 2)} ${length + 50}`,
+              "stroke-dashoffset": `${Math.min(CURRENT_STATUS_GLOW_CONFIG.maxLength, length / 2)}`,
+            },
+            opacity: 0,
+          });
         });
-      });
-      bottomConnectorGlowSequence.forEach((glow, index) => {
-        const path = bottomConnectorSequence[index];
-        if (!glow || !path) return;
-        const length = path.getTotalLength();
-        gsap.set(glow, {
-          attr: {
-            "stroke-dasharray": `${Math.min(CURRENT_STATUS_GLOW_CONFIG.maxLength, length / 2)} ${length + 50}`,
-            "stroke-dashoffset": `${Math.min(CURRENT_STATUS_GLOW_CONFIG.maxLength, length / 2)}`,
-          },
-          opacity: 0,
-        });
-      });
+        if (verticalLineGlow && verticalLine) {
+          const length = verticalLine.getTotalLength();
+          gsap.set(verticalLineGlow, {
+            attr: {
+              "stroke-dasharray": `${Math.min(CURRENT_STATUS_GLOW_CONFIG.maxLength, length / 2)} ${length + 50}`,
+              "stroke-dashoffset": `${Math.min(CURRENT_STATUS_GLOW_CONFIG.maxLength, length / 2)}`,
+            },
+            opacity: 0,
+          });
+        }
 
-      const tl = gsap.timeline({
-        delay: 1,
-        scrollTrigger: {
+        bottomConnectorSequence.forEach((path) => {
+          if (!path) return;
+          const length = path.getTotalLength();
+          gsap.set(path, {
+            strokeDasharray: `${length}`,
+            strokeDashoffset: length,
+          });
+        });
+        bottomConnectorGlowSequence.forEach((glow, index) => {
+          const path = bottomConnectorSequence[index];
+          if (!glow || !path) return;
+          const length = path.getTotalLength();
+          gsap.set(glow, {
+            attr: {
+              "stroke-dasharray": `${Math.min(CURRENT_STATUS_GLOW_CONFIG.maxLength, length / 2)} ${length + 50}`,
+              "stroke-dashoffset": `${Math.min(CURRENT_STATUS_GLOW_CONFIG.maxLength, length / 2)}`,
+            },
+            opacity: 0,
+          });
+        });
+
+        const tl = gsap.timeline({ paused: true });
+
+        const entranceTrigger = ScrollTrigger.create({
           trigger: section,
           start: "top 80%",
-          toggleActions: "restart reset restart reset",
+          once: true,
+          invalidateOnRefresh: true,
+          onEnter: () => tl.play(),
           onLeave: stopGlowLoops,
           onLeaveBack: stopGlowLoops,
-        },
-      });
+        });
 
-      tl.to(topCards, {
-        autoAlpha: 1,
-        y: 0,
-        duration: scaleDuration(1.6),
-        ease: "power2.out",
-        stagger: scaleStagger(0.5),
-      })
+        tl.to(topCards, {
+          autoAlpha: 1,
+          y: 0,
+          duration: scaleDuration(1.6),
+          ease: "power2.out",
+          stagger: scaleStagger(0.5),
+        })
         .to(inlineConnector1, {
           strokeDashoffset: 0,
           duration: scaleDuration(1),
@@ -462,99 +457,70 @@ export default function MainCurrentStatusLight() {
           "-=0.5",
         );
 
-      for (let index = 0; index < bottomConnectorSequence.length; index += 1) {
-        const path = bottomConnectorSequence[index];
-        const card = featureCards[index];
-        const isFirstStep = index === 0;
+        for (let index = 0; index < bottomConnectorSequence.length; index += 1) {
+          const path = bottomConnectorSequence[index];
+          const card = featureCards[index];
+          const isFirstStep = index === 0;
 
-        if (path) {
-          tl.add(
-            animatePathAndGlow(
-              path,
-              bottomConnectorGlowSequence[index],
-              scaleBottomDuration(1),
-              index,
-            ),
-            isFirstStep ? "-=1" : ">",
-          );
+          if (path) {
+            tl.add(
+              animatePathAndGlow(
+                path,
+                bottomConnectorGlowSequence[index],
+                scaleBottomDuration(1),
+                index,
+              ),
+              isFirstStep ? "-=1" : ">",
+            );
+          }
+
+          if (card) {
+            tl.fromTo(
+              card,
+              {
+                autoAlpha: 0,
+                y: 0,
+                scale: 0.9,
+              },
+              {
+                autoAlpha: 1,
+                y: 0,
+                scale: 1,
+                duration: scaleBottomDuration(1.35),
+                ease: "power2.out",
+                immediateRender: false,
+              },
+              ">",
+            );
+          }
         }
 
-        if (card) {
-          tl.fromTo(
-            card,
-            {
-              autoAlpha: 0,
-              y: 0,
-              scale: 0.9,
-            },
-            {
-              autoAlpha: 1,
-              y: 0,
-              scale: 1,
-              duration: scaleBottomDuration(1.35),
-              ease: "power2.out",
-              immediateRender: false,
-            },
-            ">",
-          );
-        }
-      }
-
-      tl.to(
-        buttons,
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: scaleDuration(1),
-          ease: "power4.inOut",
-        },
-        "-=6",
-      );
-
-      if (topCardsRow) {
-        const topCardsCollapseTl = gsap.timeline({
-          scrollTrigger: {
-            trigger: topCardsRow,
-            start: "bottom 55%",
-            toggleActions: "play play play reverse",
+        tl.to(
+          buttons,
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: scaleDuration(1),
+            ease: "power4.inOut",
           },
+          "-=6",
+        );
+
+        ScrollTrigger.refresh();
+        requestAnimationFrame(() => {
+          ScrollTrigger.refresh();
+          if (entranceTrigger.isActive && tl.progress() === 0) {
+            tl.play(0);
+          }
         });
 
-        if (topCardDescriptions.length > 0) {
-          topCardsCollapseTl.to(
-            topCardDescriptions,
-            {
-              autoAlpha: 0,
-              y: -6,
-              height: 0,
-              marginTop: 0,
-              duration: 0.5,
-              ease: "power2.out",
-            },
-            0,
-          );
-        }
-
-        if (topCardMarketInfo.length > 0) {
-          topCardsCollapseTl.to(
-            topCardMarketInfo,
-            {
-              autoAlpha: 0,
-              y: -6,
-              height: 0,
-              marginTop: 0,
-              paddingTop: 0,
-              paddingBottom: 0,
-              duration: 0.5,
-              ease: "power2.out",
-            },
-            "<",
-          );
-        }
-      }
+        return () => {
+          stopGlowLoops();
+        };
+      });
 
       return () => {
-        stopGlowLoops();
+        mm.revert();
       };
     },
     { scope: sectionRef },
@@ -595,10 +561,10 @@ export default function MainCurrentStatusLight() {
       />
 
       <div className="max-w-[1200px] mx-auto mt-6 flex flex-col">
-        <div className="flex gap-x-6">
+        <div className="grid grid-cols-2 gap-x-6 items-stretch">
           <div
             data-cs-top-card
-            className="flex-1 relative h-full will-change-transform"
+            className="relative flex h-full flex-col will-change-transform"
             onMouseEnter={(e) => {
               gsap.to(e.currentTarget, {
                 scale: 1.2,
@@ -616,8 +582,8 @@ export default function MainCurrentStatusLight() {
               });
             }}
           >
-            <IconBoxLight className="h-full">
-              <div className="relative flex flex-col justify-center h-full">
+            <IconBoxLight className="flex h-full flex-1 flex-col">
+              <div className="relative flex h-full flex-col">
                 <div data-cs-top-card-content>
                   <div className="mb-6 flex items-center justify-between">
                     <span className="rounded-full px-4 py-1 text-sm font-semibold uppercase text-[#0B97BE] bg-linear-to-r from-[#D4E7EE] to-[#ECF1F5]">
@@ -630,10 +596,9 @@ export default function MainCurrentStatusLight() {
                   </h3>
 
                   <p data-cs-top-card-desc className="mt-4 text-[#4B6066]">
-                    Quick home sale providers depend on speed and certainty of
-                    funding. Atomix is built for this model — repeat,
-                    high-volume bridging with a pre-approved offer generated
-                    instantly and a process that removes friction at every step.
+                    Quick home sale providers depend on speed and certainty.
+                    Atomix enables this — pre-approved offer generated
+                    instantly, friction removed at every step.
                   </p>
                 </div>
               </div>
@@ -642,7 +607,7 @@ export default function MainCurrentStatusLight() {
 
           <div
             data-cs-top-card
-            className="flex-1 relative h-full will-change-transform"
+            className="relative flex h-full flex-col will-change-transform"
             onMouseEnter={(e) => {
               gsap.to(e.currentTarget, {
                 scale: 1.2,
@@ -660,8 +625,8 @@ export default function MainCurrentStatusLight() {
               });
             }}
           >
-            <IconBoxLight className="h-full">
-              <div className="relative flex flex-col justify-center h-full">
+            <IconBoxLight className="flex h-full flex-1 flex-col">
+              <div className="relative flex h-full flex-col">
                 <div data-cs-top-card-content>
                   <div className="mb-6 flex items-center justify-between">
                     <span className="rounded-full px-4 py-1 text-sm font-semibold uppercase text-[#0B97BE] bg-linear-to-r from-[#D4E7EE] to-[#ECF1F5]">
@@ -674,9 +639,9 @@ export default function MainCurrentStatusLight() {
                   </h3>
 
                   <p data-cs-top-card-desc className="mt-4 text-[#4B6066]">
-                    Pre-approved finance embedded into the auction experience —
-                    certainty of funding before the hammer falls, within the
-                    28-day completion window.
+                    Pre-approved lender finance embedded into the auction
+                    experience — certainty of funding before the hammer falls,
+                    within the 28-day completion window.
                   </p>
                 </div>
               </div>
@@ -784,8 +749,7 @@ export default function MainCurrentStatusLight() {
           data-cs-statement-2
           className="text-3xl text-[#011F27] text-center font-semibold py-4"
         >
-          Atomix is built on the following platform modules, available across
-          all products.
+          Atomix is built on the following platform modules, available across all products:
         </div>
 
         <div data-cs-connectors>

@@ -1,12 +1,34 @@
 "use client";
 
 import { useRef } from "react";
-import { FaHouse, FaGavel } from "react-icons/fa6";
 import { PiTargetBold } from "react-icons/pi";
 import IconBoxSimple from "@/components/IconBoxSimple";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { Button as DefButton } from "@/components/ui";
+
+const PLATFORM_MODULES = [
+  {
+    title: "Loan origination",
+    description:
+      "Data entered once, eligibility checked instantly, indicative offer returned in real time — fully configurable by stakeholders, no developer involvement.",
+  },
+  {
+    title: "Lawyer workflow",
+    description:
+      "Every legal step managed on-platform — from instruction to execution, no manual chasing, no fragmented communication.",
+  },
+  {
+    title: "Loan management",
+    description:
+      "Automated lifecycle management from drawdown to exit — breach detection, payment distributions and borrower self-service, every action on blockchain.",
+  },
+  {
+    title: "Capital provider dashboards",
+    description:
+      "Real-time visibility across every funded loan — performance, distributions and compliance in a single dedicated dashboard.",
+  },
+] as const;
 
 export default function MobileCurrentStatus() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -80,9 +102,9 @@ export default function MobileCurrentStatus() {
                     </h3>
 
                     <p className="mt-2 text-sm leading-5 text-[#4B6066]">
-                      Quick home sale providers depend on speed and certainty of
-                      funding. Atomix is built for this model — repeat, high-volume
-                      bridging with a pre-approved offer generated instantly.
+                      Quick home sale providers depend on speed and certainty.
+                      Atomix enables this — pre-approved offer generated
+                      instantly, friction removed at every step.
                     </p>
                   </div>
                 </div>
@@ -104,9 +126,9 @@ export default function MobileCurrentStatus() {
                     </h3>
 
                     <p className="mt-2 text-sm leading-5 text-[#4B6066]">
-                      Pre-approved finance embedded into the auction experience —
-                      certainty of funding before the hammer falls, within the
-                      28-day window.
+                      Pre-approved lender finance embedded into the auction
+                      experience — certainty of funding before the hammer falls,
+                      within the 28-day completion window.
                     </p>
                   </div>
                 </div>
@@ -178,8 +200,7 @@ export default function MobileCurrentStatus() {
           <IconBoxSimple className="w-full h-[428px] !p-8 flex flex-col justify-center">
             <div className="flex items-center justify-center h-full w-full">
               <p className="text-[21px] font-semibold text-[#011F27] text-center leading-snug">
-                Atomix is built on the following platform modules, available
-                across all products.
+                Atomix is built on the following platform modules, available across all products:
               </p>
             </div>
           </IconBoxSimple>
@@ -222,76 +243,27 @@ export default function MobileCurrentStatus() {
         </div>
 
         {/* Column 4: Platform Modules */}
-        <div className="snap-end shrink-0 w-[340px] h-[516px] flex flex-col justify-center">
-          <div className="flex flex-col h-[428px] justify-between">
-            <div className="h-[92px] w-full flex">
-              <IconBoxSimple className="h-full w-full !py-3 !px-4">
-                <div className="flex items-center gap-x-3 text-left h-full">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#D8E9EE]">
-                    <PiTargetBold className="h-5 w-5 text-[#0B97BE]" />
+        <div className="snap-end shrink-0 w-[340px] flex flex-col justify-center py-4">
+          <div className="flex flex-col gap-y-3">
+            {PLATFORM_MODULES.map((module) => (
+              <div key={module.title} className="w-full flex">
+                <IconBoxSimple className="h-full w-full !py-3 !px-4">
+                  <div className="flex items-start gap-x-3 text-left">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#D8E9EE]">
+                      <PiTargetBold className="h-5 w-5 text-[#0B97BE]" />
+                    </div>
+                    <div>
+                      <h3 className="text-[18px] font-semibold text-[#011F27] leading-tight mb-1">
+                        {module.title}
+                      </h3>
+                      <p className="text-[14px] text-[#4B6066] leading-snug">
+                        {module.description}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-[18px] font-semibold text-[#011F27] leading-tight mb-0.5">
-                      Loan origination
-                    </h3>
-                    <p className="text-[14px] text-[#4B6066] leading-snug">
-                      Instant eligibility & offers — no dev needed.
-                    </p>
-                  </div>
-                </div>
-              </IconBoxSimple>
-            </div>
-            <div className="h-[92px] w-full flex">
-              <IconBoxSimple className="h-full w-full !py-3 !px-4">
-                <div className="flex items-center gap-x-3 text-left h-full">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#D8E9EE]">
-                    <PiTargetBold className="h-5 w-5 text-[#0B97BE]" />
-                  </div>
-                  <div>
-                    <h3 className="text-[18px] font-semibold text-[#011F27] leading-tight mb-0.5">
-                      Lawyer workflow
-                    </h3>
-                    <p className="text-[14px] text-[#4B6066] leading-snug">
-                      End-to-end legal, no chasing.
-                    </p>
-                  </div>
-                </div>
-              </IconBoxSimple>
-            </div>
-            <div className="h-[92px] w-full flex">
-              <IconBoxSimple className="h-full w-full !py-3 !px-4">
-                <div className="flex items-center gap-x-3 text-left h-full">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#D8E9EE]">
-                    <PiTargetBold className="h-5 w-5 text-[#0B97BE]" />
-                  </div>
-                  <div>
-                    <h3 className="text-[18px] font-semibold text-[#011F27] leading-tight mb-0.5">
-                      Loan management
-                    </h3>
-                    <p className="text-[14px] text-[#4B6066] leading-snug">
-                      Automated lifecycle, start to finish.
-                    </p>
-                  </div>
-                </div>
-              </IconBoxSimple>
-            </div>
-            <div className="h-[92px] w-full flex">
-              <IconBoxSimple className="h-full w-full !py-3 !px-4">
-                <div className="flex items-center gap-x-3 text-left h-full">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#D8E9EE]">
-                    <PiTargetBold className="h-5 w-5 text-[#0B97BE]" />
-                  </div>
-                  <div>
-                    <h3 className="text-[18px] font-semibold text-[#011F27] leading-tight mb-0.5">
-                      Capital provider dashboards
-                    </h3>
-                    <p className="text-[14px] text-[#4B6066] leading-snug">
-                      Real-time loan insights, all in one place.
-                    </p>
-                  </div>
-                </div>
-              </IconBoxSimple>
-            </div>
+                </IconBoxSimple>
+              </div>
+            ))}
           </div>
         </div>
 
