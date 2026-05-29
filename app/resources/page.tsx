@@ -55,7 +55,7 @@ export default function ResourcesPage() {
             title="Resources"
             description="Explore our guides, videos, and insights."
             titleClassName="max-w-none whitespace-nowrap"
-            descriptionClassName="max-w-none whitespace-nowrap"
+            descriptionClassName="max-w-none"
             showCta={false}
           />
         </div>

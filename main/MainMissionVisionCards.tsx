@@ -62,11 +62,12 @@ function renderTypewriterTitle(title: string) {
 
 const MISSION_DESCRIPTION_LINES = [
   "Rebuild UK property lending. Start with bridging.",
-  "Extend into SME CRE term loans — same infrastructure, no rebuild.",
+  "Extend into specialist term loans and beyond — same infrastructure, no rebuild.",
 ] as const;
 
 const VISION_DESCRIPTION_LINES = [
-  "One ecosystem. Every stakeholder connected. <br/>Property lending transformed — starting in the UK, built for global scale.",
+  "One ecosystem. Every stakeholder connected.",
+  "Property lending transformed — starting in the UK, built for international scale."
 ] as const;
 
 interface MissionVisionCardProps {

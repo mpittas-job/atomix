@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, type ReactNode } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -276,11 +276,15 @@ export type HeroAnimatedBgProps = {
   /** Hero heading copy. */
   title?: string;
   /** Hero supporting copy. */
-  description?: string;
+  description?: ReactNode;
   /** Optional classes for the hero title element. */
   titleClassName?: string;
   /** Optional classes for the hero description element. */
   descriptionClassName?: string;
+  /** Horizontal padding on the outer hero wrapper (defaults to `px-6`). */
+  outerPaddingClass?: string;
+  /** Optional classes for the inner content wrapper inside the hero card. */
+  contentClassName?: string;
   /**
    * `stacked` — centered title above description (platform default).
    * `row` — title and description on one row with a shorter hero height.
@@ -301,6 +305,10 @@ const DEFAULT_HERO_TITLE_ID = "advanced-slider-hero-title";
 const DEFAULT_HERO_TITLE = "Atomix Loan Operating System";
 const DEFAULT_HERO_DESCRIPTION =
   "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum.";
+const DEFAULT_OUTER_PADDING = "px-6";
+const DEFAULT_CONTENT_PADDING = "px-4 sm:px-6 md:px-8";
+const DEFAULT_DESCRIPTION_CLASSES =
+  "text-[1.05rem] leading-7 md:text-[24px] md:leading-normal";
 
 export default function HeroAnimatedBg({
   heroTitleId = DEFAULT_HERO_TITLE_ID,
@@ -313,6 +321,8 @@ export default function HeroAnimatedBg({
   description = DEFAULT_HERO_DESCRIPTION,
   titleClassName = "",
   descriptionClassName = "",
+  outerPaddingClass = DEFAULT_OUTER_PADDING,
+  contentClassName = DEFAULT_CONTENT_PADDING,
   contentLayout = "stacked",
   showCta = true,
   fixedMosaicCols = defaultFixedTileCols,
@@ -336,7 +346,7 @@ export default function HeroAnimatedBg({
   const tilesTrackRef = useRef<HTMLDivElement | null>(null);
   const heroAnimScopeRef = useRef<HTMLDivElement | null>(null);
   const heroTitleRef = useRef<HTMLHeadingElement | null>(null);
-  const heroDescRef = useRef<HTMLParagraphElement | null>(null);
+  const heroDescRef = useRef<HTMLDivElement | null>(null);
   const heroCtaRef = useRef<HTMLDivElement | null>(null);
 
   // Tile gradients are driven only from this effect (not React `style`), so parent
@@ -515,7 +525,7 @@ export default function HeroAnimatedBg({
       : "";
 
   return (
-    <div className="mx-auto w-full max-w-[1920px] px-12">
+    <div className={`mx-auto w-full max-w-[1920px] ${outerPaddingClass}`}>
       <div
         ref={heroCardRef}
         aria-labelledby={heroTitleId}
@@ -604,10 +614,10 @@ export default function HeroAnimatedBg({
           ref={heroAnimScopeRef}
           className={
             isRowLayout
-              ? "relative z-[1] mx-auto flex w-full max-w-[1240px] flex-col gap-6 px-8 md:px-12"
+              ? `relative z-[1] mx-auto flex w-full max-w-[1240px] flex-col gap-6 ${contentClassName}`
               : gridDistortionBg
-                ? "pointer-events-none relative z-[1] mx-auto flex w-full max-w-[1240px] flex-col items-center gap-6 text-center"
-                : "relative z-[1] mx-auto flex w-full max-w-[1240px] flex-col items-center gap-6 text-center"
+                ? `pointer-events-none relative z-[1] mx-auto flex w-full max-w-[1240px] flex-col items-center gap-6 text-center ${contentClassName}`
+                : `relative z-[1] mx-auto flex w-full max-w-[1240px] flex-col items-center gap-6 text-center ${contentClassName}`
           }
         >
           {isRowLayout ? (
@@ -619,12 +629,12 @@ export default function HeroAnimatedBg({
               >
                 {title}
               </h1>
-              <p
+              <div
                 ref={heroDescRef}
-                className="m-0 min-w-0 text-left text-[16px] font-normal text-white/70 sm:text-[20px] md:max-w-[52%] md:text-[24px]"
+                className={`m-0 min-w-0 text-left font-normal text-white/90 md:max-w-[52%] ${DEFAULT_DESCRIPTION_CLASSES} ${descriptionClassName}`}
               >
                 {description}
-              </p>
+              </div>
             </div>
           ) : (
             <>
@@ -635,12 +645,12 @@ export default function HeroAnimatedBg({
               >
                 {title}
               </h1>
-              <p
+              <div
                 ref={heroDescRef}
-                className={`m-0 w-full max-w-[1200px] text-[24px] font-normal text-white/70 ${descriptionClassName}`}
+                className={`m-0 w-full max-w-[1200px] font-normal text-white/90 ${DEFAULT_DESCRIPTION_CLASSES} ${descriptionClassName}`}
               >
                 {description}
-              </p>
+              </div>
             </>
           )}
           {showCta ? (

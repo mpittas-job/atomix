@@ -34,7 +34,7 @@ const aboutAtomixSections = [
     id: "what-sets-us-apart",
     title: "What sets us apart",
     description:
-      "Rules-first architecture, immutable on-chain audit and goal-driven intelligence; compliance enforced at every level, not bolted on",
+      "Proprietary rules-first architecture, immutable on-chain audit and goal-driven intelligence; compliance enforced at every level, not bolted on",
     image: "/about/about-us-img-2.jpg",
   },
   {
@@ -46,7 +46,7 @@ const aboutAtomixSections = [
   {
     id: "where-we-operate",
     title: "Where we operate",
-    description: "UK-based, with global expansion built into the model",
+    description: "UK-based, with international expansion built into the model",
     image: "/about/about-us-img-4.jpg",
   },
 ];
@@ -473,7 +473,18 @@ export default function MainHero() {
                 theme="dark"
                 badgeText=""
                 title="About Atomix"
-                description="Property lending is overdue for a rebuild. Atomix is the rebuild."
+                description={
+                  <>
+                    <p>
+                      Property lending infrastructure is overdue for a rebuild.
+                      Atomix is the rebuild.
+                    </p>
+                    <p className="mt-4">
+                      £65bn+ in specialist property lending processed every year
+                      on infrastructure that doesn&apos;t work. Atomix replaces it.
+                    </p>
+                  </>
+                }
                 showBadge={false}
                 className="mx-0 mb-20 max-w-[1800px]"
                 align="left"

@@ -15,9 +15,20 @@ export default function AboutUsPage() {
           heroCardBackgroundImage="/hero/hero-about.jpg"
           heroTitleId="about-us-hero-title"
           title="About Atomix"
-          description="Property lending is overdue for a rebuild. Atomix is it."
+          description={
+            <>
+              <p>
+                Property lending infrastructure is overdue for a rebuild. Atomix
+                is the rebuild.
+              </p>
+              <p className="mt-4">
+                £65bn+ in specialist property lending processed every year on
+                infrastructure that doesn&apos;t work. Atomix replaces it.
+              </p>
+            </>
+          }
           titleClassName="max-w-none whitespace-nowrap"
-          descriptionClassName="max-w-none whitespace-nowrap"
+          descriptionClassName="max-w-none"
           showCta={false}
         />
       </div>

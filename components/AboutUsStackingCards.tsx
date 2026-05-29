@@ -41,9 +41,9 @@ const missionCards: AboutCardData[] = [
     items: [
       "Real-time visibility — live loan status and portfolio analytics on demand",
       "Enforce every rule automatically — capital deployed exactly as intended, no self-certification required",
-      "Record every decision immutably on-chain — tamper proof transparency",
+      "Record every decision immutably on-chain — every action transparent, permanent and tamper-proof",
       "Connect institutional and private capital to multiple lenders via a single integration — lower barriers, lower due diligence costs",
-      "Automate portfolio reporting — granular loan positions monitored at no additional overhead, removing the penalty on diversified small-loan portfolios",
+      "Automate portfolio reporting — granular loan positions monitored at no additional overhead; diversified portfolios no longer penalised",
       "Connect all parties in a unified workspace — capital providers maintain live visibility across every funded loan and decision in real time",
     ],
   },
@@ -51,16 +51,15 @@ const missionCards: AboutCardData[] = [
     title: "Lenders",
     columns: 3,
     items: [
-      "Significantly reduce manual touchpoints — end-to-end workflow automation; manual intervention governed by credit policy, not discretion",
+      "End-to-end workflow automation — goal-driven reasoning finds the most efficient compliant route; manual intervention by credit policy only",
       "Connect smaller lenders to institutional capital — removing the scale barrier that previously shut them out",
       "Make smaller loans economical and scale without hiring — near-zero marginal processing cost and pay-as-you-go pricing remove both the fixed cost floor and the headcount barrier",
-      "Eliminate developer dependency — no-code configuration puts product changes, rule updates and workflow modifications in the hands of the business",
+      "No-code configuration — product changes and rule updates self-served; open API connects to any data provider or third-party system",
       "Cut the cost of incomplete applications — automated decisioning identifies ineligible applications earlier, protecting margins across the book",
       "Make every lending decision auditable — on-chain records provide a complete, traceable trail from application to exit, removing black-box risk",
-      "Apply goal-driven reasoning to find the most efficient compliant route — every loan processed at pace without manual routing",
       "Connect all parties in a unified workspace — lenders maintain live visibility across every document, decision and stakeholder throughout",
       "A self-reinforcing network takes hold — as lenders onboard, brokers and capital providers follow, driving volume and deepening the marketplace",
-      "Connect to any data provider, valuation method or third-party system — open API architecture integrates where needed without rebuilding the platform",
+      "Scale without hiring — automation absorbs growth; the platform handles compliance, configuration and connectivity",
     ],
   },
   {
@@ -69,7 +68,7 @@ const missionCards: AboutCardData[] = [
       "Eliminate re-keying — data entered once, shared across all lenders and parties for the full loan journey",
       "Keep borrowers informed at every step — live loan status, transparent next steps, no chasing required",
       "Connect all parties in a unified workspace — instant, consistent process, no handoff delays",
-      "Deliver transparent process and consistent outcomes at every stage",
+      "Deliver transparent process and certain outcomes at every stage",
     ],
   },
 ];
@@ -112,10 +111,10 @@ const visionCards: AboutCardData[] = [
     title: "Capital providers",
     items: [
       "A single integration gives access to diversified, on-chain-audited loan pools across multiple lenders",
-      "Each capital provider's interest represented as a digital token — tradeable on secondary markets, no longer locked for the full term",
-      "Flexible capital access — direct pool participation or via institutional funds, in fiat or stablecoin, within a fully permissioned and compliant ecosystem",
-      "A dedicated capital provider marketplace replaces bilateral relationships — institutional and private investors access multiple lenders in one place, collapsing due diligence costs and opening competitive capital deployment at scale",
-      "Granular, diversified portfolios become viable — automated reporting means a portfolio of smaller loans carries no greater monitoring burden than a concentrated one",
+      "Each participation represented as a digital token — tradeable on secondary markets, no longer locked for the full term",
+      "Flexible capital access — fiat or stablecoin, direct or via institutional funds; regulatory responsibility sits with the capital provider",
+      "A dedicated marketplace replaces bilateral relationships — multiple lenders in one place, due diligence costs collapsed, competitive capital deployment at scale",
+      "Granular, diversified portfolios become viable — smaller loan positions carry no greater monitoring burden than concentrated ones",
       "Real-time compliance enforcement and portfolio visibility across every loan in the ecosystem",
     ],
   },
@@ -124,31 +123,38 @@ const visionCards: AboutCardData[] = [
     items: [
       "A level playing field emerges — credit rules enforced by the platform; lenders compete on product, not process",
       "Secondary capital markets open to all — tokenised liquidity pools give lenders access to funding previously available only to large institutions",
-      "Aggregation transforms the market structure — smaller lenders collectively reach institutional securitisation scale, converting capital-constrained participants into institutional-grade originators",
+      "Aggregation transforms the market — smaller lenders collectively reach institutional scale, becoming institutional-grade originators",
       "The same infrastructure extends beyond bridging — consumer mortgages, asset-backed lending and connected financial services, no rebuild required",
-      "Distribution partners deploy discrete, white-labelled lending environments within the same ecosystem — expanding origination reach across brokers, auction houses and beyond without additional infrastructure",
-      "A shared data advantage emerges — real market pricing, risk appetite and capital flow patterns visible across the ecosystem, giving every lender intelligence previously available only to the largest institutions",
+      "Distribution partners deploy discrete, white-labelled environments within the same ecosystem — brokers, auction houses and beyond, no additional infrastructure",
+      "A shared data advantage emerges — real market intelligence no longer exclusive to the largest institutions; fraud-proof records cannot be retrofitted",
     ],
   },
   {
     title: "Borrowers",
     items: [
-      "A single unbroken journey — from first enquiry through to drawdown, entirely within one marketplace; the first time the complete property lending process has been available end-to-end on a single platform",
+      "A single unbroken journey from enquiry to drawdown — application, underwriting, legal and capital matching on one platform; no other solution covers the complete journey",
       "AI agents available 24/7 — handling queries, tracking progress and answering loan-specific questions in natural language",
-      "A loan optimiser surfaces matched lenders, predicted rates and approval likelihood in real time",
+      "A loan optimiser — matched lenders, predicted rates and approval likelihood, in real time",
       "Direct access to a broader, more competitive pool of capital as the marketplace scales",
     ],
   },
 ];
 
+const ABOUT_CARD_ITEM_MIN_HEIGHT = 72;
+const ABOUT_CARD_ROW_GAP = 16;
+
 function getCardsContainerHeight(cards: AboutCardData[]) {
   const heights = cards.map((card) => {
     const cols = card.columns ?? 2;
     const rows = Math.ceil(card.items.length / cols);
-    return 120 + rows * 104 + Math.max(0, rows - 1) * 32;
+    return (
+      120 +
+      rows * ABOUT_CARD_ITEM_MIN_HEIGHT +
+      Math.max(0, rows - 1) * ABOUT_CARD_ROW_GAP
+    );
   });
 
-  return Math.max(430, ...heights);
+  return Math.max(380, ...heights);
 }
 
 function AboutCard({
@@ -200,20 +206,13 @@ function AboutCard({
       </div>
 
       <div
-        className={`about-stack-card-content grid gap-x-8 gap-y-8 ${gridColsClass} relative z-10`}
-        style={
-          index === 0
-            ? { overflow: "hidden" }
-            : {
-                opacity: 0,
-                visibility: "hidden",
-                height: 0,
-                overflow: "hidden",
-              }
-        }
+        className={`about-stack-card-content grid content-start gap-x-8 gap-y-4 ${gridColsClass} relative z-10 overflow-hidden`}
       >
         {card.items.map((item) => (
-          <div key={item} className="flex items-start gap-4">
+          <div
+            key={item}
+            className="flex min-h-[72px] items-start gap-4"
+          >
             {(() => {
               const ItemIcon = getItemIcon(item);
 
@@ -291,8 +290,16 @@ function AboutStackingSection({
         scale: 1,
         transformOrigin: "top center",
       });
-      gsap.set(cardContentElements, { overflow: "hidden" });
-      gsap.set(cardContentElements[0], { autoAlpha: 1, height: "auto" });
+      gsap.set(cardContentElements, { overflow: "hidden", height: "auto", autoAlpha: 1 });
+
+      const measuredContentHeights = cardContentElements.map(
+        (element) => element.offsetHeight,
+      );
+
+      gsap.set(cardContentElements[0], {
+        autoAlpha: 1,
+        height: measuredContentHeights[0],
+      });
       gsap.set(cardContentElements.slice(1), { autoAlpha: 0, height: 0 });
       gsap.set(cardChevronElements, {
         rotate: 0,
@@ -392,7 +399,7 @@ function AboutStackingSection({
             autoAlpha: 0,
             height: 0,
             duration: 0.7,
-            ease: "power2.out",
+            ease: "power2.inOut",
           },
           index - 0.25,
         );
@@ -411,9 +418,9 @@ function AboutStackingSection({
           cardContentElements[index],
           {
             autoAlpha: 1,
-            height: "auto",
+            height: measuredContentHeights[index],
             duration: 0.85,
-            ease: "power2.out",
+            ease: "power2.inOut",
           },
           index - 0.18,
         );
@@ -559,7 +566,7 @@ export default function AboutUsStackingCards() {
           <>
             Rebuild UK property lending. Start with bridging.
             <br />
-            Extend into SME CRE term loans — same infrastructure, no rebuild.
+            Extend into specialist term loans and beyond — same infrastructure, no rebuild.
           </>
         }
       />
@@ -568,8 +575,8 @@ export default function AboutUsStackingCards() {
         cards={visionCards}
         description={
           <>
-            One ecosystem. Every stakeholder connected. Property lending
-            transformed — starting in the UK, built for global scale.
+            One ecosystem. Every stakeholder connected. Property lending 
+            transformed — starting in the UK, built for international scale.
           </>
         }
       />

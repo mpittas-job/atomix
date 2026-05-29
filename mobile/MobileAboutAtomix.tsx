@@ -11,14 +11,14 @@ const aboutAtomixSections = [
     id: "what-we-are",
     title: "What we are",
     description:
-      "A Platform-as-a-Service automating the full lifecycle of property loans, end-to-end; <br/>fully configurable and white-label ready",
+      "A Platform-as-a-Service automating the property loan process, end-to-end; <br/>fully configurable and white-label ready",
     image: "/about/about-us-img-1.jpg",
   },
   {
     id: "what-sets-us-apart",
     title: "What sets us apart",
     description:
-      "Rules-first architecture, immutable on-chain audit and goal-driven intelligence; compliance enforced at every level, not bolted on",
+      "Proprietary rules-first architecture, immutable on-chain audit and goal-driven intelligence; compliance enforced at every level, not bolted on",
     image: "/about/about-us-img-2.jpg",
   },
   {
@@ -30,7 +30,7 @@ const aboutAtomixSections = [
   {
     id: "where-we-operate",
     title: "Where we operate",
-    description: "UK-based, with global expansion built into the model",
+    description: "UK-based, with international expansion built into the model",
     image: "/about/about-us-img-4.jpg",
   },
 ] as const;
@@ -130,7 +130,12 @@ export default function MobileAboutAtomix() {
             About Atomix
           </h2>
           <p className="mt-4 text-[1.05rem] leading-7 text-[#474D5D] md:text-xl md:leading-8">
-            Property lending is overdue for a rebuild. Atomix is the rebuild.
+            Property lending infrastructure is overdue for a rebuild. Atomix is
+            the rebuild.
+          </p>
+          <p className="mt-4 text-[1.05rem] leading-7 text-[#474D5D] md:text-xl md:leading-8">
+            £65bn+ in specialist property lending processed every year on
+            infrastructure that doesn&apos;t work. Atomix replaces it.
           </p>
         </div>
 
