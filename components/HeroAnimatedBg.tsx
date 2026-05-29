@@ -302,9 +302,9 @@ export type HeroAnimatedBgProps = {
 
 const DEFAULT_HERO_TITLE_ID = "advanced-slider-hero-title";
 
-const DEFAULT_HERO_TITLE = "Atomix Loan Operating System";
+const DEFAULT_HERO_TITLE = "The Platform";
 const DEFAULT_HERO_DESCRIPTION =
-  "Lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum dolor sit amet lorem ipsum.";
+  "From application to exit —every step, one platform";
 const DEFAULT_OUTER_PADDING = "px-6";
 const DEFAULT_CONTENT_PADDING = "px-4 sm:px-6 md:px-8";
 const DEFAULT_DESCRIPTION_CLASSES =

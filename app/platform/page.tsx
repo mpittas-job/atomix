@@ -19,6 +19,7 @@ import DefCta from "@/components/DefCta";
 import Footer from "@/components/Footer";
 import Header from "@/components/header";
 import DefHeading from "@/components/typo/DefHeading";
+import PlatformJourneyOverview from "@/components/PlatformJourneyOverview";
 
 import { NAV_CATEGORIES, SECTIONS } from "./content/nav-categories";
 import { JOURNEY_FLOW_CHART_TARGETS } from "./content/journey-flow-chart-targets";
@@ -605,6 +606,8 @@ function AdvancedSliderPageContent() {
           </div>
         </div>
 
+        <PlatformJourneyOverview />
+
         <section
           id="atomix-journey-flow"
           aria-label="The Atomix Journey"
@@ -617,9 +620,19 @@ function AdvancedSliderPageContent() {
               title="The Atomix Journey"
               description={
                 <>
-                  Real-time data captured at every stage — powering faster
-                  decisions, structured collaboration, and continuous loan
-                  management beyond completion.
+                  <p>
+                    Atomix supports multiple sales channels, origination flows,
+                    and loan products — including auction finance, quick home
+                    sale, and broker-introduced lending.
+                  </p>
+                  <p className="mt-4">
+                    Rules, branding, eligibility criteria, and workflow
+                    sequencing are defined by the lender, without developer
+                    involvement.
+                  </p>
+                  <p className="mt-4">
+                    The flow illustrated here is direct to borrower.
+                  </p>
                 </>
               }
               theme="dark"
