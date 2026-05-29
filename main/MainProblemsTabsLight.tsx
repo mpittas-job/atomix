@@ -17,6 +17,8 @@ import {
   FaBan,
   FaBinoculars,
   FaClockRotateLeft,
+  FaChevronLeft,
+  FaChevronRight,
   FaFileCircleXmark,
   FaHandHoldingDollar,
   FaHourglassHalf,
@@ -83,8 +85,13 @@ const getTabButtons = (ref: React.RefObject<HTMLDivElement | null>) => {
   );
 };
 
-const getIconBoxes = (ref: React.RefObject<HTMLDivElement | null>) =>
-  ref.current ? Array.from(ref.current.children) : [];
+const getIconBoxes = (
+  desktopRef: React.RefObject<HTMLDivElement | null>,
+  mobileRef: React.RefObject<HTMLDivElement | null>,
+) => {
+  const desktopBoxes = desktopRef.current ? Array.from(desktopRef.current.children) : [];
+  return desktopBoxes;
+};
 
 const icons = {
   noVisibility: <FaBinoculars className="h-7 w-7" />,
@@ -258,7 +265,9 @@ const problemTabs = tabsData.map((tab, index) => ({
 
 export default function MainProblemsTabsLight() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [activeSlide, setActiveSlide] = useState(0);
   const iconBoxContainerRef = useRef<HTMLDivElement>(null);
+  const carouselRef = useRef<HTMLDivElement>(null);
   const tabButtonsRef = useRef<HTMLDivElement>(null);
   const tabScrollRef = useRef<HTMLDivElement>(null);
   const activePillRef = useRef<HTMLDivElement>(null);
@@ -279,7 +288,7 @@ export default function MainProblemsTabsLight() {
       gsap.set(activePillRef.current, { opacity: 0, scale: 0.85 });
     }
 
-    const iconBoxes = getIconBoxes(iconBoxContainerRef);
+    const iconBoxes = getIconBoxes(iconBoxContainerRef, carouselRef);
     if (iconBoxes.length) gsap.set(iconBoxes, { opacity: 0, y: 30 });
 
     if (learnMoreRef.current) {
@@ -291,7 +300,7 @@ export default function MainProblemsTabsLight() {
   useGSAP(
     () => {
       if (!initialAnimDone.current) return;
-      const boxes = getIconBoxes(iconBoxContainerRef);
+      const boxes = getIconBoxes(iconBoxContainerRef, carouselRef);
       if (!boxes.length) return;
       gsap.fromTo(
         boxes,
@@ -360,7 +369,7 @@ export default function MainProblemsTabsLight() {
     });
 
     // 2. Tab content fade in up (same animation as tab switch)
-    const iconBoxes = getIconBoxes(iconBoxContainerRef);
+    const iconBoxes = getIconBoxes(iconBoxContainerRef, carouselRef);
     if (iconBoxes.length) {
       tl.to(
         iconBoxes,
@@ -436,6 +445,45 @@ export default function MainProblemsTabsLight() {
     });
   }, [activeIndex]);
 
+  // Reset carousel slide and scroll position when the active category changes
+  useLayoutEffect(() => {
+    if (carouselRef.current) {
+      carouselRef.current.scrollLeft = 0;
+      setActiveSlide(0);
+    }
+  }, [activeIndex]);
+
+  const handleCarouselScroll = () => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const width = el.getBoundingClientRect().width;
+    if (width <= 0) return;
+    const index = Math.round(el.scrollLeft / width);
+    setActiveSlide(index);
+  };
+
+  const goToSlide = (index: number) => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const width = el.getBoundingClientRect().width;
+    gsap.to(el, {
+      scrollLeft: index * width,
+      duration: 0.5,
+      ease: "power2.out",
+    });
+  };
+
+  const handlePrevSlide = () => {
+    const current = activeSlide;
+    if (current > 0) goToSlide(current - 1);
+  };
+
+  const handleNextSlide = () => {
+    const total = tabsData[activeIndex].iconBoxes.length;
+    const current = activeSlide;
+    if (current < total - 1) goToSlide(current + 1);
+  };
+
   return (
     <div className="min-h-[calc(100vh-126px)] w-full rounded-[2rem] bg-[#EBEFF2] relative overflow-hidden flex flex-col justify-center items-center">
       <div className="relative z-7 flex flex-col gap-y-12 max-w-[1400px] w-full px-6 py-14 lg:py-32">
@@ -480,7 +528,7 @@ export default function MainProblemsTabsLight() {
                     activeTabId={String(activeIndex)}
                     onTabChange={(tabId) => setActiveIndex(Number(tabId))}
                     ariaLabel="Problem categories"
-                    className="!mx-0 mb-0 shrink-0"
+                    className="!mx-0 !mb-0 shrink-0"
                   />
                 </div>
               </div>
@@ -514,27 +562,40 @@ export default function MainProblemsTabsLight() {
             </div>
           </div>
 
-          {/* IconBox content with fade-in animation */}
+          {/* Desktop — IconBox content with grid layout */}
           <div
             ref={iconBoxContainerRef}
-            key={activeIndex}
-            className={`grid ${getIconBoxGridClass(tabsData[activeIndex])} gap-5 w-full`}
+            key={`desktop-${activeIndex}`}
+            className={`hidden lg:grid ${getIconBoxGridClass(tabsData[activeIndex])} gap-5 w-full`}
           >
             {tabsData[activeIndex].iconBoxes.map((iconBox, index) => (
               <div
-                key={`${activeIndex}-${index}`}
+                key={`desktop-${activeIndex}-${index}`}
                 className="relative h-full"
               >
-                <div className="hidden h-full lg:block">
-                  <IconBoxLight
-                    icon={iconBox.icon}
-                    title={iconBox.title}
-                    description={iconBox.description}
-                    titleMaxWidth={iconBox.titleMaxWidth}
-                    className="h-full"
-                  />
-                </div>
-                <div className="h-full lg:hidden">
+                <IconBoxLight
+                  icon={iconBox.icon}
+                  title={iconBox.title}
+                  description={iconBox.description}
+                  titleMaxWidth={iconBox.titleMaxWidth}
+                  className="h-full"
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile/Tablet — IconBox content with responsive carousel layout */}
+          <div key={`mobile-${activeIndex}`} className="block lg:hidden w-full">
+            <div
+              ref={carouselRef}
+              onScroll={handleCarouselScroll}
+              className="flex w-full overflow-x-auto snap-x snap-mandatory scroll-smooth overscroll-x-contain gap-5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {tabsData[activeIndex].iconBoxes.map((iconBox, index) => (
+                <div
+                  key={`mobile-${activeIndex}-${index}`}
+                  className="w-full shrink-0 snap-center snap-always"
+                >
                   <IconBoxSimple
                     icon={iconBox.icon}
                     title={iconBox.title}
@@ -543,8 +604,48 @@ export default function MainProblemsTabsLight() {
                     className="h-full"
                   />
                 </div>
+              ))}
+            </div>
+
+            {/* Carousel navigation controls (arrows + indicators) */}
+            <div className="flex items-center justify-center gap-6 mt-6">
+              <button
+                onClick={handlePrevSlide}
+                disabled={activeSlide === 0}
+                className={`flex h-10 w-10 items-center justify-center rounded-full border border-[#DCE1E4] bg-white text-[#011F27] shadow-sm transition-all active:scale-95 ${
+                  activeSlide === 0 ? "opacity-40 cursor-not-allowed" : "opacity-100 cursor-pointer"
+                }`}
+                aria-label="Previous slide"
+              >
+                <FaChevronLeft className="h-4 w-4" />
+              </button>
+
+              <div className="flex gap-2">
+                {tabsData[activeIndex].iconBoxes.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => goToSlide(idx)}
+                    className={`h-2 rounded-full transition-all duration-300 ${
+                      idx === activeSlide ? "w-6 bg-[#011F27]" : "w-2 bg-[#A0AEB2]"
+                    }`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
               </div>
-            ))}
+
+              <button
+                onClick={handleNextSlide}
+                disabled={activeSlide === tabsData[activeIndex].iconBoxes.length - 1}
+                className={`flex h-10 w-10 items-center justify-center rounded-full border border-[#DCE1E4] bg-white text-[#011F27] shadow-sm transition-all active:scale-95 ${
+                  activeSlide === tabsData[activeIndex].iconBoxes.length - 1
+                    ? "opacity-40 cursor-not-allowed"
+                    : "opacity-100 cursor-pointer"
+                }`}
+                aria-label="Next slide"
+              >
+                <FaChevronRight className="h-4 w-4" />
+              </button>
+            </div>
           </div>
         </div>
 
