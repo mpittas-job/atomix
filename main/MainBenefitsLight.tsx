@@ -14,6 +14,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import AdvSliderTabToggle from "@/components/AdvSliderTabToggle";
 import DefHeading from "@/components/typo/DefHeading";
 import { IoShieldCheckmark } from "react-icons/io5";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import IconBoxSimple from "@/components/IconBoxSimple";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -61,70 +63,70 @@ const MOBILE_BENEFITS_IMAGE_LAYOUT: {
   main: MobileImagePosition;
   small: MobileImagePosition;
 }[] = [
-  {
-    label: "Capital Providers",
-    mainSrc: "/dashboard/benefits-tab-1-img-lg.svg",
-    smallSrc: "/dashboard/benefits-tab-1-img-sm.png",
-    main: {
-      width: "140%",
-      maxHeight: "88%",
-      top: "50%",
-      left: "50%",
-      translateX: "0%",
-      translateY: "-50%",
+    {
+      label: "Capital Providers",
+      mainSrc: "/dashboard/benefits-tab-1-img-lg.svg",
+      smallSrc: "/dashboard/benefits-tab-1-img-sm.png",
+      main: {
+        width: "140%",
+        maxHeight: "88%",
+        top: "50%",
+        left: "50%",
+        translateX: "0%",
+        translateY: "-50%",
+      },
+      small: {
+        width: "70%",
+        maxHeight: "72%",
+        top: "50%",
+        left: "50%",
+        translateX: "-50%",
+        translateY: "-50%",
+      },
     },
-    small: {
-      width: "70%",
-      maxHeight: "72%",
-      top: "50%",
-      left: "50%",
-      translateX: "-50%",
-      translateY: "-50%",
+    {
+      label: "Lenders",
+      mainSrc: "/images/dashboard-lenders-main.svg",
+      smallSrc: "/images/dashboard-lenders-small.svg",
+      main: {
+        width: "120%",
+        maxHeight: "88%",
+        top: "40%",
+        left: "20%",
+        translateX: "0%",
+        translateY: "-50%",
+      },
+      small: {
+        width: "90%",
+        maxHeight: "72%",
+        top: "80%",
+        left: "50%",
+        translateX: "-50%",
+        translateY: "-50%",
+      },
     },
-  },
-  {
-    label: "Lenders",
-    mainSrc: "/images/dashboard-lenders-main.svg",
-    smallSrc: "/images/dashboard-lenders-small.svg",
-    main: {
-      width: "120%",
-      maxHeight: "88%",
-      top: "40%",
-      left: "20%",
-      translateX: "0%",
-      translateY: "-50%",
+    {
+      label: "Borrowers",
+      mainSrc: "/images/dashboard-partner-main.svg",
+      smallSrc: "/images/dashboard-partner-small.svg",
+      main: {
+        width: "140%",
+        maxHeight: "88%",
+        top: "50%",
+        left: "50%",
+        translateX: "0%",
+        translateY: "-50%",
+      },
+      small: {
+        width: "50%",
+        maxHeight: "72%",
+        top: "50%",
+        left: "50%",
+        translateX: "-50%",
+        translateY: "-50%",
+      },
     },
-    small: {
-      width: "90%",
-      maxHeight: "72%",
-      top: "80%",
-      left: "50%",
-      translateX: "-50%",
-      translateY: "-50%",
-    },
-  },
-  {
-    label: "Borrowers",
-    mainSrc: "/images/dashboard-partner-main.svg",
-    smallSrc: "/images/dashboard-partner-small.svg",
-    main: {
-      width: "140%",
-      maxHeight: "88%",
-      top: "50%",
-      left: "50%",
-      translateX: "0%",
-      translateY: "-50%",
-    },
-    small: {
-      width: "50%",
-      maxHeight: "72%",
-      top: "50%",
-      left: "50%",
-      translateX: "-50%",
-      translateY: "-50%",
-    },
-  },
-];
+  ];
 
 function mobileImageWrapperStyle(
   position: MobileImagePosition,
@@ -326,6 +328,49 @@ export default function MainBenefitsLight() {
   const listRef = useRef<HTMLUListElement>(null);
   const mainImageRef = useRef<HTMLImageElement>(null);
   const smallImageRef = useRef<HTMLImageElement>(null);
+
+  // Mobile benefit carousel refs/state
+  const benefitsCarouselRef = useRef<HTMLDivElement>(null);
+  const [activeBenefitSlide, setActiveBenefitSlide] = useState(0);
+
+  // Reset carousel slide and scroll position when the active category changes
+  useLayoutEffect(() => {
+    if (benefitsCarouselRef.current) {
+      benefitsCarouselRef.current.scrollLeft = 0;
+      setActiveBenefitSlide(0);
+    }
+  }, [activeIndex]);
+
+  const handleBenefitCarouselScroll = () => {
+    const el = benefitsCarouselRef.current;
+    if (!el) return;
+    const width = el.getBoundingClientRect().width;
+    if (width <= 0) return;
+    const index = Math.round(el.scrollLeft / width);
+    setActiveBenefitSlide(index);
+  };
+
+  const goToBenefitSlide = (index: number) => {
+    const el = benefitsCarouselRef.current;
+    if (!el) return;
+    const width = el.getBoundingClientRect().width;
+    gsap.to(el, {
+      scrollLeft: index * width,
+      duration: 0.5,
+      ease: "power2.out",
+    });
+  };
+
+  const handlePrevBenefitSlide = () => {
+    const current = activeBenefitSlide;
+    if (current > 0) goToBenefitSlide(current - 1);
+  };
+
+  const handleNextBenefitSlide = () => {
+    const total = tabsData[activeIndex].items.length;
+    const current = activeBenefitSlide;
+    if (current < total - 1) goToBenefitSlide(current + 1);
+  };
 
   const activeImageLayout = MOBILE_BENEFITS_IMAGE_LAYOUT[activeIndex];
 
@@ -735,7 +780,7 @@ export default function MainBenefitsLight() {
                     activeTabId={String(activeIndex)}
                     onTabChange={(tabId) => setActiveIndex(Number(tabId))}
                     ariaLabel="Benefit categories"
-                    className="!mx-0 mb-0 shrink-0"
+                    className="!mx-0 !mb-0 shrink-0"
                   />
                 </div>
               </div>
@@ -757,11 +802,10 @@ export default function MainBenefitsLight() {
                   key={tab.title}
                   data-tab
                   onClick={() => setActiveIndex(index)}
-                  className={`relative z-10 flex flex-1 cursor-pointer items-center justify-center rounded-xl p-5 transition-colors duration-300 ${
-                    index === activeIndex
+                  className={`relative z-10 flex flex-1 cursor-pointer items-center justify-center rounded-xl p-5 transition-colors duration-300 ${index === activeIndex
                       ? "font-semibold text-[#011F27]"
                       : "font-medium text-[#5B6F75] hover:text-[#3a4a4e]"
-                  }`}
+                    }`}
                 >
                   <span className="text-base">{tab.title}</span>
                 </div>
@@ -802,7 +846,7 @@ export default function MainBenefitsLight() {
                   >
                     {tabsData[activeIndex].description}
                   </p>
-                  <ul ref={listRef} className="space-y-4 lg:space-y-5">
+                  <ul ref={listRef} className="hidden lg:block space-y-4 lg:space-y-5">
                     {tabsData[activeIndex].items.map((item, idx) => (
                       <li key={idx} className="flex items-start gap-3">
                         <IoShieldCheckmark className="mt-0.5 h-5 w-5 shrink-0 text-[#39C6ED] lg:h-6 lg:w-6" />
@@ -812,6 +856,74 @@ export default function MainBenefitsLight() {
                       </li>
                     ))}
                   </ul>
+
+                  {/* Mobile/Tablet — Swipeable Carousel layout for list items */}
+                  <div className="block lg:hidden w-full">
+                    <div
+                      ref={benefitsCarouselRef}
+                      onScroll={handleBenefitCarouselScroll}
+                      className="flex w-full overflow-x-auto snap-x snap-mandatory scroll-smooth overscroll-x-contain gap-4 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                    >
+                      {tabsData[activeIndex].items.map((item, idx) => (
+                        <div
+                          key={idx}
+                          className="w-full shrink-0 snap-center snap-always"
+                        >
+                          <IconBoxSimple className="h-full min-h-[140px] flex flex-col justify-center bg-white/60">
+                            <div className="flex flex-col items-start gap-3">
+                              <IoShieldCheckmark className="h-8 w-8 shrink-0 text-[#39C6ED]" />
+                              <span className="text-[0.9rem] leading-6 text-[#495F64]">
+                                {formatListItemText(item.text)}
+                              </span>
+                            </div>
+                          </IconBoxSimple>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Carousel navigation controls (arrows + indicators) */}
+                    <div className="flex items-center justify-center gap-4 mt-5">
+                      <button
+                        onClick={handlePrevBenefitSlide}
+                        disabled={activeBenefitSlide === 0}
+                        className={`flex h-9 w-9 items-center justify-center rounded-full border border-[#DCE1E4] bg-white text-[#011F27] shadow-sm transition-all active:scale-95 ${activeBenefitSlide === 0
+                            ? "opacity-40 cursor-not-allowed"
+                            : "opacity-100 cursor-pointer"
+                          }`}
+                        aria-label="Previous slide"
+                      >
+                        <FaChevronLeft className="h-3.5 w-3.5" />
+                      </button>
+
+                      <div className="flex gap-1.5">
+                        {tabsData[activeIndex].items.map((_, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => goToBenefitSlide(idx)}
+                            className={`h-1.5 rounded-full transition-all duration-300 ${idx === activeBenefitSlide
+                                ? "w-5 bg-[#011F27]"
+                                : "w-1.5 bg-[#A0AEB2]"
+                              }`}
+                            aria-label={`Go to slide ${idx + 1}`}
+                          />
+                        ))}
+                      </div>
+
+                      <button
+                        onClick={handleNextBenefitSlide}
+                        disabled={
+                          activeBenefitSlide === tabsData[activeIndex].items.length - 1
+                        }
+                        className={`flex h-9 w-9 items-center justify-center rounded-full border border-[#DCE1E4] bg-white text-[#011F27] shadow-sm transition-all active:scale-95 ${activeBenefitSlide === tabsData[activeIndex].items.length - 1
+                            ? "opacity-40 cursor-not-allowed"
+                            : "opacity-100 cursor-pointer"
+                          }`}
+                        aria-label="Next slide"
+                      >
+                        <FaChevronRight className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Images — bottom on mobile, right on desktop */}
@@ -852,9 +964,8 @@ export default function MainBenefitsLight() {
                         alt=""
                         width={600}
                         height={400}
-                        className={`h-auto w-full max-h-full object-contain lg:absolute lg:top-1/2 lg:left-14 lg:max-h-[78%] lg:-translate-y-1/2 ${
-                          activeIndex === 2 ? "lg:w-[42%]" : "lg:w-[48%]"
-                        }`}
+                        className={`h-auto w-full max-h-full object-contain lg:absolute lg:top-1/2 lg:left-14 lg:max-h-[78%] lg:-translate-y-1/2 ${activeIndex === 2 ? "lg:w-[42%]" : "lg:w-[48%]"
+                          }`}
                       />
                     </div>
                   </div>
