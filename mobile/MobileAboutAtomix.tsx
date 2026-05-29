@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { FaArrowRight } from "react-icons/fa";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
 const aboutAtomixSections = [
   {
@@ -49,9 +51,8 @@ function AboutSectionNavItem({
       type="button"
       data-nav-item
       onClick={onClick}
-      className={`group w-full text-left flex items-center justify-between py-2 transition-all duration-300 ${
-        isActive ? "text-[#1BA8CE]" : "text-[#011F27] hover:text-[#1BA8CE]"
-      }`}
+      className={`group w-full text-left flex items-center justify-between py-2 transition-all duration-300 ${isActive ? "text-[#1BA8CE]" : "text-[#011F27] hover:text-[#1BA8CE]"
+        }`}
     >
       <span
         className="text-lg font-medium transition-colors duration-300"
@@ -59,23 +60,58 @@ function AboutSectionNavItem({
         {section.title}
       </span>
       <FaArrowRight
-        className={`w-4 h-4 transition-all duration-300 ${
-          isActive
-            ? "opacity-100 translate-x-0 text-[#1BA8CE]"
-            : "group-hover:translate-x-0"
-        }`}
+        className={`w-4 h-4 transition-all duration-300 ${isActive
+          ? "opacity-100 translate-x-0 text-[#1BA8CE] rotate-90"
+          : "group-hover:translate-x-0 rotate-0"
+          }`}
       />
     </button>
   );
 }
 
 function AboutSectionCard({ section }: { section: Section }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    if (containerRef.current) {
+      gsap.fromTo(
+        containerRef.current,
+        { opacity: 0, y: 15, scale: 0.98 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.5,
+          ease: "power2.out",
+          clearProps: "all",
+        }
+      );
+    }
+  }, { scope: containerRef });
+
   return (
-    <div className="relative h-[340px] md:h-[460px] rounded-2xl overflow-hidden">
-      <Image src={section.image} alt="" fill className="object-cover" priority />
-      <div className="absolute inset-0 flex items-center p-6 md:p-12">
+    <div
+      ref={containerRef}
+      className="flex flex-col rounded-[2rem] overflow-hidden bg-[#24424B] shadow-lg w-full origin-top border border-white/10"
+    >
+      {/* Image container with its own overlay */}
+      <div className="relative w-full h-[180px] sm:h-[240px]">
+        <Image
+          src={section.image}
+          alt={section.title}
+          fill
+          className="object-cover"
+          priority
+        />
+        {/* Soft blue-teal multiplier tint specific to image */}
+        <div className="absolute inset-0 bg-[#476E78]/5 mix-blend-multiply pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/15 pointer-events-none" />
+      </div>
+
+      {/* Vertical gradient on bottom container starting from #476E78 to #24424B */}
+      <div className="p-8 pb-10 flex flex-col justify-center min-h-[140px] sm:min-h-[160px] bg-gradient-to-b from-[#476E78] to-[#24424B]">
         <p
-          className="text-white text-xl md:text-2xl leading-relaxed max-w-lg"
+          className="text-white text-lg sm:text-xl font-normal leading-relaxed"
           dangerouslySetInnerHTML={{ __html: section.description }}
         />
       </div>
