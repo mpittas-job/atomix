@@ -15,7 +15,7 @@ export default function MobileHero() {
           <SoftAurora
             speed={1.3}
             scale={1.2}
-            brightness={0.65}
+            brightness={0.35}
             color1="#78cfe3"
             color2="#87b9d4"
             noiseFrequency={1}

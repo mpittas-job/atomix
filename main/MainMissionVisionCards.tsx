@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { RefObject } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -115,6 +115,16 @@ export default function MainMissionVisionCards() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const missionCardRef = useRef<HTMLDivElement>(null);
   const visionCardRef = useRef<HTMLDivElement>(null);
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia("(max-width: 1023px)");
+    setIsMobile(mql.matches);
+    const update = () => setIsMobile(mql.matches);
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
 
   useGSAP(() => {
     const section = sectionRef.current;
@@ -269,7 +279,7 @@ export default function MainMissionVisionCards() {
           className="absolute top-0 left-0 h-[500px] w-full"
           speed={1.3}
           scale={1.2}
-          brightness={0.65}
+          brightness={isMobile ? 0.35 : 0.65}
           color1="#78cfe3"
           color2="#87b9d4"
           noiseFrequency={1}
