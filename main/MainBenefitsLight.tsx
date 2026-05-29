@@ -158,7 +158,7 @@ const tabsData: TabData[] = [
   {
     title: "Capital Providers",
     description:
-      "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor",
+      "Every rule enforced, every decision on-chain, every loan visible in real time — blind trust replaced by architecture",
     mainImage: "/images/dashboard-cp-main.svg",
     smallImages: [
       "/images/dashboard-cp-1.svg",
@@ -169,97 +169,73 @@ const tabsData: TabData[] = [
     items: [
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "Every rule enforced automatically at every stage, including regulatory and third-party policy requirements — capital deployed exactly as intended, blind trust replaced by architecture",
+        text: "Every rule enforced automatically, every decision immutably on-chain — lenders deploy capital exactly as intended, fraud impossible to hide, compliance continuous",
       },
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "Every decision immutably on-chain — fraud impossible to hide, compliance instant and continuous",
+        text: "Real-time visibility across every funded loan — live status, policy adherence and portfolio analytics on demand, no dependence on lender reporting",
       },
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "One integration, multiple lenders — per-lender due diligence costs collapse, institutional capital accessible at scale",
+        text: "One integration connects capital to multiple lenders — per-lender due diligence costs collapse, institutional and private capital accessible at scale",
       },
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "Automated portfolio reporting — diversified small-loan positions no more demanding to monitor than concentrated ones",
+        text: "Tokenised loan participations — each interest represented as a digital token, tradeable on secondary markets, no longer locked for the full term",
       },
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "Tokenised loan participations — static positions become tradeable digital assets, liquidity unlocked",
-      },
-      {
-        icon: "/icons/white/shield-check-white.svg",
-        text: "Unified workspace provides live visibility across every funded loan — all activity accessible in real time, no dependence on lender reporting",
+        text: "Automated portfolio reporting — diversified small-loan positions carry no greater monitoring burden than concentrated ones, granularity no longer penalised",
       },
     ],
   },
   {
     title: "Lenders",
     description:
-      "Incididunt ut labore et dolore magna aliqua ut enim ad minim veniam",
+      "Full automation, compliant by design, scalable without headcount — the infrastructure to grow without the overhead.",
     mainImage: "/images/dashboard-lenders-main.svg",
     smallImage: "/images/dashboard-lenders-small.svg",
     items: [
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "Full workflow automation, credit policy enforced throughout — underwriter bottleneck broken, volume scales without headcount",
+        text: "Full workflow automation — goal-driven reasoning enforces credit policy throughout; underwriter bottleneck broken, volume scales without headcount",
       },
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "Pay-as-you-go, fees scale with loan size — smaller loans profitable for the first time, fixed processing floor eliminated",
+        text: "Pay-as-you-go fees scale with loan size — smaller loans profitable for the first time; incomplete applications no longer subsidise completed ones",
       },
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "White-label ready, no rebuild required — any product, any market, without developer dependency",
+        text: "White-label, no-code configuration — any product built or modified in minutes; open API connects to any data provider, valuation method or third-party system",
       },
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "No-code configuration — rules and products changed in minutes, not months; zero operational risk",
-      },
-      {
-        icon: "/icons/white/shield-check-white.svg",
-        text: "Open API, modular architecture — connects to any data provider, valuation method or third-party system",
-      },
-      {
-        icon: "/icons/white/shield-check-white.svg",
-        text: "Platform compliance infrastructure levels the playing field — institutional capital accessible regardless of lender size",
-      },
-      {
-        icon: "/icons/white/shield-check-white.svg",
-        text: "Live risk-adjusted pricing — driven by real market data, not manual assessment",
+        text: "Platform compliance levels the playing field — institutional capital accessible regardless of lender size; live risk-adjusted pricing driven by real market data",
       },
       {
         icon: "/icons/white/shield-check-white.svg",
         text: "Immutable on-chain decision trail — every lending decision traceable, auditable and defensible; no black box, full regulatory accountability",
-      },
-      {
-        icon: "/icons/white/shield-check-white.svg",
-        text: "Earlier automated decisioning — abort rate economics improve; incomplete applications no longer subsidise completed ones",
       },
     ],
   },
   {
     title: "Borrowers",
     description:
-      "Quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo",
+      "One application, one workspace, one unbroken process — from first enquiry to completion, friction removed at every step.",
     mainImage: "/images/dashboard-partner-main.svg",
     smallImage: "/images/dashboard-partner-small.svg",
     items: [
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "Data entered once, shared across all parties — re-keying eliminated, errors reduced",
+        text: "Data entered once, shared across all parties — re-keying eliminated, errors reduced, no fragmented handoffs",
       },
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "Automated policy enforcement, every outcome on-chain — consistent, verifiable decisions from first interaction to completion, no black box",
+        text: "Automated policy enforcement, every outcome on-chain — consistent, verifiable decisions from first interaction to completion",
       },
       {
         icon: "/icons/white/shield-check-white.svg",
-        text: "Unified workspace — all parties connected in real time, every document and decision in one place",
-      },
-      {
-        icon: "/icons/white/shield-check-white.svg",
-        text: "End-to-end coordination eliminates fragmentation — legal, valuation and compliance steps managed within the platform, cutting completion times and funding costs",
+        text: "Unified workspace connects all parties in real time — legal, valuation and compliance steps coordinated within the platform, cutting completion times and funding costs",
       },
       {
         icon: "/icons/white/shield-check-white.svg",
